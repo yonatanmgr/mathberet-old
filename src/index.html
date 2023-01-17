@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="he">
+  <head>
+    <meta charset="UTF-8">
+    <link href="mathberet\node_modules\gridstack\dist\gridstack.min.css" rel="stylesheet"/>
+    <script src="mathberet\node_modules\gridstack\dist\gridstack-all.js"></script>
+    <script src="/mathberet/src/Geogebra/deployggb.js"></script>
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+    <link href="./index.css" rel="stylesheet">
+    <title>Hello World!</title>
+  </head>
+<body>
+    <div class="app">
+    <div class="appContainer">
+        <div id="sidebar">
+            
+        </div>
+
+    <div class="container">
+        <div id="header">
+            
+        </div>
+
+        <div id="content">
+            <div id="toolbar">
+                <button class="tool" id="addText">
+                    T
+                </button>
+                <button class="tool" id="addGgb">
+                    L
+                </button>
+                <button class="tool" id="loadGgb">
+                    R
+                </button>
+            </div>
+            <div id="page" class="grid-stack">
+                
+            </div>
+        </div>
+
+    
+    </div>
+</div>
+  
+    <script src="./renderer.js"></script>
+</body>
+</html>
