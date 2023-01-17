@@ -84,7 +84,7 @@ function loadGgb() {
 
     var params = {"appName": "graphing", "scaleContainerClass": "grid-stack-item-content", "showToolBar": true, "showAlgebraInput": true, "showMenuBar": true };
     var applet = new GGBApplet(params, true);
-    applet.setHTML5Codebase('../src/Geogebra/HTML5/5.0/web3d/');
+    applet.setHTML5Codebase('Geogebra/HTML5/5.0/web3d/');
     applet.inject('ggb-element');
 }
 grid.load(items);
