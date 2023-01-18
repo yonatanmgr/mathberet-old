@@ -135,6 +135,7 @@ html{
 .applet_scaler, .ggbTransform, .ggBox, .GeoGebraFrame, .applet_dimensions{
   width: 100% !important;
   height: 100% !important;
+  
 }
 
 .GeoGebraFrame {

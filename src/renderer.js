@@ -47,7 +47,10 @@ function create_ggbBlock() {
     </div>
     `
 
-    return {html: ggbBlock, uuid: id};
+    return {
+        html: ggbBlock,
+        uuid: id
+    };
 }
 
 function addText() {
@@ -61,7 +64,7 @@ function addGgb() {
     grid.addWidget(created["html"], {
         w: 5
     });
-    loadGgb("ggBox_"+created["uuid"].toString())
+    loadGgb("ggBox_" + created["uuid"].toString())
 
 };
 
@@ -87,16 +90,11 @@ document.getElementById("addGgb").addEventListener("click", addGgb);
 // document.getElementById("loadGgb").addEventListener("click", applets.map(updateSize));
 
 
-grid.on('resizestop', function(el) {
+grid.on('resizestop', function (el) {
     var resized = el.target.querySelector(".ggBox");
-        if (resized != null){
-            var found = applets.find(applet => applet.getParameters().parent.id == resized.id)
-            found
-            .getAppletObject()
-            .setSize(
-                found.getParameters().parent.offsetWidth,
-                found.getParameters().parent.offsetHeight
-            )
+    if (resized) {
+        var found = applets.find(applet => applet.getParameters().parent == resized)
+        found.getAppletObject().setSize(resized.offsetWidth, resized.offsetHeight)
     }
 })
 
@@ -104,7 +102,7 @@ function loadGgb(element) {
     var params = {
         "appName": "graphing",
         "autoHeight": true,
-        "scaleContainerClass": "ggbContainer",
+        "scaleContainerClass": "ggBox",
         "showToolBar": true,
         "showAlgebraInput": true,
         "useBrowserForJS": true,
