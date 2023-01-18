@@ -5,13 +5,14 @@
  * `contextIsolation` is turned on. Use the contextBridge API in `preload.js`
  * to expose Node.js functionality from the main process.
  */
-
+var MQ = MathQuill.getInterface(2);
 
 var grid = GridStack.init({
+    rtl: true,
     float: false,
-    handle: '.grid-stack-item',
+    handle: '.handle',
     resizable: {
-        handles: 'all'
+        handles: 'sw'
     }
 });
 
@@ -23,14 +24,33 @@ function create_textBlock() {
     var textBlock = `
     <div class="grid-stack-item" id="blockId_${id}">
         <div class="grid-stack-item-content">
-            <button class="xButton">X</button>
-            <div class="textEdit" contenteditable="true" dir="rtl">
+            <div class="handle">::</div>
+            <div class="actionsArea">
+                <div id="textEdit_${id}"></div>
             </div>
         </div>
     </div>
     `
-    return textBlock;
+    return {html: textBlock, id: id};
 }
+
+// function create_title() {
+//     let id = Date.now();
+
+//     var title = `
+//     <div class="grid-stack-item" id="blockId_${id}">
+//         <div class="grid-stack-item-content">
+//             <div class="handle">::</div>
+//             <div class="actionsArea">
+//                 <textarea class="title" type="text" dir="rtl"></textarea>
+//             </div>
+//         </div>
+//     </div>
+//     `
+//     return title;
+// }
+
+
 
 function create_ggbBlock() {
     let id = Date.now();
@@ -38,8 +58,8 @@ function create_ggbBlock() {
     var ggbBlock = `
         <div class="grid-stack-item" id="blockId_${id}">
         <div class="grid-stack-item-content">
-        <button class="xButton">X</button>
-        <div class="ggbContainer"> 
+        <div class="handle">::</div>
+        <div class="actionsArea"> 
             <div id="ggBox_${id}" class="ggBox"></div> 
             </div>
             </div>
@@ -54,17 +74,38 @@ function create_ggbBlock() {
 }
 
 function addText() {
-    grid.addWidget(create_textBlock(), {
-        w: 12
+    let created = create_textBlock()
+    grid.addWidget(created.html, {
+        h: 3,
+        w: 8,
+        minW: 1,
+        minH: 1
     });
+    var quill = new Quill(`#textEdit_${created.id}`, {
+        theme: 'bubble'
+      });
+      quill.format('direction', 'rtl');
+      quill.format('align', 'right');
 };
+
+// function addTitle() {
+//     grid.addWidget(create_title(), {
+//         h: 1,
+//         w: 8,
+//         minW: 1,
+//         maxH: 1
+//     });
+// };
 
 function addGgb() {
     let created = create_ggbBlock()
-    grid.addWidget(created["html"], {
-        w: 5
+    grid.addWidget(created.html, {
+        minH: 5,
+        minW: 4,
+        maxH: 5,
+        maxW: 4
     });
-    loadGgb("ggBox_" + created["uuid"].toString())
+    createApplet("ggBox_" + created.uuid.toString())
 
 };
 
@@ -74,8 +115,8 @@ function removeWidget(el) {
     grid.removeWidget(el);
 }
 
-document.addEventListener("click", function (e) {
-    const target = e.target.closest(".xButton");
+document.addEventListener("dblclick", function (e) {
+    const target = e.target.closest(".handle");
 
     if (target) {
         removeWidget(target.parentElement.parentElement)
@@ -87,18 +128,26 @@ let applets = [];
 
 document.getElementById("addText").addEventListener("click", addText);
 document.getElementById("addGgb").addEventListener("click", addGgb);
-// document.getElementById("loadGgb").addEventListener("click", applets.map(updateSize));
+// document.getElementById("loadGgb").addEventListener("click", addTitle);
 
+function findApplet(target) {
+    return applets.find(applet => applet.getParameters().parent == target.id)
+}
 
 grid.on('resizestop', function (el) {
-    var resized = el.target.querySelector(".ggBox");
+    let resized = el.target.querySelector(".ggBox");
     if (resized) {
-        var found = applets.find(applet => applet.getParameters().parent == resized)
-        found.getAppletObject().setSize(resized.offsetWidth, resized.offsetHeight)
+        let a = findApplet(resized);
+        console.log(document.getElementById(a.getParameters().parent))
+        a.getAppletObject()
+            .setSize(
+                document.getElementById(a.getParameters().parent).offsetWidth,
+                document.getElementById(a.getParameters().parent).offsetHeight
+            );
     }
 })
 
-function loadGgb(element) {
+function createApplet(element) {
     var params = {
         "appName": "graphing",
         "autoHeight": true,
@@ -107,7 +156,7 @@ function loadGgb(element) {
         "showAlgebraInput": true,
         "useBrowserForJS": true,
         "showMenuBar": true,
-        "parent": document.getElementById(element)
+        "parent": element
     };
     var applet = new GGBApplet(params, true);
     applet.setHTML5Codebase('Geogebra/HTML5/5.0/web3d/');
