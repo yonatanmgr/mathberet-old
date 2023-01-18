@@ -7,8 +7,6 @@
  */
 
 
-
-
 var grid = GridStack.init({
     float: false,
     handle: '.grid-stack-item',
@@ -23,7 +21,7 @@ function create_textBlock() {
     let id = Date.now();
 
     var textBlock = `
-    <div class="grid-stack-item" id="${id}">
+    <div class="grid-stack-item" id="blockId_${id}">
         <div class="grid-stack-item-content">
             <button class="xButton">X</button>
             <div class="textEdit" contenteditable="true" dir="rtl">
@@ -38,18 +36,18 @@ function create_ggbBlock() {
     let id = Date.now();
 
     var ggbBlock = `
-        <div class="grid-stack-item" id="${id}">
+        <div class="grid-stack-item" id="blockId_${id}">
         <div class="grid-stack-item-content">
         <button class="xButton">X</button>
         <div class="ggbContainer"> 
-            <div id="ggb-element" class="ggBox"></div> 
+            <div id="ggBox_${id}" class="ggBox"></div> 
             </div>
             </div>
         </div>
     </div>
     `
 
-    return ggbBlock;
+    return {html: ggbBlock, uuid: id};
 }
 
 function addText() {
@@ -59,9 +57,12 @@ function addText() {
 };
 
 function addGgb() {
-    grid.addWidget(create_ggbBlock(), {
+    let created = create_ggbBlock()
+    grid.addWidget(created["html"], {
         w: 5
     });
+    loadGgb("ggBox_"+created["uuid"].toString())
+
 };
 
 
@@ -78,12 +79,28 @@ document.addEventListener("click", function (e) {
     }
 });
 
+let applets = [];
+
+
 document.getElementById("addText").addEventListener("click", addText);
 document.getElementById("addGgb").addEventListener("click", addGgb);
-document.getElementById("loadGgb").addEventListener("click", loadGgb);
+// document.getElementById("loadGgb").addEventListener("click", applets.map(updateSize));
 
-function loadGgb() {
 
+grid.on('resizestop', function(el) {
+    var resized = el.target.querySelector(".ggBox");
+        if (resized != null){
+            var found = applets.find(applet => applet.getParameters().parent.id == resized.id)
+            found
+            .getAppletObject()
+            .setSize(
+                found.getParameters().parent.offsetWidth,
+                found.getParameters().parent.offsetHeight
+            )
+    }
+})
+
+function loadGgb(element) {
     var params = {
         "appName": "graphing",
         "autoHeight": true,
@@ -92,11 +109,11 @@ function loadGgb() {
         "showAlgebraInput": true,
         "useBrowserForJS": true,
         "showMenuBar": true,
-        
+        "parent": document.getElementById(element)
     };
     var applet = new GGBApplet(params, true);
     applet.setHTML5Codebase('Geogebra/HTML5/5.0/web3d/');
-    applet.inject('ggb-element');
-
+    applet.inject(element);
+    applets.push(applet)
 }
 grid.load(items);

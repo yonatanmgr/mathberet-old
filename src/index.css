@@ -132,15 +132,13 @@ html{
 }
 
 
-.applet_scaler, .ggbTransform, .ggBox, #ggb-element, .GeoGebraFrame{
+.applet_scaler, .ggbTransform, .ggBox, .GeoGebraFrame, .applet_dimensions{
   width: 100% !important;
   height: 100% !important;
 }
 
 .GeoGebraFrame {
 
-  border-radius: 12px;
+  border-radius: 8px;
   font-family:monospace !important;
-  border: 2px;
-
 }

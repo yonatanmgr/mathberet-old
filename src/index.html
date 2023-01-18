@@ -8,7 +8,7 @@
     <script src="..\node_modules\gridstack\dist\gridstack-all.js"></script>
     <script src="../src/Geogebra/deployggb.js"></script>
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"> -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-eval' 'unsafe-inline' data: filesystem:; connect-src https://www.geogebra.org/api/json.php; script-src 'unsafe-eval' 'self' 'unsafe-inline' data: filesystem:; style-src 'self' 'unsafe-inline'">
     <link href="./index.css" rel="stylesheet">
     <title>Mathberet</title>
   </head>
