@@ -106,6 +106,14 @@ html{
   outline: 0px solid transparent;
 }
 
+.ggbContainer{
+  height: 100%;
+  min-width: 100%;
+  resize: both;
+
+
+}
+
 .textEdit{
   height: 100%;
   margin: 15px;
@@ -121,4 +129,18 @@ html{
 #sidebar{
   background-color: #D0E7F5;
   min-width: 50px;
+}
+
+
+.applet_scaler, .ggbTransform, .ggBox, #ggb-element, .GeoGebraFrame{
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.GeoGebraFrame {
+
+  border-radius: 12px;
+  font-family:monospace !important;
+  border: 2px;
+
 }

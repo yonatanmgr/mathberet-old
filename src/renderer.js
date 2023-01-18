@@ -12,12 +12,14 @@
 var grid = GridStack.init({
     float: false,
     handle: '.grid-stack-item',
-    resizable: { handles: 'all'}
+    resizable: {
+        handles: 'all'
+    }
 });
 
 var items = [];
 
-function create_textBlock(){
+function create_textBlock() {
     let id = Date.now();
 
     var textBlock = `
@@ -32,14 +34,16 @@ function create_textBlock(){
     return textBlock;
 }
 
-function create_ggbBlock(){
+function create_ggbBlock() {
     let id = Date.now();
 
     var ggbBlock = `
         <div class="grid-stack-item" id="${id}">
         <div class="grid-stack-item-content">
-            <button class="xButton">X</button>
-            <div id="ggb-element"></div> 
+        <button class="xButton">X</button>
+        <div class="ggbContainer"> 
+            <div id="ggb-element" class="ggBox"></div> 
+            </div>
             </div>
         </div>
     </div>
@@ -66,25 +70,33 @@ function removeWidget(el) {
     grid.removeWidget(el);
 }
 
-document.addEventListener("click", function(e){
-  const target = e.target.closest(".xButton");
+document.addEventListener("click", function (e) {
+    const target = e.target.closest(".xButton");
 
-  if(target){
-    removeWidget(target.parentElement.parentElement)
-  }
+    if (target) {
+        removeWidget(target.parentElement.parentElement)
+    }
 });
 
 document.getElementById("addText").addEventListener("click", addText);
 document.getElementById("addGgb").addEventListener("click", addGgb);
 document.getElementById("loadGgb").addEventListener("click", loadGgb);
 
-
-
 function loadGgb() {
 
-    var params = {"appName": "graphing", "scaleContainerClass": "grid-stack-item-content", "showToolBar": true, "showAlgebraInput": true, "showMenuBar": true };
+    var params = {
+        "appName": "graphing",
+        "autoHeight": true,
+        "scaleContainerClass": "ggbContainer",
+        "showToolBar": true,
+        "showAlgebraInput": true,
+        "useBrowserForJS": true,
+        "showMenuBar": true,
+        
+    };
     var applet = new GGBApplet(params, true);
     applet.setHTML5Codebase('Geogebra/HTML5/5.0/web3d/');
     applet.inject('ggb-element');
+
 }
 grid.load(items);
