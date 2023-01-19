@@ -9,20 +9,20 @@
 
 
 var grid = GridStack.init({
-    rtl: true,
     float: false,
     handle: '.handle',
     resizable: {
         handles: 'sw'
-    }
+    },
+    margin: 7,
+    cellHeight: 50
 });
 
-var items = [];
 
 function create_textBlock() {
     let id = Date.now();
 
-    var textBlock = `
+    var html = `
     <div class="grid-stack-item" id="blockId_${id}">
         <div class="grid-stack-item-content">
             <div class="handle">::</div>
@@ -33,33 +33,36 @@ function create_textBlock() {
     </div>
     `
     return {
-        html: textBlock,
+        html: html,
         id: id
     };
 }
 
-// function create_title() {
-//     let id = Date.now();
+function create_mq() {
+    let id = Date.now();
 
-//     var title = `
-//     <div class="grid-stack-item" id="blockId_${id}">
-//         <div class="grid-stack-item-content">
-//             <div class="handle">::</div>
-//             <div class="actionsArea">
-//                 <textarea class="title" type="text" dir="rtl"></textarea>
-//             </div>
-//         </div>
-//     </div>
-//     `
-//     return title;
-// }
+    var html = `
+    <div class="grid-stack-item" id="blockId_${id}">
+        <div class="grid-stack-item-content">
+            <div class="handle">::</div>
+            <div class="actionsArea">
+                <span id="math_field_${id}"></span>
+            </div>
+        </div>
+    </div>
+    `
+    return {
+        html: html,
+        id: id
+    };
+}
 
 
 
 function create_ggbBlock() {
     let id = Date.now();
 
-    var ggbBlock = `
+    var html = `
         <div class="grid-stack-item" id="blockId_${id}">
         <div class="grid-stack-item-content">
         <div class="handle">::</div>
@@ -72,22 +75,47 @@ function create_ggbBlock() {
     `
 
     return {
-        html: ggbBlock,
-        uuid: id
+        html: html,
+        id: id
     };
 }
 
 function addText() {
     let created = create_textBlock()
     grid.addWidget(created.html, {
-        h: 3,
+        x: 12,
+        y: 1000,
+        h: 2,
         w: 8,
         minW: 1,
-        minH: 1
+        minH: 2
     });
 
+    let bindings = {
+        ltr: {
+            key: 219,
+            ctrlKey: true,
+            handler: function(range) {
+                this.quill.formatLine(range, 'direction', '');
+                this.quill.formatLine(range, 'align', '')
+          }
+        },
+        rtl: {
+            key: 221,
+            ctrlKey: true,
+            handler: function(range) {
+                this.quill.formatLine(range, 'direction', 'rtl');
+                this.quill.formatLine(range, 'align', 'right')
+          }
+        }
+    }
+
     var quill = new Quill(`#textEdit_${created.id}`, {
-        modules: {formula: true, toolbar: [["formula"]]},
+        modules: {
+            keyboard: {bindings: bindings},          
+            formula: true,
+            toolbar: [["formula"]]
+        },
         theme: 'bubble'
     });
     quill.format('direction', 'rtl');
@@ -103,53 +131,63 @@ function addText() {
 
     // var enableMathQuillFormulaAuthoring = mathquill4quill();
     // enableMathQuillFormulaAuthoring(quill);
-    const quillMarkdown = new QuillMarkdown(quill)  
+    const quillMarkdown = new QuillMarkdown(quill)
+    quill.focus()
 };
 
-// function addTitle() {
-//     grid.addWidget(create_title(), {
-//         h: 1,
-//         w: 8,
-//         minW: 1,
-//         maxH: 1
-//     });
-// };
+function addMq() {
+    let created = create_mq()
+    grid.addWidget(created.html, {
+        h: 2,
+        w: 12,
+        minW: 1,
+        maxH: 4
+    });
+    var mathFieldSpan = document.getElementById(`math_field_${created.id.toString()}`)
+    var MQ = MathQuill.getInterface(2);
+    let config = {
+        autoCommands: 'to oo and or dots int deg pi theta sq sum sr cb ge pm alpha beta gamma delta eps zeta eta iota kappa lambda mu nu xi rho sigma tau ups phi chi psi omega ne neq notin sub sup cap cup nsub nsup RR ZZ NN CC HH QQ PP mid',
+        autoOperatorNames: 'log ln lg'
+        }
+    var mathField = MQ.MathField(mathFieldSpan, config);
+
+    mathField.focus();
+
+};
 
 function addGgb() {
     let created = create_ggbBlock()
     grid.addWidget(created.html, {
-        minH: 5,
-        minW: 4,
-        maxH: 5,
-        maxW: 4
+        h: 10,
+        w: 4,
+        noResize: true
     });
-    createApplet("ggBox_" + created.uuid.toString())
+    createApplet(`ggBox_${created.id.toString()}`)
 
 };
 
 
 function removeWidget(el) {
+    applets.pop(findApplet(el.querySelector(".ggBox").id)).getAppletObject().remove();
     el.remove();
     grid.removeWidget(el);
 }
 
 document.addEventListener("dblclick", function (e) {
     const target = e.target.closest(".handle");
-
-    if (target) {
-        removeWidget(target.parentElement.parentElement)
-    }
+    if (target) {removeWidget(target.parentElement.parentElement)}
 });
 
 let applets = [];
 
-
 document.getElementById("addText").addEventListener("click", addText);
 document.getElementById("addGgb").addEventListener("click", addGgb);
-// document.getElementById("loadGgb").addEventListener("click", addTitle);
+document.getElementById("addLatex").addEventListener("click", addMq);
+document.getElementById("save").addEventListener("click", saveGrid);
+document.getElementById("load").addEventListener("click", loadGrid);
 
 function findApplet(target) {
-    return applets.find(applet => applet.getParameters().parent == target.id)
+    return applets.find(applet => applet.getParameters().parent == target);
 }
 
 grid.on('resizestop', function (el) {
@@ -162,6 +200,7 @@ grid.on('resizestop', function (el) {
                 document.getElementById(a.getParameters().parent).offsetWidth,
                 document.getElementById(a.getParameters().parent).offsetHeight
             );
+        a.recalculateEnvironments()
     }
 })
 
@@ -181,4 +220,6 @@ function createApplet(element) {
     applet.inject(element);
     applets.push(applet)
 }
-grid.load(items);
+
+function saveGrid() {items = grid.save()}
+function loadGrid() {grid.removeAll(); grid.load(items)}

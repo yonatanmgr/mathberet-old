@@ -1009,7 +1009,7 @@ function getInterface(v) {
 
       var contents = el.addClass(classNames).contents().detach();
       root.jQ =
-        $('<span class="mq-root-block"/>').attr(mqBlockId, root.id).appendTo(el);
+        $('<span align="center" class="mq-root-block"/>').attr(mqBlockId, root.id).appendTo(el);
       this.latex(contents.text());
 
       this.revert = function() {
@@ -3381,31 +3381,31 @@ LatexCmds.notsupersete = LatexCmds.notsuperseteq =
 
 
 //the canonical sets of numbers
-LatexCmds.N = LatexCmds.naturals = LatexCmds.Naturals =
+LatexCmds.NN = LatexCmds.naturals = LatexCmds.Naturals =
   bind(VanillaSymbol,'\\mathbb{N}','&#8469;');
 
-LatexCmds.P =
+LatexCmds.PP =
 LatexCmds.primes = LatexCmds.Primes =
 LatexCmds.projective = LatexCmds.Projective =
 LatexCmds.probability = LatexCmds.Probability =
   bind(VanillaSymbol,'\\mathbb{P}','&#8473;');
 
-LatexCmds.Z = LatexCmds.integers = LatexCmds.Integers =
+LatexCmds.ZZ = LatexCmds.integers = LatexCmds.Integers =
   bind(VanillaSymbol,'\\mathbb{Z}','&#8484;');
 
-LatexCmds.Q = LatexCmds.rationals = LatexCmds.Rationals =
+LatexCmds.QQ = LatexCmds.rationals = LatexCmds.Rationals =
   bind(VanillaSymbol,'\\mathbb{Q}','&#8474;');
 
-LatexCmds.R = LatexCmds.reals = LatexCmds.Reals =
+LatexCmds.RR = LatexCmds.reals = LatexCmds.Reals =
   bind(VanillaSymbol,'\\mathbb{R}','&#8477;');
 
-LatexCmds.C =
+LatexCmds.CC =
 LatexCmds.complex = LatexCmds.Complex =
 LatexCmds.complexes = LatexCmds.Complexes =
 LatexCmds.complexplane = LatexCmds.Complexplane = LatexCmds.ComplexPlane =
   bind(VanillaSymbol,'\\mathbb{C}','&#8450;');
 
-LatexCmds.H = LatexCmds.Hamiltonian = LatexCmds.quaternions = LatexCmds.Quaternions =
+LatexCmds.HH = LatexCmds.Hamiltonian = LatexCmds.quaternions = LatexCmds.Quaternions =
   bind(VanillaSymbol,'\\mathbb{H}','&#8461;');
 
 //spacing
@@ -3535,6 +3535,7 @@ LatexCmds['\u222b'] =
 LatexCmds['int'] =
 LatexCmds.integral = bind(Symbol,'\\int ','<big>&int;</big>');
 
+
 LatexCmds.slash = bind(VanillaSymbol, '/');
 LatexCmds.vert = bind(VanillaSymbol,'|');
 LatexCmds.perp = LatexCmds.perpendicular = bind(VanillaSymbol,'\\perp ','&perp;');
@@ -3603,8 +3604,11 @@ LatexCmds.image = LatexCmds.imagin = LatexCmds.imaginary = LatexCmds.Imaginary =
 
 LatexCmds.part = LatexCmds.partial = bind(VanillaSymbol,'\\partial ','&part;');
 
-LatexCmds.infty = LatexCmds.infin = LatexCmds.infinity =
+LatexCmds.oo = LatexCmds.infin = LatexCmds.infinity =
   bind(VanillaSymbol,'\\infty ','&infin;');
+
+
+
 
 LatexCmds.alef = LatexCmds.alefsym = LatexCmds.aleph = LatexCmds.alephsym =
   bind(VanillaSymbol,'\\aleph ','&alefsym;');
@@ -3630,7 +3634,7 @@ LatexCmds.cap = LatexCmds.intersect = LatexCmds.intersection =
   bind(BinaryOperator,'\\cap ','&cap;');
 
 // FIXME: the correct LaTeX would be ^\circ but we can't parse that
-LatexCmds.deg = LatexCmds.degree = bind(VanillaSymbol,'\\degree ','&deg;');
+// LatexCmds.deg = LatexCmds.degree = bind(VanillaSymbol,'\\degree ','&deg;');
 
 LatexCmds.ang = LatexCmds.angle = bind(VanillaSymbol,'\\angle ','&ang;');
 LatexCmds.measuredangle = bind(VanillaSymbol,'\\measuredangle ','&#8737;');
@@ -3673,7 +3677,7 @@ var Variable = P(Symbol, function(_, super_) {
 
 Options.p.autoCommands = { _maxLength: 0 };
 optionProcessors.autoCommands = function(cmds) {
-  if (!/^[a-z]+(?: [a-z]+)*$/i.test(cmds)) {
+  if (!/^[a-zA-Z]+(?: [a-zA-Z]+)*$/i.test(cmds)) {
     throw '"'+cmds+'" not a space-delimited list of only letters';
   }
   var list = cmds.split(' '), dict = {}, maxLength = 0;
@@ -3782,7 +3786,7 @@ var AutoOpNames = Options.p.autoOperatorNames = { _maxLength: 9 }; // the set
   // of operator names that MathQuill auto-unitalicizes by default; overridable
 var TwoWordOpNames = { limsup: 1, liminf: 1, projlim: 1, injlim: 1 };
 (function() {
-  var mostOps = ('arg deg det dim exp gcd hom inf ker lg lim ln log max min sup'
+  var mostOps = ('arg deg det dim exp gcd hom inf ker lg ln log max min'
                  + ' limsup liminf injlim projlim Pr').split(' ');
   for (var i = 0; i < mostOps.length; i += 1) {
     BuiltInOpNames[mostOps[i]] = AutoOpNames[mostOps[i]] = 1;
@@ -3888,7 +3892,7 @@ LatexCmds['%'] = bind(NonSymbolaSymbol, '\\%', '%');
 //the following are all Greek to me, but this helped a lot: http://www.ams.org/STIX/ion/stixsig03.html
 
 //lowercase Greek letter variables
-LatexCmds.alpha =
+LatexCmds.alpha = 
 LatexCmds.beta =
 LatexCmds.gamma =
 LatexCmds.delta =
@@ -3919,7 +3923,7 @@ LatexCmds.phiv = //Elsevier and 9573-13
 LatexCmds.varphi = //AMS and LaTeX
   bind(Variable,'\\varphi ','&phi;');
 
-LatexCmds.epsilon = //W3C or Unicode?
+LatexCmds.eps = //W3C or Unicode?
   bind(Variable,'\\epsilon ','&#1013;');
 
 LatexCmds.epsiv = //Elsevier and 9573-13
@@ -3940,8 +3944,7 @@ LatexCmds.vartheta = //AMS and LaTeX
 LatexCmds.thetasym = //W3C/Unicode
   bind(Variable,'\\vartheta ','&thetasym;');
 
-LatexCmds.upsilon = //AMS and LaTeX and W3C/Unicode
-LatexCmds.upsi = //Elsevier and 9573-13
+LatexCmds.ups = //AMS and LaTeX and W3C/Unicode
   bind(Variable,'\\upsilon ','&upsilon;');
 
 //these aren't even mentioned in the HTML character entity references
@@ -4037,6 +4040,12 @@ LatexCmds['\u00b3'] = bind(LatexFragment, '^3');
 LatexCmds['\u00bc'] = bind(LatexFragment, '\\frac14');
 LatexCmds['\u00bd'] = bind(LatexFragment, '\\frac12');
 LatexCmds['\u00be'] = bind(LatexFragment, '\\frac34');
+
+LatexCmds.sr = LatexCmds['\u00b2'] = bind(LatexFragment,'^2');
+LatexCmds.cb = LatexCmds['\u00b3'] = bind(LatexFragment,'^3');
+LatexCmds.deg = bind(LatexFragment,'^\\circ');
+
+
 
 var PlusMinus = P(BinaryOperator, function(_) {
   _.init = VanillaSymbol.prototype.init;
@@ -4551,7 +4560,7 @@ CharCmds['/'] = P(Fraction, function(_, super_) {
 });
 
 var SquareRoot =
-LatexCmds.sqrt =
+LatexCmds.sq =
 LatexCmds['\u221a'] = P(MathCommand, function(_, super_) {
   _.ctrlSeq = '\\sqrt';
   _.htmlTemplate =
@@ -4853,7 +4862,7 @@ LatexCmds.MathQuillMathField = P(MathCommand, function(_, super_) {
   _.ctrlSeq = '\\MathQuillMathField';
   _.htmlTemplate =
       '<span class="mq-editable-field">'
-    +   '<span class="mq-root-block">&0</span>'
+    +   '<span class="mq-root-block" align="center">&0</span>'
     + '</span>'
   ;
   _.parser = function() {

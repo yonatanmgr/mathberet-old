@@ -71,12 +71,13 @@ html{
 #page{
   background-color: white;
   width: 70%;
-  border-radius: 20px;
+  border-radius: 20px 20px 0px 0px;
   height: 100%;
   overflow-y: scroll !important;
   border: 1px solid #C7C7C7;
   min-height: 0px !important;
 }
+
 #page::-webkit-scrollbar{
   display: none;
 }
@@ -86,17 +87,13 @@ html{
   overflow-y: hidden !important; 
 }
 
-.gridItemTopBar{
+/* .gridItemTopBar{
   height: 30px;
   width: 100%;
   display: flex;
   flex-direction: row-reverse;
-}
+} */
 
-.xButton{
-  width: 30px;
-  height: 30px;
-}
 
 .handle{
   height: 30px;
@@ -104,7 +101,7 @@ html{
   align-items: center;
   justify-content: center;
   align-content: center;
-  width: 25px;
+  padding-left: 5px;
 }
 
 .handle:hover{
@@ -113,7 +110,7 @@ html{
 
 .grid-stack-item-content {
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   overflow-y: hidden !important; 
   max-height: 100%;
   height: auto;
@@ -143,33 +140,9 @@ html{
 }
 
 
-.textEdit{
-  height: 100%;
-  width: 100%;
-  direction: rtl;
-  font-family: Rubik;
-  font-size: 20px;
-  overflow-y: scroll !important;
-}
-
-.title{
-  height: 100%;
-  width: 100%;
-  direction: rtl;
-  font-family: Rubik;
-  white-space: nowrap;
-  resize: none;
-  font-size: 70px;
-  overflow-y: unset !important;
-}
-
 
 .ql-formula{
   direction: ltr;
-}
-
-.textEdit::-webkit-scrollbar{
-  display: none;
 }
 
 #sidebar{
