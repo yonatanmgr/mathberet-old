@@ -6,6 +6,7 @@
  * https://www.electronjs.org/docs/latest/tutorial/sandbox
  */
 
+
 window.addEventListener('DOMContentLoaded', () => {
   
     const replaceText = (selector, text) => {

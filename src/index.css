@@ -163,6 +163,11 @@ html{
   overflow-y: unset !important;
 }
 
+
+.ql-formula{
+  direction: ltr;
+}
+
 .textEdit::-webkit-scrollbar{
   display: none;
 }

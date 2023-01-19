@@ -5,7 +5,8 @@
  * `contextIsolation` is turned on. Use the contextBridge API in `preload.js`
  * to expose Node.js functionality from the main process.
  */
-var MQ = MathQuill.getInterface(2);
+
+
 
 var grid = GridStack.init({
     rtl: true,
@@ -31,7 +32,10 @@ function create_textBlock() {
         </div>
     </div>
     `
-    return {html: textBlock, id: id};
+    return {
+        html: textBlock,
+        id: id
+    };
 }
 
 // function create_title() {
@@ -81,11 +85,25 @@ function addText() {
         minW: 1,
         minH: 1
     });
+
     var quill = new Quill(`#textEdit_${created.id}`, {
+        modules: {formula: true, toolbar: [["formula"]]},
         theme: 'bubble'
-      });
-      quill.format('direction', 'rtl');
-      quill.format('align', 'right');
+    });
+    quill.format('direction', 'rtl');
+    quill.format('align', 'right');
+
+    // quill.on('selection-change', range => {
+    //     if (range) {
+    //       quill.theme.tooltip.show();
+    //       quill.theme.tooltip.position(quill.getBounds(range));
+    //     }
+    // }
+    // )
+
+    // var enableMathQuillFormulaAuthoring = mathquill4quill();
+    // enableMathQuillFormulaAuthoring(quill);
+    const quillMarkdown = new QuillMarkdown(quill)  
 };
 
 // function addTitle() {
