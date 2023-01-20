@@ -1,22 +1,54 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {
+  app,
+  BrowserWindow,
+  ipcMain
+} = require('electron')
 const path = require('path')
+const fs = require("fs")
 
-function createWindow () {
+let win;
+
+async function createWindow() {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  win = new BrowserWindow({
     width: 1500,
     height: 900,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      contextIsolation: true, // protect against prototype pollution
+      enableRemoteModule: false, // turn off remote
+      preload: path.join(__dirname, "preload.js") // use a preload script
     }
   })
 
   // and load the index.html of the app.
-  mainWindow.loadFile('./src/index.html')
+  win.loadFile('./src/index.html')
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+
+  ipcMain.on("toMain", (event, args) => {
+    if (args == "LOAD") {
+      return
+    } else {
+
+      fs.writeFile("./file.json", args, "utf-8", (error) => {
+        if (error) {
+          console.error("error: " + error);
+        }
+      });
+    }
+  });
+
+  ipcMain.on("toMain", (event, args) => {
+    if (args != "LOAD") {
+      return
+    } else {
+      fs.readFile("./file.json", "utf-8", (error, data) => {
+        win.webContents.send("fromMain", data);
+      });
+    }
+  });
 }
 
 // This method will be called when Electron has finished
