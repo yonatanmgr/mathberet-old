@@ -4,6 +4,7 @@ document.getElementById("addLatex").addEventListener("click", addMq);
 document.getElementById("save").addEventListener("click", saveGrid);
 document.getElementById("load").addEventListener("click", loadGrid);
 let applets = [];
+let drag = "drag-indicator-svgrepo-com.svg"
 
 var grid = GridStack.init({
     float: false,
@@ -17,7 +18,7 @@ var grid = GridStack.init({
 
 function create_textBlock() {
     let id = Date.now();
-    var html = `<div class="grid-stack-item" id="blockId_${id}"><div class="grid-stack-item-content"><div class="handle">::</div><div class="actionsArea"><div id="textEdit_${id}"></div></div></div></div>`
+    var html = `<div class="grid-stack-item" id="blockId_${id}"><div class="grid-stack-item-content"><img src=${drag} class="handle"></img><div class="actionsArea"><div id="textEdit_${id}"></div></div></div></div>`
     return {
         html: html,
         id: id
@@ -26,7 +27,7 @@ function create_textBlock() {
 
 function create_mq() {
     let id = Date.now();
-    var html = `<div class="grid-stack-item" id="blockId_${id}"><div class="grid-stack-item-content"><div class="handle">::</div><div class="actionsArea"><span id="math_field_${id}"></span></div></div></div>`
+    var html = `<div class="grid-stack-item" id="blockId_${id}"><div class="grid-stack-item-content"><img src=${drag} class="handle"></img><div class="actionsArea"><span id="math_field_${id}"></span></div></div></div>`
     return {
         html: html,
         id: id
@@ -35,7 +36,7 @@ function create_mq() {
 
 function create_ggbBlock() {
     let id = Date.now();
-    var html = `<div class="grid-stack-item" id="blockId_${id}"><div class="grid-stack-item-content"><div class="handle">::</div><div class="actionsArea"><div id="ggBox_${id}" class="ggBox"></div></div></div></div></div>`
+    var html = `<div class="grid-stack-item" id="blockId_${id}"><div class="grid-stack-item-content"><img src=${drag} class="handle"></img><div class="actionsArea"><div id="ggBox_${id}" class="ggBox"></div></div></div></div></div>`
     return {
         html: html,
         id: id
@@ -48,9 +49,10 @@ function addText() {
         x: 12,
         y: 1000,
         h: 2,
-        w: 8,
+        w: 6,
         minW: 1,
-        minH: 2
+        minH: 2,
+        id: created.id
     });
 
     let bindings = {
@@ -79,7 +81,7 @@ function addText() {
             },
             formula: true,
             toolbar: [
-                ["formula"]
+                []
             ]
         },
         theme: 'bubble'
@@ -105,9 +107,10 @@ function addMq() {
     let created = create_mq()
     grid.addWidget(created.html, {
         h: 2,
-        w: 12,
+        w: 6,
         minW: 1,
-        maxH: 4
+        maxH: 4,
+        id: created.id
     });
     var mathFieldSpan = document.getElementById(`math_field_${created.id.toString()}`)
     var MQ = MathQuill.getInterface(2);
@@ -124,9 +127,11 @@ function addGgb() {
     let created = create_ggbBlock()
     grid.addWidget(created.html, {
         h: 10,
-        w: 4
+        w: 6,
+        id: created.id
         });
     createApplet(`ggBox_${created.id.toString()}`)
+
 };
 
 function removeWidget(el) {
@@ -161,11 +166,14 @@ grid.on('resizestop', function (el) {
 })
 
 function createApplet(element) {
+    console.log(document.getElementById(element).offsetWidth);
     var params = {
         "appName": "suite",
-        "autoHeight": true,
-        "scaleContainerClass": "ggBox",
+        // "autoHeight": true,
+        // "scaleContainerClass": "ggBox",
         "showToolBar": true,
+        "height": document.getElementById(element).offsetHeight,
+        "width": document.getElementById(element).offsetWidth,
         "showToolBarHelp": false,
         "showAlgebraInput": true,
         "useBrowserForJS": true,
@@ -198,28 +206,13 @@ function checkForApplet(item) {
 
 function saveGrid() {
     let items = grid.save();
-    // console.log(items);
-    // items.map(item => item.applet = checkForApplet(item));
-    // items.map(item => item.appletBase64 = saveApplet(item.applet))
     for (var item of items) {
         item.applet = checkForApplet(item)
         item.appletBase64 = saveApplet(item.applet)
-        if (item.applet) {
-            item.appletParent = item.applet.getParameters().parent
-        }
+        if (item.applet) {item.appletParent = item.applet.getParameters().parent}
+        console.log(JSON.stringify(items));
         window.api.send("toMain", JSON.stringify(items));
-
-
     }
-
-    // items.map(function(item){if (checkForApplet(item)) {item.appletParent = item.applet.getParameters().parent}})
-
-    // items.map(function(item){
-    //     if (items.includes(item.applet) == false){
-    //         console.log(item.applet);
-    //         applets.push(item.applet)
-    //     }
-    // })
 }
 
 function loadGrid() {
@@ -227,15 +220,16 @@ function loadGrid() {
 
     window.api.receive("fromMain", (data) => {
         let items = JSON.parse(data.toString());
-        // console.log(items);
         grid.removeAll();
         grid.load(items)
         for (var item of items) {
             if (item.applet) {
                 var params = {
                     "appName": "suite",
-                    "autoHeight": true,
-                    "scaleContainerClass": "ggBox",
+                    // "autoHeight": true,
+                    // "scaleContainerClass": "ggBox",
+                    "height": document.getElementById(item.appletParent).offsetHeight,
+                    "width": document.getElementById(item.appletParent).offsetWidth,            
                     "showToolBar": true,
                     "showAlgebraInput": true,
                     "showToolBarHelp": false,
@@ -257,16 +251,4 @@ function loadGrid() {
 
         }
     });
-
-    // items.map(item => applets.push(item))
-
-
-
-    // items.map(item => function(){
-    //     // console.log(item.applet.getParameters().parent);
-    //     item.applet.getAppletObject().remove()
-    //     item.applet.inject(item.applet.getParameters().parent)
-    //     // loadApplet(item.applet, item.appletBase64);
-    //     }
-    // )
 }

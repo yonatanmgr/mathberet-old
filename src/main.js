@@ -32,7 +32,7 @@ async function createWindow() {
       return
     } else {
 
-      fs.writeFile("./file.json", args, "utf-8", (error) => {
+      fs.writeFileSync("./file.json", args, "utf-8", (error) => {
         if (error) {
           console.error("error: " + error);
         }
@@ -44,7 +44,7 @@ async function createWindow() {
     if (args != "LOAD") {
       return
     } else {
-      fs.readFile("./file.json", "utf-8", (error, data) => {
+      fs.readFileSync("./file.json", "utf-8", (error, data) => {
         win.webContents.send("fromMain", data);
       });
     }
