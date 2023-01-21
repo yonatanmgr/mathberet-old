@@ -166,6 +166,9 @@ html{
   min-width: 50px;
 }
 
+math-field{
+  font-size: 30px;
+}
 
 .applet_scaler, .ggbTransform, .ggBox, .applet_dimensions{
   width: 100% !important;
