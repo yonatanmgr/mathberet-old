@@ -44,7 +44,7 @@ async function createWindow() {
     if (args != "LOAD") {
       return
     } else {
-      fs.readFileSync("./file.json", "utf-8", (error, data) => {
+      fs.readFile("./file.json", "utf-8", (error, data) => {
         win.webContents.send("fromMain", data);
       });
     }

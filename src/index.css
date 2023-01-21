@@ -30,7 +30,7 @@ html{
   border-bottom: 0.3px solid #BEBEBE;
 }
 #content{
-  background-color: white;
+  background-color: rgb(255, 255, 255);
   flex: 1;
   overflow-y: hidden;
   padding-top: 100px;
@@ -68,7 +68,7 @@ html{
   width: 45px;
   cursor: pointer;
 }
-#page{
+.pageContainer{
   background-color: white;
   width: 70%;
   border-radius: 20px 20px 0px 0px;
@@ -76,9 +76,10 @@ html{
   overflow-y: scroll !important;
   border: 1px solid #C7C7C7;
   min-height: 0px !important;
+  padding-top: 10px;
 }
 
-#page::-webkit-scrollbar{
+.pageContainer::-webkit-scrollbar{
   display: none;
 }
 
@@ -169,6 +170,8 @@ html{
 math-field{
   font-size: 30px;
 }
+
+
 
 .applet_scaler, .ggbTransform, .ggBox, .applet_dimensions{
   width: 100% !important;

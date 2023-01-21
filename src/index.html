@@ -12,21 +12,23 @@
 
     <script src="Geogebra/deployggb.js"></script>
     <script src="cortexJS/mathlive.min.js"></script>
+    <script src="cortexJS/compute-engine.min.js"></script>
+    <script>const ce = new ComputeEngine.ComputeEngine();</script>
 
-    <link href="mathquill-0.10.1/mathquill.css" rel="stylesheet">
+
+    <!-- <link href="mathquill-0.10.1/mathquill.css" rel="stylesheet">
     <script src="..\node_modules\jquery\dist\jquery.js"></script>
     <script src="mathquill-0.10.1/mathquill.js"></script>
-    <script>var MQ = MathQuill.getInterface(2);</script>
+    <script>var MQ = MathQuill.getInterface(2);</script> -->
 
     <script src="quill/quill.js"></script>
     <script src="quill/quilljs-markdown.js"></script>
     <link href="quill/quill.bubble.css" rel="stylesheet">
     <link href="quill/quilljs-markdown-common-style.css" rel="stylesheet">
     
-    <script src="mathquill4quill/mathquill4quill.js"></script>
-    <link href="mathquill4quill/mathquill4quill.css" rel="stylesheet">
+    <!-- <script src="mathquill4quill/mathquill4quill.js"></script>
+    <link href="mathquill4quill/mathquill4quill.css" rel="stylesheet"> -->
 
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-eval' 'unsafe-inline' data: filesystem:; connect-src https://www.geogebra.org/api/json.php; script-src 'unsafe-eval' 'self' 'unsafe-inline' data: filesystem:; style-src 'self' 'unsafe-inline'">
     <link href="./index.css" rel="stylesheet">
     <title>Mathberet</title>
@@ -61,8 +63,9 @@
                     L
                 </button>
             </div>
-            <div id="page" class="grid-stack">
-                
+            <div class="pageContainer">
+                <div id="page" class="grid-stack">
+            </div>  
             </div>
         </div>
 

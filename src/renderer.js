@@ -4,12 +4,15 @@ document.getElementById("addLatex").addEventListener("click", addML);
 document.getElementById("save").addEventListener("click", saveGrid);
 document.getElementById("load").addEventListener("click", loadGrid);
 let applets = [];
+let mfList = []
 let drag = "drag-indicator-svgrepo-com.svg"
+
 let defShortcuts = {
     'sr': '^2',
     'cb': '^3',
     '&': '\\&',
     '%': '\\%',
+    '@': '\\degree',
   
     // Primes
     "''": '^{\\doubleprime}',
@@ -150,6 +153,7 @@ let defShortcuts = {
     // Operators
     'xx': '\\times',
     '+-': '\\pm',
+    '-+': '\\mp',
   
     // Relational operators
     '≠': '\\ne',
@@ -177,7 +181,7 @@ let defShortcuts = {
     // More Greek letters
     'beta': '\\beta',
     'chi': '\\chi',
-    'epsilon': '\\epsilon',
+    'eps': '\\epsilon',
     'varepsilon': '\\varepsilon',
     'eta': {
       after:
@@ -235,7 +239,7 @@ let defShortcuts = {
       value: '\\tau',
     },
     'vartheta': '\\vartheta',
-    'upsilon': '\\upsilon',
+    'ups': '\\upsilon',
     'xi': {
       after:
         'nothing+digit+function+frac+surd+binop+relop+punct+array+openfence+closefence+space',
@@ -410,6 +414,10 @@ let defShortcuts = {
   */
   };
 
+function expand(expression){
+    return ce.box(["Expand", ce.parse(expression.getValue())]).evaluate().latex
+}
+
 var grid = GridStack.init({
     float: false,
     handle: '.handle',
@@ -429,18 +437,9 @@ function create_textBlock() {
     };
 }
 
-function create_mq() {
-    let id = Date.now();
-    var html = `<div class="grid-stack-item" id="blockId_${id}"><div class="grid-stack-item-content"><img src=${drag} class="handle"></img><div class="actionsArea"><span id="math_field_${id}"></span></div></div></div>`
-    return {
-        html: html,
-        id: id
-    };
-}
-
 function create_ml() {
     let id = Date.now();
-    var html = `<div class="grid-stack-item" id="blockId_${id}"><div class="grid-stack-item-content"><img src=${drag} class="handle"></img><div class="actionsArea"><div id="mf_${id}"></div></div></div></div></div>`
+    var html = `<div class="grid-stack-item" id="blockId_${id}"><div class="grid-stack-item-content"><img src=${drag} class="handle"></img><div class="actionsArea"><div id="mf_${id}" class="mlBlock"></div></div></div></div></div>`
     return {
         html: html,
         id: id
@@ -488,52 +487,15 @@ function addText() {
     }
 
     var quill = new Quill(`#textEdit_${created.id}`, {
-        modules: {
-            keyboard: {
-                bindings: bindings
-            },
-            formula: true,
-            toolbar: [
-                []
-            ]
-        },
+        modules: {keyboard: {bindings: bindings}, toolbar: [["formula"]]},
         theme: 'bubble'
     });
     quill.format('direction', 'rtl');
     quill.format('align', 'right');
-
-    // quill.on('selection-change', range => {
-    //     if (range) {
-    //       quill.theme.tooltip.show();
-    //       quill.theme.tooltip.position(quill.getBounds(range));
-    //     }
-    // }
-    // )
-
-    // var enableMathQuillFormulaAuthoring = mathquill4quill();
-    // enableMathQuillFormulaAuthoring(quill);
+    // quill.on('selection-change', range => {if (range) {quill.theme.tooltip.show();}})
     const quillMarkdown = new QuillMarkdown(quill)
     quill.focus()
-};
 
-function addMq() {
-    let created = create_mq()
-    grid.addWidget(created.html, {
-        h: 2,
-        w: 6,
-        minW: 1,
-        maxH: 4,
-        id: created.id
-    });
-    var mathFieldSpan = document.getElementById(`math_field_${created.id.toString()}`)
-    var MQ = MathQuill.getInterface(2);
-    let config = {
-        autoCommands: 'to oo and or dots int deg pi theta sq sum sr cb ge pm alpha beta gamma delta eps zeta eta iota kappa lambda mu nu xi rho sigma tau ups phi chi psi omega ne neq in notin sub sup cap cup nsub nsup RR ZZ NN CC HH QQ PP mid',
-        autoOperatorNames: 'log ln lg'
-    }
-    var mathField = MQ.MathField(mathFieldSpan, config);
-
-    mathField.focus();
 };
 
 function addGgb() {
@@ -552,20 +514,25 @@ function addML() {
     grid.addWidget(created.html, {
         h: 2,
         w: 6,
+        x: 12,
+        y: 1000,
         id: created.id
         });
     let mf = new MathfieldElement();
     
-    mf.setOptions({
-        inlineShortcuts: defShortcuts,
-        plonkSound: null
-    })
+    mf.setOptions({inlineShortcuts: defShortcuts, plonkSound: null, id: created.id, onExport: (mf, latex) => `<math>${latex}</math>`})
     document.getElementById(`mf_${created.id}`).appendChild(mf)
+    mfList.push(mf)
+    mf.focus()
+    
 };
 
 function removeWidget(el) {
     if (el.querySelector(".ggBox")) {
         findApplet(el.querySelector(".ggBox").id).getAppletObject().remove();
+    }
+    else if (el.querySelector(".mlBlock")) {
+        mfList.pop(findMf(el.querySelector(".mlBlock").id));
     }
     el.remove();
     grid.removeWidget(el);
@@ -633,9 +600,20 @@ function checkForApplet(item) {
     } else return
 }
 
+function checkForMf(item) {
+    let found = mfList.find(mf => mf.getOptions().id == item.id)
+    if (found) {return found.value}
+}
+
+function findMf(item) {
+    let found = mfList.find(mf => mf.getOptions().id == item.id)
+    if (found) {return found}
+}
+
 function saveGrid() {
     let items = grid.save();
     for (var item of items) {
+        item.mfValue = checkForMf(item)
         item.applet = checkForApplet(item)
         item.appletBase64 = saveApplet(item.applet)
         if (item.applet) {item.appletParent = item.applet.getParameters().parent}
@@ -650,7 +628,8 @@ function loadGrid() {
     window.api.receive("fromMain", (data) => {
         let items = JSON.parse(data.toString());
         grid.removeAll();
-        grid.load(items)
+        mfList = []
+        grid.load(items);
         for (var item of items) {
             if (item.applet) {
                 var params = {
@@ -677,7 +656,16 @@ function loadGrid() {
                 applets.push(item.applet)
 
             }
-
+            if (item.mfValue){
+                let mf = new MathfieldElement();
+    
+                mf.setOptions({inlineShortcuts: defShortcuts, plonkSound: null, id: item.id, onExport: (mf, latex) => `<math>${latex}</math>`})
+                mf.setValue(item.mfValue)
+                document.getElementById(`mf_${item.id}`).firstChild.remove()
+                document.getElementById(`mf_${item.id}`).appendChild(mf)
+                mfList.push(mf)
+            }
         }
     });
 }
+
