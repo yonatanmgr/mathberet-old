@@ -21,7 +21,8 @@
     "electron-squirrel-startup": "^1.0.0",
     "gridstack": "^7.2.2",
     "jquery": "^3.6.3",
-    "katex": "^0.16.4"
+    "katex": "^0.16.4",
+    "quill-mathlive-blot": "^1.5.0"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.4",
