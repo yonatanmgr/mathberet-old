@@ -414,6 +414,24 @@ let defShortcuts = {
   */
   };
 
+function setGGBParams(id, parentId, base64=""){
+  return {
+    "appName": "suite",
+    "showToolBar": true,
+    "height": document.getElementById(parentId).offsetHeight,
+    "width": document.getElementById(parentId).offsetWidth,
+    "showToolBarHelp": false,
+    "showAlgebraInput": true,
+    "useBrowserForJS": true,
+    "showMenuBar": true,
+    "buttonShadows": false,
+    "buttonRounding": 0.6,
+    "id": id,
+    "ggbBase64": base64
+  };
+}
+
+
 function expand(expression){
     return ce.box(["Expand", ce.parse(expression.getValue())]).evaluate().latex
 }
@@ -428,27 +446,9 @@ var grid = GridStack.init({
     cellHeight: 50
 });
 
-function create_textBlock() {
-    let id = Date.now();
-    var html = `<div class="grid-stack-item" id="blockId_${id}"><div class="grid-stack-item-content"><img src=${drag} class="handle"></img><div class="actionsArea"><div id="textEdit_${id}"></div></div></div></div>`
-    return {
-        html: html,
-        id: id
-    };
-}
 
-function create_ml() {
-    let id = Date.now();
-    var html = `<div class="grid-stack-item" id="blockId_${id}"><div class="grid-stack-item-content"><img src=${drag} class="handle"></img><div class="actionsArea"><div id="mf_${id}" class="mlBlock"></div></div></div></div></div>`
-    return {
-        html: html,
-        id: id
-    };
-}
 
 function create_ggbBlock() {
-    let id = Date.now();
-    var html = `<div class="grid-stack-item" id="blockId_${id}"><div class="grid-stack-item-content"><img src=${drag} class="handle"></img><div class="actionsArea"><div id="ggBox_${id}" class="ggBox"></div></div></div></div></div>`
     return {
         html: html,
         id: id
@@ -456,15 +456,18 @@ function create_ggbBlock() {
 }
 
 function addText() {
-    let created = create_textBlock()
-    grid.addWidget(created.html, {
+    let id = Date.now();
+    let html = `<div class="grid-stack-item" id="blockId_${id}"><div class="grid-stack-item-content"><img src=${drag} class="handle"></img><div class="actionsArea"><div id="textEdit_${id}" class="textBlock"></div></div></div></div>`
+    grid.addWidget(html, {
         x: 12,
         y: 1000,
         h: 2,
         w: 6,
         minW: 1,
         minH: 2,
-        id: created.id
+        id: id,
+        type: "Text",
+        content: {}
     });
 
     let bindings = {
@@ -486,43 +489,47 @@ function addText() {
         }
     }
 
-    var quill = new Quill(`#textEdit_${created.id}`, {
+    var quill = new Quill(`#textEdit_${id}`, {
         modules: {keyboard: {bindings: bindings}, toolbar: [["formula"]]},
         theme: 'bubble'
     });
     quill.format('direction', 'rtl');
     quill.format('align', 'right');
-    // quill.on('selection-change', range => {if (range) {quill.theme.tooltip.show();}})
     const quillMarkdown = new QuillMarkdown(quill)
     quill.focus()
-
 };
 
 function addGgb() {
-    let created = create_ggbBlock()
-    grid.addWidget(created.html, {
+    let id = Date.now();
+    var html = `<div class="grid-stack-item" id="blockId_${id}"><div class="grid-stack-item-content"><img src=${drag} class="handle"></img><div class="actionsArea"><div id="ggBox_${id}" class="ggBox"></div></div></div></div></div>`
+
+    grid.addWidget(html, {
         h: 10,
         w: 6,
-        id: created.id
+        id: id,
+        type: "Graph",
+        content: {}
         });
-    createApplet(`ggBox_${created.id.toString()}`)
+    createApplet(`ggBox_${id.toString()}`)
 
 };
 
 function addML() {
-    let created = create_ml()
-    grid.addWidget(created.html, {
+    let id = Date.now();
+    let html = `<div class="grid-stack-item" id="blockId_${id}"><div class="grid-stack-item-content"><img src=${drag} class="handle"></img><div class="actionsArea"><div id="mf_${id}" class="mathBlock"></div></div></div></div></div>`
+    grid.addWidget(html, {
         h: 2,
         w: 6,
         x: 12,
         y: 1000,
-        id: created.id
+        id: id,
+        type: "Math",
+        content: {}
         });
     let mf = new MathfieldElement();
     
-    mf.setOptions({inlineShortcuts: defShortcuts, plonkSound: null, id: created.id, onExport: (mf, latex) => `<math>${latex}</math>`})
-    document.getElementById(`mf_${created.id}`).appendChild(mf)
-    mfList.push(mf)
+    mf.setOptions({inlineShortcuts: defShortcuts, plonkSound: null, id: id, onExport: (mf, latex) => `${latex}`})
+    document.getElementById(`mf_${id}`).appendChild(mf)
     mf.focus()
     
 };
@@ -530,9 +537,6 @@ function addML() {
 function removeWidget(el) {
     if (el.querySelector(".ggBox")) {
         findApplet(el.querySelector(".ggBox").id).getAppletObject().remove();
-    }
-    else if (el.querySelector(".mlBlock")) {
-        mfList.pop(findMf(el.querySelector(".mlBlock").id));
     }
     el.remove();
     grid.removeWidget(el);
@@ -546,7 +550,7 @@ document.addEventListener("dblclick", function (e) {
 });
 
 function findApplet(target) {
-    return applets.find(applet => applet.getParameters().parent == target);
+    return applets.find(applet => applet.getParameters().id == target);
 }
 
 grid.on('resizestop', function (el) {
@@ -555,31 +559,14 @@ grid.on('resizestop', function (el) {
         let a = findApplet(resized.id);
         a.getAppletObject()
             .setSize(
-                document.getElementById(a.getParameters().parent).offsetWidth,
-                document.getElementById(a.getParameters().parent).offsetHeight
+                document.getElementById(a.getParameters().id).offsetWidth,
+                document.getElementById(a.getParameters().id).offsetHeight
             );
     }
 })
 
 function createApplet(element) {
-    console.log(document.getElementById(element).offsetWidth);
-    var params = {
-        "appName": "suite",
-        // "autoHeight": true,
-        // "scaleContainerClass": "ggBox",
-        "showToolBar": true,
-        "height": document.getElementById(element).offsetHeight,
-        "width": document.getElementById(element).offsetWidth,
-        "showToolBarHelp": false,
-        "showAlgebraInput": true,
-        "useBrowserForJS": true,
-        "showMenuBar": true,
-        "buttonShadows": false,
-        "buttonRounding": 0.6,
-        "parent": element,
-        "id": element
-    };
-    var applet = new GGBApplet(params, true);
+    var applet = new GGBApplet(setGGBParams(element, element), true);
     applet.setHTML5Codebase('Geogebra/HTML5/5.0/web3d/');
     applet.inject(element);
     applets.push(applet)
@@ -600,24 +587,28 @@ function checkForApplet(item) {
     } else return
 }
 
-function checkForMf(item) {
-    let found = mfList.find(mf => mf.getOptions().id == item.id)
-    if (found) {return found.value}
-}
-
-function findMf(item) {
-    let found = mfList.find(mf => mf.getOptions().id == item.id)
-    if (found) {return found}
+function saveBlockContent(block){
+  switch (block.type) {
+    case "Text":
+      block.content = block.querySelector(".textBlock").__quill.getContents()
+      break;
+    case "Math":
+      block.content = block.querySelector("math-field").value
+      break;
+    case "Graph":
+      block.content = saveApplet(block.applet)
+      break;
+    default:
+      break;
+  }
 }
 
 function saveGrid() {
     let items = grid.save();
     for (var item of items) {
-        item.mfValue = checkForMf(item)
+        saveBlockContent(item)
         item.applet = checkForApplet(item)
-        item.appletBase64 = saveApplet(item.applet)
-        if (item.applet) {item.appletParent = item.applet.getParameters().parent}
-        console.log(JSON.stringify(items));
+        if (item.applet) {item.appletParent = item.applet.getParameters().id}
         window.api.send("toMain", JSON.stringify(items));
     }
 }
@@ -631,39 +622,21 @@ function loadGrid() {
         mfList = []
         grid.load(items);
         for (var item of items) {
-            if (item.applet) {
-                var params = {
-                    "appName": "suite",
-                    // "autoHeight": true,
-                    // "scaleContainerClass": "ggBox",
-                    "height": document.getElementById(item.appletParent).offsetHeight,
-                    "width": document.getElementById(item.appletParent).offsetWidth,            
-                    "showToolBar": true,
-                    "showAlgebraInput": true,
-                    "showToolBarHelp": false,
-                    "useBrowserForJS": true,
-                    "buttonShadows": false,
-                    "showMenuBar": true,
-                    "parent": item.appletParent,
-                    "id": item.appletParent,
-                    "ggbBase64": item.appletBase64
-                };
-                var app = new GGBApplet(params, true);
+            if (item.type == "Graph") {
+                let parent = `ggBox_${item.id}`
+                var app = new GGBApplet(setGGBParams(item.id, parent, item.content), true);
                 app.setHTML5Codebase('Geogebra/HTML5/5.0/web3d/');
-                // app.getAppletObject().setBase64(item.appletBase64)
-                app.inject(item.appletParent);
-                item.applet = app;
-                applets.push(item.applet)
+                app.inject(parent);
+                applets.push(app)
 
             }
-            if (item.mfValue){
+            if (item.type == "Math"){
                 let mf = new MathfieldElement();
     
-                mf.setOptions({inlineShortcuts: defShortcuts, plonkSound: null, id: item.id, onExport: (mf, latex) => `<math>${latex}</math>`})
-                mf.setValue(item.mfValue)
+                mf.setOptions({inlineShortcuts: defShortcuts, plonkSound: null, id: item.id, onExport: (mf, latex) => `${latex}`})
+                mf.setValue(item.content)
                 document.getElementById(`mf_${item.id}`).firstChild.remove()
                 document.getElementById(`mf_${item.id}`).appendChild(mf)
-                mfList.push(mf)
             }
         }
     });

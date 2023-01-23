@@ -33,7 +33,7 @@ html{
   background-color: rgb(255, 255, 255);
   flex: 1;
   overflow-y: hidden;
-  padding-top: 100px;
+  padding-top: 80px;
   display: flex;
   flex-direction: row-reverse;
   align-items: flex-start;
