@@ -1,4 +1,5 @@
-loadGrid()
+// loadGrid()
+document.getElementById("logo").addEventListener("click", toggleSidebar);
 document.getElementById("addQuill").addEventListener("click", addQuill);
 document.getElementById("addGgb").addEventListener("click", addGgb);
 document.getElementById("addMF").addEventListener("click", addMF);
@@ -399,6 +400,21 @@ let defShortcuts = {
   */
 };
 
+let sidebarStatus = 0
+
+function toggleSidebar(){
+  if (sidebarStatus == 0) {
+    document.getElementById("sidebarcontent").style.minWidth = "300px"
+    document.getElementById("sidebarcontent").style.borderLeft = "1px solid #BEBEBE"
+    sidebarStatus = 1  
+  }
+  else{
+    document.getElementById("sidebarcontent").style.minWidth = "0px"
+    setTimeout(() => {document.getElementById("sidebarcontent").style.borderLeft = "1px solid transparent"}, 400)
+    sidebarStatus = 0
+  }
+  
+}
 
 function expand(expression) {
   return ce.box(["Expand", ce.parse(expression.getValue())]).evaluate().latex
@@ -536,19 +552,14 @@ document.addEventListener("dblclick", function (e) {
   if (target) {removeWidget(target.closest(".grid-stack-item"))}
 });
 
-// function findApplet(target) {
-//     return applets.find(applet => applet.getParameters().id == target);
-// }
-
 grid.on('resizestop', function (el) {
-  console.log(el);
-  let resized = el.target.querySelector(".ggBox");
-  if (resized) {
-    let a = findApplet(resized.id);
+  let resized = el.target.gridstackNode;
+  if (resized.type == "Graph") {
+    let a = resized.blockContent;
     a.getAppletObject()
       .setSize(
-        document.getElementById(a.getParameters().id).offsetWidth,
-        document.getElementById(a.getParameters().id).offsetHeight
+        document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+        document.getElementById(`ggBox_${resized.id}`).offsetHeight
       );
   }
 })
@@ -561,14 +572,6 @@ function saveApplet(applet) {
   }
 }
 
-function checkForApplet(item) {
-  var doc = new DOMParser().parseFromString(item.content, "text/html")
-  if (doc.querySelector(".ggBox")) {
-    found = findApplet(doc.querySelector(".ggBox").id)
-    doc = null
-    return found
-  } else return
-}
 
 function saveBlockContent(block) {
   console.log(block);

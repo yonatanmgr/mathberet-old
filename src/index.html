@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="he">
-  <head>
-    <meta name=viewport content="width=device-width,initial-scale=1">  
+
+<head>
+    <meta name=viewport content="width=device-width,initial-scale=1">
 
     <meta charset="UTF-8">
     <script src="..\node_modules\gridstack\dist\gridstack-all.js"></script>
     <!-- <script src="quill-mathlive-blot/index.js"></script> -->
 
-    <link href="..\node_modules\gridstack\dist\gridstack.min.css" rel="stylesheet"/>
-    
-    <script src="katex\katex.js" ></script>
+    <link href="..\node_modules\gridstack\dist\gridstack.min.css" rel="stylesheet" />
+
+    <script src="katex\katex.js"></script>
     <link rel="stylesheet" href="katex\katex.css">
 
     <script src="Geogebra/deployggb.js"></script>
     <script src="cortexJS/mathlive.min.js"></script>
     <script src="cortexJS/compute-engine.min.js"></script>
-    <script>const ce = new ComputeEngine.ComputeEngine();</script>
+    <script>
+        const ce = new ComputeEngine.ComputeEngine();
+    </script>
 
 
     <!-- <link href="mathquill-0.10.1/mathquill.css" rel="stylesheet">
@@ -27,54 +30,58 @@
     <script src="quill/quilljs-markdown.js"></script>
     <link href="quill/quill.bubble.css" rel="stylesheet">
     <link href="quill/quilljs-markdown-common-style.css" rel="stylesheet">
-    
+
     <!-- <script src="mathquill4quill/mathquill4quill.js"></script>
     <link href="mathquill4quill/mathquill4quill.css" rel="stylesheet"> -->
 
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-eval' 'unsafe-inline' data: filesystem:; connect-src https://www.geogebra.org/api/json.php; script-src 'unsafe-eval' 'self' 'unsafe-inline' data: filesystem:; style-src 'self' 'unsafe-inline'">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' 'unsafe-eval' 'unsafe-inline' data: filesystem:; connect-src https://www.geogebra.org/api/json.php; script-src 'unsafe-eval' 'self' 'unsafe-inline' data: filesystem:; style-src 'self' 'unsafe-inline'">
     <link href="./index.css" rel="stylesheet">
     <title>Mathberet</title>
-  </head>
+</head>
+
 <body>
     <div class="app">
-    <div class="appContainer">
-        <div id="sidebar">
-            <img id="logo" src="mathberet.svg" alt="logo">
-        </div>
-
-    <div class="container">
-        <div id="header">
-            <div id="filepath"></div>
-        </div>
-
-        <div id="content">
-            <div id="toolbar">
-                <button class="tool" id="addQuill">
-                    <img class="icon" src="text.svg" alt="Add Text Block">
-                </button>
-                <button class="tool" id="addGgb">
-                    <img class="icon" src="graph.svg" alt="Add Geogebra Block">
-                </button>
-                <button class="tool" id="addMF">
-                    <img class="icon" src="math.svg" alt="Add Math Block">
-                </button>
-                <button class="tool" id="save">
-                    S
-                </button>
-                <button class="tool" id="load">
-                    L
-                </button>
+        <div class="appContainer">
+            <div id="sidebar">
+                <img id="logo" src="mathberet.svg" alt="logo">
             </div>
-            <div class="pageContainer">
-                <div id="page" class="grid-stack">
-            </div>  
+
+            <div class="container">
+                <div id="header">
+                    <div id="filepath"></div>
+                </div>
+                <div id="con">
+                    <div id="sidebarcontent"></div>
+                    <div id="content">
+                        <div id="toolbar">
+                            <button class="tool" id="addQuill">
+                                <img class="icon" src="text.svg" alt="Add Text Block">
+                            </button>
+                            <button class="tool" id="addMF">
+                                <img class="icon" src="math.svg" alt="Add Math Block">
+                            </button>
+                            <button class="tool" id="addGgb">
+                                <img class="icon" src="graph.svg" alt="Add Geogebra Block">
+                            </button>
+                            <button class="tool" id="save">
+                                S
+                            </button>
+                            <button class="tool" id="load">
+                                L
+                            </button>
+                        </div>
+                        <div class="pageContainer">
+                            <div id="page" class="grid-stack">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-    
-    </div>
-</div>
-  
-    <script src="./renderer.js"></script>
+        <script src="./renderer.js"></script>
 </body>
+
 </html>
