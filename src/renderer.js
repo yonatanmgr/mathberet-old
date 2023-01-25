@@ -1,5 +1,9 @@
 // loadGrid()
-document.getElementById("logo").addEventListener("click", toggleSidebar);
+
+document.getElementById("minimize").addEventListener("click", window.api.minimize);
+document.getElementById("close").addEventListener("click", window.api.close);
+document.getElementById("maximize").addEventListener("click", toggleMaximize);
+document.getElementById("notebooks").addEventListener("click", toggleSidebar);
 document.getElementById("addQuill").addEventListener("click", addQuill);
 document.getElementById("addGgb").addEventListener("click", addGgb);
 document.getElementById("addMF").addEventListener("click", addMF);
@@ -7,7 +11,7 @@ document.getElementById("save").addEventListener("click", saveGrid);
 document.getElementById("load").addEventListener("click", loadGrid);
 let applets = [];
 let mfList = []
-let drag = "drag-indicator-svgrepo-com.svg"
+let drag = "icons/drag-indicator-svgrepo-com.svg"
 let defShortcuts = {
   'sr': '^2',
   'cb': '^3',
@@ -400,24 +404,37 @@ let defShortcuts = {
   */
 };
 
+let maximizeStatus = 0
 let sidebarStatus = 0
 
-function toggleSidebar(){
+function toggleMaximize() {
+  if (maximizeStatus == 0) {
+    window.api.maximize();
+    maximizeStatus = 1
+  } else {
+    window.api.unmaximize();
+    maximizeStatus = 0
+  }
+
+}
+
+function toggleSidebar() {
   if (sidebarStatus == 0) {
     document.getElementById("sidebarcontent").style.minWidth = "300px"
     document.getElementById("sidebarcontent").style.borderLeft = "1px solid #BEBEBE"
-    sidebarStatus = 1  
-  }
-  else{
+    sidebarStatus = 1
+  } else {
     document.getElementById("sidebarcontent").style.minWidth = "0px"
-    setTimeout(() => {document.getElementById("sidebarcontent").style.borderLeft = "1px solid transparent"}, 400)
+    setTimeout(() => {
+      document.getElementById("sidebarcontent").style.borderLeft = "1px solid transparent"
+    }, 400)
     sidebarStatus = 0
   }
-  
+
 }
 
 function expand(expression) {
-  return ce.box(["Expand", ce.parse(expression.getValue())]).evaluate().latex
+  return ce.box(["Expand", ce.parse(expression)]).evaluate().latex
 }
 
 var grid = GridStack.init({
@@ -549,7 +566,9 @@ function removeWidget(el) {
 
 document.addEventListener("dblclick", function (e) {
   const target = e.target.closest(".handle");
-  if (target) {removeWidget(target.closest(".grid-stack-item"))}
+  if (target) {
+    removeWidget(target.closest(".grid-stack-item"))
+  }
 });
 
 grid.on('resizestop', function (el) {
@@ -610,14 +629,14 @@ function loadBlock(block) {
   switch (block.type) {
     case "Text":
       block.blockContent = createQuill(block.id).setContents(block.blockContent)
-    break;
+      break;
     case "Math":
       block.blockContent = createMF(block.id).setValue(block.blockContent)
-    break;
+      break;
     case "Graph":
       let box = document.getElementById(`ggBox_${block.id}`)
       box.closest(".grid-stack-item").gridstackNode.blockContent = createGgb(block.id, block.blockContent)
-    break;
+      break;
     default:
       break;
   }
@@ -638,8 +657,12 @@ function loadGrid() {
   window.api.receive("fromMain", (data) => {
     let items = JSON.parse(data.toString());
     grid.removeAll();
-    for (var item of items) {loadBlockContent(item)}
+    for (var item of items) {
+      loadBlockContent(item)
+    }
     grid.load(items);
-    for (var item of items) {loadBlock(item)}
+    for (var item of items) {
+      loadBlock(item)
+    }
   });
 }

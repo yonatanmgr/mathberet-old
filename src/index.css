@@ -1,3 +1,7 @@
+:root{
+  --theme: #D0E7F5
+}
+
 html, body, .app {
   width: 100%;
   height: 100%;
@@ -22,15 +26,75 @@ html{
 
   }
 
+#filepath{
+  width: -webkit-fit-available;
+  font-family: Rubik;
+  font-weight: lighter;
+  font-size: 26px;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: 15px;
+  direction: rtl;
+}
+
+#fileName{
+  font-weight: bold;
+}
+
 #header{
-  display: block;
-  width: 100%;
-  height: 50px;
+  -webkit-app-region: drag;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  width: -webkit-fill-available;
+  height: 45px;
   background-color: white;
   border-bottom: 0.3px solid #BEBEBE;
-
-
+  margin-top: auto;
+  margin-bottom: auto;
 }
+
+#windowButtons{
+  margin-left: 60px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+.windowButton{
+  -webkit-app-region: no-drag;
+  display: block;
+  width: 33px;
+  height: 33px;
+  border-radius: 8px;
+  border-color: transparent;
+  background-color: #FFFFFF;
+  margin: auto;
+  transition: 0.2s;
+}
+
+.windowButton:hover{
+  cursor: pointer;
+}
+
+.windowButton#close:hover{
+  background-color: rgb(255, 104, 134);
+}
+.windowButton#close:active{
+  background-color: rgb(255, 66, 104);
+}
+.windowButton#close:active .icon{
+  filter: brightness(500%) !important;
+}
+
+.windowButton#maximize:hover, .windowButton#minimize:hover{
+  filter: brightness(90%);
+}
+.windowButton#maximize:active, .windowButton#minimize:active{
+  filter: brightness(80%);
+}
+
 #content{
   background-color: rgb(255, 255, 255);
   flex: 1;
@@ -68,12 +132,12 @@ html{
   height: 50px;
   border-radius: 15px;
   border-color: transparent;
-  background-color: #D0E7F5;
+  background-color: var(--theme);
   transition: ease 0.2s;
-
 }
+
 .tool:hover{
-  background-color: #b6ddf5;
+  filter: brightness(94%) saturate(200%);
   cursor: pointer;
 }
 .tool:active{
@@ -81,6 +145,7 @@ html{
   width: 45px;
   cursor: pointer;
 }
+
 .pageContainer{
   background-color: white;
   width: 73%;
@@ -106,8 +171,10 @@ html{
 }
 
 .icon{
+  -webkit-user-drag: none;
   height: 70%;
   width: 70%;
+  padding-top: 2px;
 }
 
 /* .gridItemTopBar{
@@ -185,10 +252,26 @@ html{
 }
 
 #sidebar{
-  background-color: #D0E7F5;
+  background-color: var(--theme);
   min-width: 55px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+#sidebar .tool{
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 30px;
+  filter: brightness(87%) saturate(200%);
+  transition: 0.3s;
+}
+
+#sidebar .tool:hover{
+  filter: brightness(81%) saturate(240%);
+  transition: 0.3s;
 }
 
 #sidebarcontent{
@@ -202,8 +285,8 @@ html{
 
 #logo{
   filter: invert(17%) sepia(10%) saturate(1626%), hue-rotate(163deg) brightness(96%) contrast(95%);
-  margin-top: 13px;
-  margin-bottom: 13px;
+  margin-top: 10.5px;
+  margin-bottom: 10.5px;
   margin-left: auto;
   margin-right: 11.5px;
   height: 24px;

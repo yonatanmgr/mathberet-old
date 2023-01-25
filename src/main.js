@@ -14,6 +14,7 @@ async function createWindow() {
   win = new BrowserWindow({
     width: 1500,
     height: 900,
+    titleBarStyle: 'hidden',
     webPreferences: {
       contextIsolation: true, // protect against prototype pollution
       enableRemoteModule: false, // turn off remote
@@ -26,6 +27,11 @@ async function createWindow() {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+
+  ipcMain.on("maximize", ()=>{win.maximize()})
+  ipcMain.on("unmaximize", ()=>{win.unmaximize()})
+  ipcMain.on("minimize", ()=>{win.minimize()})
+  ipcMain.on("close", ()=>{win.close()})
 
   ipcMain.on("toMain", (event, args) => {
     if (args == "LOAD") {

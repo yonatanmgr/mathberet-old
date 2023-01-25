@@ -20,6 +20,10 @@ contextBridge.exposeInMainWorld(
               // Deliberately strip event as it includes `sender` 
               ipcRenderer.on(channel, (event, ...args) => func(...args));
           }
-      }
+      },
+      maximize: () => {ipcRenderer.send("maximize")},
+      unmaximize: () => {ipcRenderer.send("unmaximize")},
+      minimize: () => {ipcRenderer.send("minimize")},
+      close: () => {ipcRenderer.send("close")}
   }
 );

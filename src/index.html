@@ -44,25 +44,32 @@
     <div class="app">
         <div class="appContainer">
             <div id="sidebar">
-                <img id="logo" src="mathberet.svg" alt="logo">
+                <img id="logo" src="icons/mathberet.svg" alt="logo">
+                <button class="tool" id="notebooks"><img src="icons/notebook.svg" alt="notebooks"></button>
+                <button class="tool" id="search"><img src="icons/search.svg" alt="search"></button>
             </div>
 
             <div class="container">
                 <div id="header">
-                    <div id="filepath"></div>
+                    <div id="filepath"><span id="notebookName">מחברת</span><span> / </span><span id="fileName">קובץ</span></div>
+                    <div id="windowButtons">
+                        <button id="close" class="windowButton"><img class="icon" src="icons/exit.svg" alt="Exit"></button>
+                        <button id="maximize" class="windowButton"><img class="icon" src="icons/window.svg" alt="Maximize"></button>
+                        <button id="minimize" class="windowButton"><img class="icon" src="icons/minimize.svg" alt="Minimize"></button>
+                    </div>
                 </div>
                 <div id="con">
                     <div id="sidebarcontent"></div>
                     <div id="content">
                         <div id="toolbar">
                             <button class="tool" id="addQuill">
-                                <img class="icon" src="text.svg" alt="Add Text Block">
+                                <img class="icon" src="icons/text.svg" alt="Add Text Block">
                             </button>
                             <button class="tool" id="addMF">
-                                <img class="icon" src="math.svg" alt="Add Math Block">
+                                <img class="icon" src="icons/math.svg" alt="Add Math Block">
                             </button>
                             <button class="tool" id="addGgb">
-                                <img class="icon" src="graph.svg" alt="Add Geogebra Block">
+                                <img class="icon" src="icons/graph.svg" alt="Add Geogebra Block">
                             </button>
                             <button class="tool" id="save">
                                 S
