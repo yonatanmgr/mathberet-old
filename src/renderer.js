@@ -656,11 +656,11 @@ function saveGrid() {
     saveBlockContent(item);
     item.content = ""
   }
-  window.api.send("toMain", JSON.stringify(items));
+  window.api.save(JSON.stringify(items), "./file.json");
 }
 
 function loadGrid() {
-  window.api.send("toMain", "LOAD");
+  window.api.load("./file.json");
   window.api.receive("fromMain", (data) => {
     let items = JSON.parse(data.toString());
     grid.removeAll();

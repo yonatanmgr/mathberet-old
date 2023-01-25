@@ -21,6 +21,8 @@ contextBridge.exposeInMainWorld(
               ipcRenderer.on(channel, (event, ...args) => func(...args));
           }
       },
+      save: (data, file) => {ipcRenderer.send("save", data, file)},
+      load: (file) => {ipcRenderer.send("load", file)},
       maximize: () => {ipcRenderer.send("maximize")},
       unmaximize: () => {ipcRenderer.send("unmaximize")},
       minimize: () => {ipcRenderer.send("minimize")},

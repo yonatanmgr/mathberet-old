@@ -25,36 +25,28 @@ async function createWindow() {
   // and load the index.html of the app.
   win.loadFile('./src/index.html')
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  ipcMain.on("maximize", () => {
+    win.maximize()
+  })
+  ipcMain.on("unmaximize", () => {
+    win.unmaximize()
+  })
+  ipcMain.on("minimize", () => {
+    win.minimize()
+  })
+  ipcMain.on("close", () => {
+    win.close()
+  })
 
-  ipcMain.on("maximize", ()=>{win.maximize()})
-  ipcMain.on("unmaximize", ()=>{win.unmaximize()})
-  ipcMain.on("minimize", ()=>{win.minimize()})
-  ipcMain.on("close", ()=>{win.close()})
+  ipcMain.on("save", (event, data, file) => {
+    fs.writeFileSync(file, data, "utf-8");
+  })
 
-  ipcMain.on("toMain", (event, args) => {
-    if (args == "LOAD") {
-      return
-    } else {
-
-      fs.writeFileSync("./file.json", args, "utf-8", (error) => {
-        if (error) {
-          console.error("error: " + error);
-        }
-      });
-    }
-  });
-
-  ipcMain.on("toMain", (event, args) => {
-    if (args != "LOAD") {
-      return
-    } else {
-      fs.readFile("./file.json", "utf-8", (error, data) => {
-        win.webContents.send("fromMain", data);
-      });
-    }
-  });
+  ipcMain.on("load", (event, file) => {
+    fs.readFile(file, "utf-8", (error, data) => {
+      win.webContents.send("fromMain", data);
+    });
+  })
 }
 
 // This method will be called when Electron has finished
