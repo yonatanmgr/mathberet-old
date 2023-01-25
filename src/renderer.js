@@ -1,5 +1,20 @@
 // loadGrid()
 
+let listedFiles = []
+
+function readDir(){
+  window.api.readDir()
+  window.api.receive("readDir", (data) => {
+  for (var file of data){
+    if (listedFiles.includes(file) == false){
+    listedFiles.push(file.replace(".json", ""))
+  }
+  } 
+  })
+}
+
+readDir()
+
 document.getElementById("minimize").addEventListener("click", window.api.minimize);
 document.getElementById("close").addEventListener("click", window.api.close);
 document.getElementById("maximize").addEventListener("click", toggleMaximize);
@@ -419,15 +434,15 @@ function toggleMaximize() {
 
 function toggleSidebar() {
   if (sidebarStatus == 0) {
+    sidebarStatus = 1
     document.getElementById("sidebarcontent").style.minWidth = "300px"
     document.getElementById("sidebarcontent").style.borderLeft = "1px solid #BEBEBE"
-    sidebarStatus = 1
   } else {
+    sidebarStatus = 0
     document.getElementById("sidebarcontent").style.minWidth = "0px"
     setTimeout(() => {
       document.getElementById("sidebarcontent").style.borderLeft = "1px solid transparent"
-    }, 400)
-    sidebarStatus = 0
+    }, 300)
   }
   setTimeout(() => {
     resizeAll()
@@ -656,11 +671,13 @@ function saveGrid() {
     saveBlockContent(item);
     item.content = ""
   }
-  window.api.save(JSON.stringify(items), "./file.json");
+  window.api.save(JSON.stringify(items), `./files/${listedFiles[0]}.json`);
 }
 
 function loadGrid() {
-  window.api.load("./file.json");
+  window.api.load(`./files/${listedFiles[0]}.json`);
+  document.getElementById("fileName").innerText = listedFiles[0]
+
   window.api.receive("fromMain", (data) => {
     let items = JSON.parse(data.toString());
     grid.removeAll();
@@ -669,3 +686,9 @@ function loadGrid() {
     items.map(loadBlock)
   });
 }
+
+window.api.receive("Text", ()=>addQuill())
+window.api.receive("Graph", ()=>addGgb())
+window.api.receive("Math", ()=>addMF())
+window.api.receive("toggleNotebooks", ()=>toggleSidebar())
+window.api.receive("Search", ()=>{})

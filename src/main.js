@@ -2,7 +2,9 @@
 const {
   app,
   BrowserWindow,
-  ipcMain
+  ipcMain,
+  Menu,
+  MenuItem
 } = require('electron')
 const path = require('path')
 const fs = require("fs")
@@ -25,6 +27,64 @@ async function createWindow() {
   // and load the index.html of the app.
   win.loadFile('./src/index.html')
 
+  const menu = new Menu()
+  menu.append(new MenuItem({
+    label: 'Blocks',
+    submenu: [
+      {
+      role: 'Add Text Block',
+      accelerator: 'Ctrl+T',
+      click: () => {win.webContents.send("Text");}
+    },
+      {
+      role: 'Add Math Block',
+      accelerator: 'Ctrl+M',
+      click: () => {win.webContents.send("Math");}
+    },
+      {
+      role: 'Add Geogebra Block',
+      accelerator: 'Ctrl+G',
+      click: () => {win.webContents.send("Graph");}
+    }
+  ]
+  })),
+  menu.append(new MenuItem({
+    label: 'Misc',
+    submenu: [
+      {
+      role: 'Open Devtools',
+      accelerator: 'Ctrl+Shift+I',
+      click: () => {win.webContents.openDevTools();}
+    },
+    {
+      role: 'Quit',
+      accelerator: 'Ctrl+W',
+      click: () => {win.close()}
+    },
+    {
+      role: 'Refresh',
+      accelerator: 'Ctrl+R',
+      click: () => {win.webContents.reloadIgnoringCache()}
+    }
+  ]
+  }))
+  menu.append(new MenuItem({
+    label: 'Actions',
+    submenu: [
+      {
+      role: 'Toggle Notebooks',
+      accelerator: 'Ctrl+O',
+      click: () => {win.webContents.send("toggleNotebooks");}
+    },
+      {
+      role: 'Search',
+      accelerator: 'Ctrl+F',
+      click: () => {win.webContents.send("Search");}
+    }
+  ]
+  }))
+  Menu.setApplicationMenu(menu)
+  
   ipcMain.on("maximize", () => {
     win.maximize()
   })
@@ -46,6 +106,13 @@ async function createWindow() {
     fs.readFile(file, "utf-8", (error, data) => {
       win.webContents.send("fromMain", data);
     });
+  })
+  
+
+  ipcMain.on("readDir", (event, args) => {
+    fs.readdir("./files", (error, files)=>{
+      win.webContents.send("readDir", files);
+    }) 
   })
 }
 
