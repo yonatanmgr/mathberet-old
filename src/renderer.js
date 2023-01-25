@@ -9,8 +9,7 @@ document.getElementById("addGgb").addEventListener("click", addGgb);
 document.getElementById("addMF").addEventListener("click", addMF);
 document.getElementById("save").addEventListener("click", saveGrid);
 document.getElementById("load").addEventListener("click", loadGrid);
-let applets = [];
-let mfList = []
+
 let drag = "icons/drag-indicator-svgrepo-com.svg"
 let defShortcuts = {
   'sr': '^2',
@@ -430,7 +429,9 @@ function toggleSidebar() {
     }, 400)
     sidebarStatus = 0
   }
-
+  setTimeout(() => {
+    resizeAll()
+  }, 600)
 }
 
 function expand(expression) {
@@ -446,6 +447,45 @@ var grid = GridStack.init({
   margin: 7,
   cellHeight: 50
 });
+
+function removeWidget(el) {
+  if (el.type == "Graph") {
+    el.blockContent.getAppletObject().remove();
+  }
+  el.remove();
+  grid.removeWidget(el);
+}
+
+document.addEventListener("dblclick", function (e) {
+  const target = e.target.closest(".handle");
+  if (target) {
+    removeWidget(target.closest(".grid-stack-item"))
+  }
+});
+
+grid.on('resizestop', function (el) {
+  let resized = el.target.gridstackNode;
+  if (resized.type == "Graph") {
+    let a = resized.blockContent;
+    a.getAppletObject()
+      .setSize(
+        document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+        document.getElementById(`ggBox_${resized.id}`).offsetHeight
+      );
+  }
+})
+
+function resizeAll() {
+  let items = grid.getGridItems()
+  for (var item of items) {
+    if (item.gridstackNode.type == "Graph") {
+      item.gridstackNode.blockContent.getAppletObject().setSize(
+        document.getElementById(`ggBox_${item.gridstackNode.id}`).offsetWidth,
+        document.getElementById(`ggBox_${item.gridstackNode.id}`).offsetHeight
+      )
+    }
+  }
+}
 
 function blockData(html, id, type, h, blockContent = {}, x = 12, y = 1000, w = 6, minW = 2, minH = 2) {
   return {
@@ -517,7 +557,6 @@ function createGgb(id, base64) {
     "useBrowserForJS": true,
     "showMenuBar": true,
     "buttonShadows": false,
-    "buttonRounding": 0.6,
     "id": id,
     "ggbBase64": base64
   };
@@ -556,44 +595,13 @@ function addMF() {
   createMF(id).focus()
 };
 
-function removeWidget(el) {
-  if (el.type == "Graph") {
-    el.blockContent.getAppletObject().remove();
-  }
-  el.remove();
-  grid.removeWidget(el);
-}
-
-document.addEventListener("dblclick", function (e) {
-  const target = e.target.closest(".handle");
-  if (target) {
-    removeWidget(target.closest(".grid-stack-item"))
-  }
-});
-
-grid.on('resizestop', function (el) {
-  let resized = el.target.gridstackNode;
-  if (resized.type == "Graph") {
-    let a = resized.blockContent;
-    a.getAppletObject()
-      .setSize(
-        document.getElementById(`ggBox_${resized.id}`).offsetWidth,
-        document.getElementById(`ggBox_${resized.id}`).offsetHeight
-      );
-  }
-})
-
-
-
 function saveApplet(applet) {
   if (applet) {
     return applet.getAppletObject().getBase64()
   }
 }
 
-
 function saveBlockContent(block) {
-  console.log(block);
   switch (block.type) {
     case "Text":
       block.blockContent = document.getElementById(`textEdit_${block.id}`).__quill.getContents()
@@ -645,24 +653,19 @@ function loadBlock(block) {
 function saveGrid() {
   let items = grid.save();
   for (var item of items) {
-    saveBlockContent(item)
+    saveBlockContent(item);
     item.content = ""
-    window.api.send("toMain", JSON.stringify(items));
   }
+  window.api.send("toMain", JSON.stringify(items));
 }
 
 function loadGrid() {
   window.api.send("toMain", "LOAD");
-
   window.api.receive("fromMain", (data) => {
     let items = JSON.parse(data.toString());
     grid.removeAll();
-    for (var item of items) {
-      loadBlockContent(item)
-    }
+    items.map(loadBlockContent)
     grid.load(items);
-    for (var item of items) {
-      loadBlock(item)
-    }
+    items.map(loadBlock)
   });
 }
