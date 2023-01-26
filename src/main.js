@@ -57,6 +57,11 @@ async function createWindow() {
       click: () => {win.webContents.openDevTools();}
     },
     {
+      role: 'Save',
+      accelerator: 'Ctrl+S',
+      click: () => {win.webContents.send("Save");}
+    },
+    {
       role: 'Quit',
       accelerator: 'Ctrl+W',
       click: () => {win.close()}

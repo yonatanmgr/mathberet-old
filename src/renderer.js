@@ -1,6 +1,7 @@
 // loadGrid()
 
 var notebooks; 
+var currentfile;
 
 window.api.getNotebooks()
 window.api.receive("gotNotebooks", (data) => {
@@ -17,7 +18,7 @@ function createFolderList() {
     let html = []
     for (var file of notebooks[n].files){
       if (html.includes(file) == false){
-        html.push(`<div class="listedFile" id="${notebooks[n].folder}/${file}"><div class="fileName">${file.replace(".json", "")}</div></div>`)
+        html.push(`<div class="listedFile" data-filename="${file.replace(".json", "")}" data-foldername="${notebooks[n].folder}" data-path="${notebooks[n].folder}/${file}"><div class="fileName">${file.replace(".json", "")}</div></div>`)
       }
     }
     
@@ -38,8 +39,6 @@ document.getElementById("addQuill").addEventListener("click", addQuill);
 document.getElementById("addGgb").addEventListener("click", addGgb);
 document.getElementById("addMF").addEventListener("click", addMF);
 document.getElementById("save").addEventListener("click", saveGrid);
-document.getElementById("load").addEventListener("click", loadGrid);
-
 
 let drag = "icons/drag-indicator-svgrepo-com.svg"
 let defShortcuts = {
@@ -473,7 +472,6 @@ function toggleSidebar() {
     sidebarContent.innerHTML = ""
     setTimeout(() => {
       sidebar.style.borderLeft = "1px solid transparent"
-      document.getElementsByClassName("folder")[0].innerHTML = ""
     }, 300)
 
   }
@@ -508,6 +506,15 @@ document.addEventListener("dblclick", function (e) {
   const target = e.target.closest(".handle");
   if (target) {
     removeWidget(target.closest(".grid-stack-item"))
+  }
+});
+document.addEventListener("click", function (e) {
+  const target = e.target.closest(".listedFile");
+  if (target) {
+    let path = target.getAttribute("data-path")
+    let fileName = target.getAttribute("data-filename")
+    let folderName = target.getAttribute("data-foldername").replace("./files/", "")
+    loadGrid(path, fileName, folderName)
   }
 });
 
@@ -704,13 +711,15 @@ function saveGrid() {
     saveBlockContent(item);
     item.content = ""
   }
-  window.api.save(JSON.stringify(items), `./files/${listedFiles[0]}.json`);
+  window.api.save(JSON.stringify(items), currentfile);
 }
 
-function loadGrid() {
-  window.api.load(`./files/${listedFiles[0]}.json`);
-  document.getElementById("fileName").innerText = listedFiles[0]
-
+function loadGrid(path, file, folder) {
+  window.api.load(path);
+  document.getElementById("slash").innerText = " / "
+  document.getElementById("fileName").innerText = file
+  document.getElementById("notebookName").innerText = folder
+  currentfile = path
   window.api.receive("fromMain", (data) => {
     let items = JSON.parse(data.toString());
     grid.removeAll();
@@ -724,4 +733,5 @@ window.api.receive("Text", () => addQuill())
 window.api.receive("Graph", () => addGgb())
 window.api.receive("Math", () => addMF())
 window.api.receive("toggleNotebooks", () => toggleSidebar())
+window.api.receive("Save", () => saveGrid())
 window.api.receive("Search", () => {})
