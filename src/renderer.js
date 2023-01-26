@@ -22,7 +22,7 @@ function createFolderList() {
       }
     }
     
-    let folder = `<div id="folder_${n}" class="folder"><div class="folderTitle">${notebooks[n].folder.replace("./files/", "")}</div><div class="folderContent">${html.join("")}</div></div>`
+    let folder = `<div id="folder_${n}" class="folder"><div class="folderTitle"><img src="icons/book.svg" alt="notebook" class="notebookIcon">${notebooks[n].folder.replace("./files/", "")}</div><div class="folderContent">${html.join("")}</div></div>`
     if (contentList.includes(folder) == false){
       contentList.push(folder)
     }
@@ -30,7 +30,15 @@ function createFolderList() {
   sidebarContent.innerHTML = contentList.join("")
 }
 
+const getRandomColor = () => {
+  const h = Math.floor(Math.random() * 360),
+        s = '65%',
+        l = '89%';
+  document.querySelector(":root").style.setProperty("--theme", `hsl(${h},${s},${l})`);
+};
 
+window.addEventListener("resize", resizeAll);
+document.getElementById("logo").addEventListener("dblclick", getRandomColor);
 document.getElementById("minimize").addEventListener("click", window.api.minimize);
 document.getElementById("close").addEventListener("click", window.api.close);
 document.getElementById("maximize").addEventListener("click", toggleMaximize);
@@ -38,7 +46,7 @@ document.getElementById("notebooks").addEventListener("click", toggleSidebar);
 document.getElementById("addQuill").addEventListener("click", addQuill);
 document.getElementById("addGgb").addEventListener("click", addGgb);
 document.getElementById("addMF").addEventListener("click", addMF);
-document.getElementById("save").addEventListener("click", saveGrid);
+// document.getElementById("save").addEventListener("click", saveGrid);
 
 let drag = "icons/drag-indicator-svgrepo-com.svg"
 let defShortcuts = {
@@ -451,27 +459,36 @@ function toggleSidebar() {
   if (sidebarStatus == 0) {
     sidebarStatus = 1
     createFolderList()
+
+    sidebar.style.minWidth = "280px"
+    sidebar.style.borderLeft = "1px solid var(--theme);"
+    setTimeout(() => {
     for (var folder of document.getElementsByClassName("folder")) {
         folder.style.width = "250px"
     }
+    for (var folderName of document.getElementsByClassName("folderTitle")) {
+        folderName.style.fontSize = "20px"
+    }
     for (var item of document.getElementsByClassName("listedFile")) {
         item.style.width = "250px"
-      }
-    
-    sidebar.style.minWidth = "280px"
-    sidebar.style.borderLeft = "1px solid #BEBEBE"
+      }    }, 30)
+
+  
   } else {
     sidebarStatus = 0
     for (var folder of document.getElementsByClassName("folder")) {
       folder.style.width = "0px"
     }
+    for (var folderName of document.getElementsByClassName("folderTitle")) {
+      folderName.style.fontSize = "0px"
+  }
     for (var item of document.getElementsByClassName("listedFile")) {
       item.style.width = "0px"
     }
     sidebar.style.minWidth = "0px"
     sidebarContent.innerHTML = ""
     setTimeout(() => {
-      sidebar.style.borderLeft = "1px solid transparent"
+      sidebar.style.borderLeft = "1px solid var(--theme);"
     }, 300)
 
   }

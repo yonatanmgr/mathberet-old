@@ -1,5 +1,5 @@
 :root{
-  --theme: #D0E7F5
+  --theme: hsl(203, 65%, 89%);
 }
 
 .folder{
@@ -12,15 +12,23 @@
 }
 .folderContent{
   height: fit-content;
-  margin-top: 20px;
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
   transition: 0.3s;
 }
 
+.notebookIcon{
+  height: 21px;
+  margin-top: auto;
+  margin-bottom: auto;
+  padding-left: 8px;
+  /* filter: sepia(200%) saturate(599%) brightness(200%) hue-rotate(200deg); */
+}
+
 .listedFile{
   width: 0px;
-  height: 40px;
+  height: 35px;
   background-color: #efefef;
   border-radius: 10px;
   overflow-x: hidden;
@@ -36,18 +44,22 @@
   filter: brightness(90%);
 }
 .listedFile:active{
-  filter: brightness(80%);
+  filter: brightness(85%);
 }
 
 .fileName{
   padding-right: 10px;
   font-family: Rubik;
-  font-size: 16px;
+  font-size: 17px;
 }
 .folderTitle{
   direction: rtl;
   font-family: Rubik;
-  font-size: 20px;
+  font-size: 0px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-start;
 }
 
 
@@ -79,7 +91,7 @@ html{
   width: -webkit-fit-available;
   font-family: Rubik;
   font-weight: lighter;
-  font-size: 26px;
+  font-size: 24px;
   margin-top: auto;
   margin-bottom: auto;
   margin-right: 15px;
@@ -224,6 +236,7 @@ html{
   height: 70%;
   width: 70%;
   padding-top: 2px;
+  filter: saturate(0%);
 }
 
 /* .gridItemTopBar{
@@ -309,25 +322,35 @@ html{
   gap: 10px;
 }
 
+img{
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+
+}
 #sidebar .tool{
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+
   display: block;
   width: 40px;
   height: 40px;
   border-radius: 30px;
   filter: brightness(87%) saturate(200%);
-  transition: 0.3s;
+  transition: 0.2s;
 }
 
 #sidebar .tool:hover{
   filter: brightness(81%) saturate(240%);
-  transition: 0.3s;
+}
+#sidebar .tool:active{
+  filter: brightness(70%) saturate(240%);
 }
 
 #sidebarContainer{
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-left: 1px solid #FFFFFF;
+  border-left: 1px solid var(--theme);
   background-color: white;
   min-width: 0px;
   min-height: 100%;
@@ -335,16 +358,21 @@ html{
 }
 
 #logo{
-  filter: invert(17%) sepia(10%) saturate(1626%), hue-rotate(163deg) brightness(96%) contrast(95%);
+  filter: brightness(40%) saturate(0%);
   margin-top: 10.5px;
   margin-bottom: 10.5px;
   margin-left: auto;
   margin-right: 11.5px;
   height: 24px;
+  transition: 0.1s;
 }
 
 #logo:hover{
-  filter: brightness(200%);
+  filter: brightness(100%) saturate(0%);
+  cursor: pointer;
+}
+#logo:active{
+  filter: brightness(150%) saturate(0%);
   cursor: pointer;
 }
 
