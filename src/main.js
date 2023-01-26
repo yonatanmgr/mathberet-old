@@ -110,16 +110,17 @@ async function createWindow() {
   
 
   ipcMain.on("getNotebooks", (event, args) => {
+    const expanded = []
+    
     const folders = source => (fs.readdirSync(source, {withFileTypes: true}))
     .filter(dirent => dirent.isDirectory())
-    .map(dirent => `./files/${dirent.name}`) 
-    win.webContents.send("getNotebooks", folders("./files"));
-  })
-  
-  ipcMain.on("readDir", (event, dir) => {
-    fs.readdirSync(dir, (error, files)=>{
-      win.webContents.send("readDir", files);
-    }) 
+    .map(dirent => `./files/${dirent.name}`)
+    
+    for (var folder of folders("./files")){
+      expanded.push({folder: folder, files: fs.readdirSync(folder)})
+      }
+
+    win.webContents.send("gotNotebooks", expanded);
   })
 }
 

@@ -1,46 +1,35 @@
 // loadGrid()
 
-let listedNotebooks = []
+var notebooks; 
 
 window.api.getNotebooks()
-window.api.receive("getNotebooks", (data) => {
-  listedNotebooks = data
-  for (var notebook of listedNotebooks) {
-    let item = {"name": notebook}
-    window.api.readDir(notebook)
-    window.api.receive("readDir", (data) => {
-      item.files = data
-    })
-    console.log(item);
-  }
+window.api.receive("gotNotebooks", (data) => {
+  notebooks = data
 })
-
 
 
 let sidebar = document.getElementById("sidebarContainer")
 let sidebarContent = document.getElementById("sidebarContent")
 
 function createFolderList() {
-  let folder = `<div class="folder"></div>`
-}
-
-function createFileList(list) {
-  let folder = `<div class="folder"></div>`
-  let sidebarFolders = Array.prototype.slice.call(sidebar)
-  if (sidebarFolders.includes(folder) == false) {
-    sidebar.innerHTML += folder;
-  }
-  let addedItems = []
-
-  for (var item of list) {
-    if (addedItems.includes(item) == false) {
-      addedItems.push(item)
-      document.getElementsByClassName("folder")[0].innerHTML += `<div class="listedFile" id="${item}"><span class="fileName">${item}</span></div>`
+  contentList = []
+  for (var n = 0; n < notebooks.length; n++){
+    let html = []
+    for (var file of notebooks[n].files){
+      if (html.includes(file) == false){
+        html.push(`<div class="listedFile" id="${notebooks[n].folder}/${file}"><div class="fileName">${file.replace(".json", "")}</div></div>`)
+      }
+    }
+    
+    let folder = `<div id="folder_${n}" class="folder"><div class="folderTitle">${notebooks[n].folder.replace("./files/", "")}</div><div class="folderContent">${html.join("")}</div></div>`
+    if (contentList.includes(folder) == false){
+      contentList.push(folder)
     }
   }
+  sidebarContent.innerHTML = contentList.join("")
 }
 
-// window.addEventListener("load", readDir(listedNotebooks[0]));
+
 document.getElementById("minimize").addEventListener("click", window.api.minimize);
 document.getElementById("close").addEventListener("click", window.api.close);
 document.getElementById("maximize").addEventListener("click", toggleMaximize);
@@ -462,24 +451,26 @@ function toggleMaximize() {
 function toggleSidebar() {
   if (sidebarStatus == 0) {
     sidebarStatus = 1
-    createFileList(listedFiles)
-    for (var folder of sidebar.children) {
-      folder.style.width = "250px"
-      for (var item of folder.childNodes) {
+    createFolderList()
+    for (var folder of document.getElementsByClassName("folder")) {
+        folder.style.width = "250px"
+    }
+    for (var item of document.getElementsByClassName("listedFile")) {
         item.style.width = "250px"
       }
-    }
+    
     sidebar.style.minWidth = "280px"
     sidebar.style.borderLeft = "1px solid #BEBEBE"
   } else {
     sidebarStatus = 0
-    for (var folder of sidebar.children) {
+    for (var folder of document.getElementsByClassName("folder")) {
       folder.style.width = "0px"
-      for (var item of folder.childNodes) {
-        item.style.width = "0px"
-      }
+    }
+    for (var item of document.getElementsByClassName("listedFile")) {
+      item.style.width = "0px"
     }
     sidebar.style.minWidth = "0px"
+    sidebarContent.innerHTML = ""
     setTimeout(() => {
       sidebar.style.borderLeft = "1px solid transparent"
       document.getElementsByClassName("folder")[0].innerHTML = ""
