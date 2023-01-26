@@ -19,11 +19,20 @@
 }
 
 .notebookIcon{
-  height: 21px;
+  height: 20px;
   margin-top: auto;
   margin-bottom: auto;
   padding-left: 8px;
-  /* filter: sepia(200%) saturate(599%) brightness(200%) hue-rotate(200deg); */
+  transition: 0.1s;
+}
+
+.notebookIcon:hover{
+  filter: brightness(155%);
+  cursor: pointer;
+}
+.notebookIcon:active{
+  filter: brightness(200%);
+  cursor: pointer;
 }
 
 .listedFile{
@@ -50,9 +59,13 @@
 .fileName{
   padding-right: 10px;
   font-family: Rubik;
-  font-size: 17px;
+  font-size: 16px;
+  overflow: hidden;
+  white-space: nowrap;
 }
+
 .folderTitle{
+  -webkit-user-select: none;
   direction: rtl;
   font-family: Rubik;
   font-size: 0px;
@@ -213,9 +226,10 @@ html{
   border-radius: 20px 20px 0px 0px;
   height: 100%;
   overflow-y: scroll !important;
-  border: 1px solid #C7C7C7;
+  border: 1px solid #DDD;
   min-height: 0px !important;
   padding-top: 10px;
+  transition: 0.2s;
 }
 
 .pageContainer::-webkit-scrollbar{
@@ -233,18 +247,10 @@ html{
 
 .icon{
   -webkit-user-drag: none;
-  height: 70%;
   width: 70%;
-  padding-top: 2px;
-  filter: saturate(0%);
+  filter: brightness(35%);
+  fill: var(--theme);
 }
-
-/* .gridItemTopBar{
-  height: 30px;
-  width: 100%;
-  display: flex;
-  flex-direction: row-reverse;
-} */
 
 
 .handle{
@@ -286,7 +292,7 @@ html{
   overflow: hidden;
   padding: 15px;
   border: 1px solid transparent;
-  transition: 0.3s;
+  transition: 0.2s;
 }
 
 .actionsArea:hover{
@@ -320,23 +326,26 @@ html{
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  transition: 0.3s;
+
 }
 
-img{
+svg{
   -webkit-user-select: none;
   -webkit-user-drag: none;
-
 }
 #sidebar .tool{
   -webkit-user-select: none;
   -webkit-user-drag: none;
-
-  display: block;
+  display: flex;
   width: 40px;
   height: 40px;
   border-radius: 30px;
   filter: brightness(87%) saturate(200%);
   transition: 0.2s;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
 }
 
 #sidebar .tool:hover{
@@ -347,9 +356,6 @@ img{
 }
 
 #sidebarContainer{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   border-left: 1px solid var(--theme);
   background-color: white;
   min-width: 0px;
@@ -357,22 +363,57 @@ img{
   transition: min-width 0.6s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
+#sidebarContent{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+}
+
+#myNotebooks{
+  font-size: 25px;
+  font-family: Rubik;
+  font-weight: 600;
+  margin-top: 14px;
+  width: 0px;
+  direction: rtl;
+  height: fit-content;
+  -webkit-user-select: none;
+  color: var(--theme);
+  filter: brightness(0.5);
+  transition: 0.3s;
+  white-space: nowrap;
+}
+
+#sidebarButtons{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+#settings{
+  margin-bottom: 10px;
+}
+
+#settings .icon{
+  width: 100% !important;
+}
+
 #logo{
-  filter: brightness(40%) saturate(0%);
   margin-top: 10.5px;
   margin-bottom: 10.5px;
-  margin-left: auto;
-  margin-right: 11.5px;
-  height: 24px;
   transition: 0.1s;
+  filter: brightness(25%);
+  fill: var(--theme);
 }
 
 #logo:hover{
-  filter: brightness(100%) saturate(0%);
+  filter: brightness(40%);
   cursor: pointer;
 }
 #logo:active{
-  filter: brightness(150%) saturate(0%);
+  filter: brightness(60%);
   cursor: pointer;
 }
 
@@ -380,7 +421,37 @@ math-field{
   font-size: 30px;
 }
 
+#menuItems{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
 
+.windowButton>.icon{
+  padding-top: 3px;
+}
+
+.ui-draggable-dragging>.grid-stack-item-content,.ui-resizable-resizing>.grid-stack-item-content {
+  box-shadow: 0 0 0px transparent;
+  opacity: 0.9;
+}
+.ui-resizeable-resizing>.grid-stack-item-content{
+  box-shadow: 0 0 0px transparent;
+  opacity: 0.9;
+}
+.grid-stack .grid-stack-placeholder>.placeholder-content {
+  background-color: var(--theme);
+  filter: opacity(20%);
+  border-radius: 8px;
+  margin: 0;
+  position: absolute;
+  width: calc(100% - 45px);
+  z-index: 0!important;
+  text-align: center;
+  transition: 0.3s;
+
+}
 
 .applet_scaler, .ggbTransform, .ggBox, .applet_dimensions{
   width: 100% !important;

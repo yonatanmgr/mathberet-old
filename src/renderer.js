@@ -5,7 +5,7 @@ var currentfile;
 
 window.api.getNotebooks()
 window.api.receive("gotNotebooks", (data) => {
-  notebooks = data
+  notebooks = data;
 })
 
 
@@ -14,6 +14,7 @@ let sidebarContent = document.getElementById("sidebarContent")
 
 function createFolderList() {
   contentList = []
+  contentList.push('<div id="myNotebooks">המחברות שלי</div>')
   for (var n = 0; n < notebooks.length; n++){
     let html = []
     for (var file of notebooks[n].files){
@@ -452,49 +453,30 @@ function toggleMaximize() {
     window.api.unmaximize();
     maximizeStatus = 0
   }
-
 }
 
 function toggleSidebar() {
   if (sidebarStatus == 0) {
     sidebarStatus = 1
     createFolderList()
-
     sidebar.style.minWidth = "280px"
-    sidebar.style.borderLeft = "1px solid var(--theme);"
+    sidebar.style.borderLeft = "1px solid #BEBEBE;"
     setTimeout(() => {
-    for (var folder of document.getElementsByClassName("folder")) {
-        folder.style.width = "250px"
-    }
-    for (var folderName of document.getElementsByClassName("folderTitle")) {
-        folderName.style.fontSize = "20px"
-    }
-    for (var item of document.getElementsByClassName("listedFile")) {
-        item.style.width = "250px"
-      }    }, 30)
-
-  
+      document.getElementById("myNotebooks").style.width = "250px"
+      for (var folder of document.getElementsByClassName("folder")) {folder.style.width = "250px"}
+      for (var folderName of document.getElementsByClassName("folderTitle")) {folderName.style.fontSize = "18px"}
+      for (var item of document.getElementsByClassName("listedFile")) {item.style.width = "250px"}
+    }, 30)
   } else {
     sidebarStatus = 0
-    for (var folder of document.getElementsByClassName("folder")) {
-      folder.style.width = "0px"
-    }
-    for (var folderName of document.getElementsByClassName("folderTitle")) {
-      folderName.style.fontSize = "0px"
-  }
-    for (var item of document.getElementsByClassName("listedFile")) {
-      item.style.width = "0px"
-    }
+    document.getElementById("myNotebooks").style.width = "0px"
+    for (var folder of document.getElementsByClassName("folder")) {folder.style.width = "0px"}
+    for (var folderName of document.getElementsByClassName("folderTitle")) {folderName.style.fontSize = "0px"}
+    for (var item of document.getElementsByClassName("listedFile")) {item.style.width = "0px"}
     sidebar.style.minWidth = "0px"
     sidebarContent.innerHTML = ""
-    setTimeout(() => {
-      sidebar.style.borderLeft = "1px solid var(--theme);"
-    }, 300)
-
   }
-  setTimeout(() => {
-    resizeAll()
-  }, 600)
+  setTimeout(() => {resizeAll()}, 600)
 }
 
 function expand(expression) {
@@ -534,6 +516,31 @@ document.addEventListener("click", function (e) {
     loadGrid(path, fileName, folderName)
   }
 });
+
+function focus(e){
+  let focused = e.target
+    if (focused.closest(".actionsArea")) {
+      document.querySelector(".pageContainer").style.border = "1px solid #DDD"
+      focused = e.target.closest(".actionsArea")
+      focused.style.border = "1px solid #BBB"
+      for (var area of document.getElementsByClassName("actionsArea")){
+        if (area != focused)
+        area.style.border = "0px solid transparent"
+      }
+    }
+    else if (focused.closest(".pageContainer")){
+      focused = e.target.closest(".pageContainer")
+      for (var area of document.getElementsByClassName("actionsArea")){area.style.border = "0px solid transparent"}
+      focused.style.border = "1px solid #BBB"
+    }
+    else {
+      for (var area of document.getElementsByClassName("actionsArea")){area.style.border = "0px solid transparent"}
+      document.querySelector(".pageContainer").style.border = "1px solid #DDD"
+    }
+  }
+
+
+document.addEventListener("click", e => focus(e))
 
 grid.on('resizestop', function (el) {
   let resized = el.target.gridstackNode;
@@ -614,7 +621,8 @@ function createQuill(id) {
 function addQuill() {
   let id = Date.now();
   let html = `<img src=${drag} class="handle"></img><div class="actionsArea"><div id="textEdit_${id}" class="textBlock"></div></div>`
-  grid.addWidget(blockData(html, id, "Text", 2));
+  let block = blockData(html, id, "Text", 2)
+  grid.addWidget(block);
   createQuill(id).focus()
 };
 
@@ -642,8 +650,8 @@ function createGgb(id, base64) {
 function addGgb() {
   let id = Date.now();
   var html = `<img src=${drag} class="handle"></img><div class="actionsArea"><div id="ggBox_${id}" class="ggBox"></div></div>`
-  grid.addWidget(blockData(html, id, "Graph", 10));
-
+  let block = blockData(html, id, "Graph", 10) 
+  grid.addWidget(block);
   let box = document.getElementById(`ggBox_${id.toString()}`)
   box.closest(".grid-stack-item").gridstackNode.blockContent = createGgb(id, "")
 };
@@ -663,7 +671,8 @@ function createMF(id) {
 function addMF() {
   let id = Date.now();
   let html = `<img src=${drag} class="handle"></img><div class="actionsArea"><div id="mf_${id}" class="mathBlock"></div></div>`
-  grid.addWidget(blockData(html, id, "Math", 2))
+  let block = blockData(html, id, "Math", 2)
+  grid.addWidget(block)
   createMF(id).focus()
 };
 
@@ -750,5 +759,9 @@ window.api.receive("Text", () => addQuill())
 window.api.receive("Graph", () => addGgb())
 window.api.receive("Math", () => addMF())
 window.api.receive("toggleNotebooks", () => toggleSidebar())
-window.api.receive("Save", () => saveGrid())
+window.api.receive("Save", () => {
+  if (currentfile == null){
+    return
+  } else {saveGrid()}
+})
 window.api.receive("Search", () => {})
