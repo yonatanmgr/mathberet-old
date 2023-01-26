@@ -2,6 +2,41 @@
   --theme: #D0E7F5
 }
 
+.folder{
+  width: 0px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: 0.3s;
+}
+
+.listedFile{
+  width: 0px;
+  height: 40px;
+  background-color: #efefef;
+  border-radius: 10px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+}
+.listedFile:hover{
+  filter: brightness(90%);
+}
+.listedFile:active{
+  filter: brightness(80%);
+}
+
+.fileName{
+  padding-right: 10px;
+  font-family: Rubik;
+  font-size: 20px;
+}
+
 html, body, .app {
   width: 100%;
   height: 100%;
@@ -274,8 +309,10 @@ html{
   transition: 0.3s;
 }
 
-#sidebarcontent{
-  display: block;
+#sidebarContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   border-left: 1px solid #FFFFFF;
   background-color: white;
   min-width: 0px;
