@@ -270,7 +270,7 @@ svg {
 
 .tool:hover {
   transition: ease 0.2s;
-  filter: brightness(94%) saturate(200%);
+  filter: brightness(94%) saturate(250%);
   cursor: pointer;
 }
 .ui-draggable-dragging>.grid-stack-item-content, .ui-resizable-resizing>.grid-stack-item-content {
@@ -412,6 +412,7 @@ svg {
   white-space: nowrap;
 }
 
+
 #page {
   min-height: 0px !important;
 }
@@ -449,7 +450,6 @@ svg {
 }
 #notebooks:active>svg{
   perspective: 100px;
-
   transform: rotateX(20deg);
 }
 
@@ -512,11 +512,14 @@ svg {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-left: 20px;
+  padding-left: 20px;
+  transition: 0.2s;
 }
+
 #toolbar>.tool>.icon {
   width: 100% !important;
 }
+
 
 #windowButtons {
   margin-left: 60px;
@@ -524,4 +527,8 @@ svg {
   flex-direction: row;
   align-items: center;
   gap: 6px;
+}
+
+.GeoGebraFrame .toolbar .header-open-portrait, .GeoGebraFrame .toolbar .header-close-portrait{
+  box-shadow: none !important;
 }
