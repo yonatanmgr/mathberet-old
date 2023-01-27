@@ -1,5 +1,6 @@
 :root {
   --theme: hsl(203, 65%, 89%);
+  font-family: Rubik !important;
 }
 
 [contenteditable]:focus {
@@ -79,7 +80,6 @@ svg {
 
 .fileName {
   padding-right: 10px;
-  font-family: Rubik;
   font-size: 16px;
   overflow: hidden;
   white-space: nowrap;
@@ -105,7 +105,6 @@ svg {
 
 .folderTitleText{
   direction: rtl;
-  font-family: Rubik;
   font-size: 0px;
   transition: font-weight 0.1s;
   font-weight: 400;
@@ -173,8 +172,9 @@ svg {
 }
 
 .handle {
-  height: 25px;
+  height: 22px;
   padding-left: 5px;
+  -webkit-user-select: none;
 }
 
 .handle:hover {
@@ -290,6 +290,8 @@ svg {
   border-color: transparent;
   background-color: #FFFFFF;
   margin: auto;
+  -webkit-user-select: none;
+
   transition: 0.2s;
 }
 
@@ -350,7 +352,6 @@ svg {
 
 #filepath {
   width: -webkit-fit-available;
-  font-family: Rubik;
   font-weight: lighter;
   font-size: 24px;
   margin-top: auto;
@@ -367,7 +368,7 @@ svg {
   width: -webkit-fill-available;
   height: 45px;
   background-color: white;
-  border-bottom: 0.3px solid #BEBEBE;
+  border-bottom: 1px solid #d2d2d2;
   margin-top: auto;
   margin-bottom: auto;
 }
@@ -381,11 +382,11 @@ svg {
 }
 
 #logo:hover {
-  filter: brightness(40%);
+  filter: brightness(40%) saturate(120%);
   cursor: pointer;
 }
 #logo:active {
-  filter: brightness(60%);
+  filter: brightness(60%) saturate(160%);
   cursor: pointer;
 }
 
@@ -398,7 +399,6 @@ svg {
 
 #myNotebooks {
   font-size: 25px;
-  font-family: Rubik;
   font-weight: 600;
   margin-top: 14px;
   width: 0px;
@@ -459,7 +459,7 @@ svg {
   display: flex;
   width: 40px;
   height: 40px;
-  border-radius: 30px;
+  border-radius: 100%;
   filter: brightness(87%) saturate(200%);
   transition: 0.2s;
   align-content: center;
@@ -493,11 +493,11 @@ svg {
 }
 
 #sidebarContainer {
-  border-left: 1px solid var(--theme);
+  border-left: 0.3px solid var(--theme);
   background-color: white;
   min-width: 0px;
   min-height: 100%;
-  transition: min-width 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: min-width 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 

@@ -1,7 +1,6 @@
 // loadGrid()
 
-var notebooks; 
-var currentfile;
+var notebooks, currentfile, currentBlock;
 
 window.api.getNotebooks()
 window.api.receive("gotNotebooks", (data) => {
@@ -553,7 +552,8 @@ function focus(e){
     if (focused.closest(".actionsArea")) {
       document.querySelector(".pageContainer").style.border = "1px solid #DDD"
       focused = e.target.closest(".actionsArea")
-      focused.style.border = "1px solid #BBB"
+      currentBlock = focused.closest(".grid-stack-item").gridstackNode
+      currentBlock.el.querySelector(".actionsArea").style.border = "1px solid #BBB"
       for (var area of document.getElementsByClassName("actionsArea")){
         if (area != focused)
         area.style.border = "0px solid transparent"
