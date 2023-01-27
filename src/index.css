@@ -1,96 +1,73 @@
-:root{
+:root {
   --theme: hsl(203, 65%, 89%);
 }
 
-.folder{
-  width: 0px;
-  height: fit-content;
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  transition: 0.3s;
-}
-.folderContent{
-  height: fit-content;
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  transition: 0.3s;
+[contenteditable]:focus {
+  outline: 0px solid transparent;
 }
 
-.notebookIcon{
-  height: 20px;
-  margin-top: auto;
-  margin-bottom: auto;
-  padding-left: 8px;
-  transition: 0.1s;
-}
-
-.notebookIcon:hover{
-  filter: brightness(155%);
-  cursor: pointer;
-}
-.notebookIcon:active{
-  filter: brightness(200%);
-  cursor: pointer;
-}
-
-.listedFile{
-  width: 0px;
-  height: 35px;
-  background-color: #efefef;
-  border-radius: 10px;
-  overflow-x: hidden;
+html {
   overflow-y: hidden;
-  cursor: pointer;
-  transition: 0.3s;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-end;
 }
-.listedFile:hover{
-  filter: brightness(90%);
-}
-.listedFile:active{
-  filter: brightness(85%);
-}
-
-.fileName{
-  padding-right: 10px;
-  font-family: Rubik;
-  font-size: 16px;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.folderTitle{
-  -webkit-user-select: none;
-  direction: rtl;
-  font-family: Rubik;
-  font-size: 0px;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  justify-content: flex-start;
-}
-
-
 html, body, .app {
   width: 100%;
   height: 100%;
   margin: 0;
-  }
-
-html{
-  overflow-y: hidden;
 }
+
+math-field {
+  font-size: 30px;
+}
+
+svg {
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+.GeoGebraFrame {
+  border-color: transparent !important;
+}
+
+.GeoGebraFrame, .gwt-Label {
+
+  border-radius: 7px;
+  font-family: Rubik !important;
+}
+
+.actionsArea {
+  max-height: 100%;
+  width: 100%;
+  max-width: 100%;
+  background: rgb(246, 246, 246);
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 15px;
+  border: 1px solid transparent;
+  transition: 0.2s;
+}
+
+.actionsArea:has(.ggBox) {
+  padding: 3px;
+}
+
+.actionsArea:has(h1:only-child) {
+  background: rgb(255, 255, 255);
+}
+
+.actionsArea:hover {
+  border: 1px solid #c5c5c5;
+}
+
 .appContainer {
   display: flex;
   flex-direction: row-reverse;
   min-height: 100%;
   min-width: 100%;
-  }
+}
+.applet_scaler, .ggbTransform, .ggBox, .applet_dimensions {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -98,45 +75,213 @@ html{
   min-width: 100%;
   overflow-x: auto;
 
-  }
+}
 
-#filepath{
-  width: -webkit-fit-available;
+.fileName {
+  padding-right: 10px;
   font-family: Rubik;
-  font-weight: lighter;
-  font-size: 24px;
-  margin-top: auto;
-  margin-bottom: auto;
-  margin-right: 15px;
+  font-size: 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  -webkit-user-select: none;
+}
+
+.folder {
+  width: 0px;
+  height: fit-content;
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  transition: 0.3s;
+}
+.folderContent {
+  height: 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: 0.3s;
+  overflow-y: hidden;
+}
+
+.folderTitleText{
   direction: rtl;
+  font-family: Rubik;
+  font-size: 0px;
+  transition: font-weight 0.1s;
+  font-weight: 400;
+}
+.folderTitle:hover>.folderTitleText, .folderTitleText#open {
+  font-weight: 550;
+}
+.folderTitle:hover>.notebookIcon{
+  filter: brightness(150%);
+}
+.folderTitle:active>.folderTitleText{
+  font-weight: 400;
+}
+.folderTitle:active>.notebookIcon{
+  filter: brightness(100%);
+}
+.folderTitle:hover, .folderTitle:active{
+  cursor: pointer;
 }
 
-#fileName{
-  font-weight: bold;
-}
-
-#header{
-  -webkit-app-region: drag;
+.folderTitle {
+  -webkit-user-select: none;
   display: flex;
   flex-direction: row-reverse;
-  justify-content: space-between;
-  width: -webkit-fill-available;
-  height: 45px;
-  background-color: white;
-  border-bottom: 0.3px solid #BEBEBE;
+  align-items: flex-start;
+  justify-content: flex-start;
+  transition: 0.1s;
+  padding-bottom: 10px;
+}
+
+
+
+.ggbContainer {
+  height: 100%;
+  min-width: 100%;
+}
+
+.grid-stack .grid-stack-placeholder>.placeholder-content {
+  background-color: var(--theme);
+  filter: opacity(20%);
+  border-radius: 8px;
+  margin: 0;
+  position: absolute;
+  width: calc(100% - 45px);
+  z-index: 0 !important;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.grid-stack-item {
+  background: transparent;
+  overflow-y: hidden !important;
+}
+
+.grid-stack-item-content {
+  display: flex;
+  flex-direction: row-reverse;
+  overflow-y: hidden !important;
+  max-height: 100%;
+  height: auto;
+}
+
+.grid-stack-item-content:has(h1:only-child)>.handle {
+  margin: auto;
+}
+
+.handle {
+  height: 25px;
+  padding-left: 5px;
+}
+
+.handle:hover {
+  cursor: pointer;
+}
+
+.icon {
+  -webkit-user-drag: none;
+  filter: brightness(30%) saturate(400%);
+  fill: var(--theme);
+}
+
+
+
+.listedFile {
+  width: 0px;
+  height: 35px;
+  background-color:#FFFFFF;
+  border-radius: 10px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+}
+.listedFile:has(.fileName#closed) {
+  background-color:#FFFFFF;
+}
+
+.listedFile:has(.fileName#open){
+  filter: brightness(90%);
+}
+.listedFile:hover {
+  filter: brightness(94%);
+
+}
+
+.listedFile:active {
+  filter: brightness(80%);
+}
+.notebookIcon {
+  height: 20px;
   margin-top: auto;
   margin-bottom: auto;
+  padding-left: 8px;
+  transition: 0.1s;
 }
 
-#windowButtons{
-  margin-left: 60px;
+
+.pageContainer {
+  background-color: white;
+  width: 73%;
+  border-radius: 20px 20px 0px 0px;
+  height: 100%;
+  overflow-y: scroll !important;
+  border: 1px solid #DDD;
+  min-height: 0px !important;
+  padding-top: 10px;
+  transition: 0.2s;
+}
+
+.pageContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.ql-editor:has(h1:only-child) {
+  overflow-y: hidden !important;
+}
+
+.ql-formula {
+  direction: ltr;
+}
+
+.tool {
   display: flex;
-  flex-direction: row;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 15px;
+  border-color: transparent;
+  background-color: var(--theme);
+  transition: ease 0.2s;
+  transform: scale(1)
 }
 
-.windowButton{
+.tool:active {
+  transform: scale(0.940);
+  cursor: pointer;
+}
+
+.tool:hover {
+  transition: ease 0.2s;
+  filter: brightness(94%) saturate(200%);
+  cursor: pointer;
+}
+.ui-draggable-dragging>.grid-stack-item-content, .ui-resizable-resizing>.grid-stack-item-content {
+  box-shadow: 0 0 0px transparent;
+  opacity: 0.9;
+}
+.ui-resizeable-resizing>.grid-stack-item-content {
+  box-shadow: 0 0 0px transparent;
+  opacity: 0.9;
+}
+.windowButton {
   -webkit-app-region: no-drag;
   display: block;
   width: 33px;
@@ -148,28 +293,44 @@ html{
   transition: 0.2s;
 }
 
-.windowButton:hover{
-  cursor: pointer;
-}
-
-.windowButton#close:hover{
-  background-color: rgb(255, 104, 134);
-}
-.windowButton#close:active{
-  background-color: rgb(255, 66, 104);
-}
-.windowButton#close:active .icon{
+.windowButton#close:active .icon {
   filter: brightness(500%) !important;
 }
 
-.windowButton#maximize:hover, .windowButton#minimize:hover{
-  filter: brightness(90%);
+.windowButton#close:active {
+  background-color: rgb(255, 66, 104);
 }
-.windowButton#maximize:active, .windowButton#minimize:active{
+.windowButton#close:hover {
+  background-color: rgb(255, 104, 134);
+}
+.windowButton#maximize:active, .windowButton#minimize:active {
   filter: brightness(80%);
 }
 
-#content{
+.windowButton#maximize:hover, .windowButton#minimize:hover {
+  filter: brightness(90%);
+}
+.windowButton:hover {
+  cursor: pointer;
+}
+
+.windowButton>.icon {
+  width: 70%;
+  padding-top: 3px;
+}
+
+#con {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  flex: 1;
+  overflow-y: hidden;
+
+}
+
+#content {
   background-color: rgb(255, 255, 255);
   flex: 1;
   overflow-y: hidden;
@@ -183,158 +344,116 @@ html{
   height: -webkit-fill-available;
 }
 
-#con{
-  height: 100%;
-  width: 100%;
+#fileName {
+  font-weight: bold;
+}
+
+#filepath {
+  width: -webkit-fit-available;
+  font-family: Rubik;
+  font-weight: lighter;
+  font-size: 24px;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: 15px;
+  direction: rtl;
+}
+
+#header {
+  -webkit-app-region: drag;
   display: flex;
   flex-direction: row-reverse;
-  align-items: flex-start;
-  flex: 1;
-  overflow-y: hidden;
-
-}
-
-#toolbar{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-left: 20px;
-}
-.tool{
-  display: block;
-  width: 50px;
-  height: 50px;
-  border-radius: 15px;
-  border-color: transparent;
-  background-color: var(--theme);
-  transition: ease 0.2s;
-}
-
-.tool:hover{
-  filter: brightness(94%) saturate(200%);
-  cursor: pointer;
-}
-.tool:active{
+  justify-content: space-between;
+  width: -webkit-fill-available;
   height: 45px;
-  width: 45px;
-  cursor: pointer;
-}
-
-.pageContainer{
   background-color: white;
-  width: 73%;
-  border-radius: 20px 20px 0px 0px;
-  height: 100%;
-  overflow-y: scroll !important;
-  border: 1px solid #DDD;
-  min-height: 0px !important;
-  padding-top: 10px;
-  transition: 0.2s;
+  border-bottom: 0.3px solid #BEBEBE;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
-.pageContainer::-webkit-scrollbar{
-  display: none;
-}
-
-#page{
-  min-height: 0px !important;
-}
-
-.grid-stack-item {
-  background: transparent;
-  overflow-y: hidden !important; 
-}
-
-.icon{
-  -webkit-user-drag: none;
-  width: 70%;
-  filter: brightness(35%);
+#logo {
+  margin-top: 10.5px;
+  margin-bottom: 10.5px;
+  transition: 0.1s;
+  filter: brightness(25%);
   fill: var(--theme);
 }
 
-
-.handle{
-  height: 25px;
-  padding-left: 5px;
+#logo:hover {
+  filter: brightness(40%);
+  cursor: pointer;
 }
-
-.handle:hover{
+#logo:active {
+  filter: brightness(60%);
   cursor: pointer;
 }
 
-.grid-stack-item-content {
-  display: flex;
-  flex-direction: row-reverse;
-  overflow-y: hidden !important; 
-  max-height: 100%;
-  height: auto;
-}
-
-[contenteditable]:focus {
-  outline: 0px solid transparent;
-}
-
-.ggbContainer{
-  height: 100%;
-  min-width: 100%;
-}
-
-.GeoGebraFrame{
-  border-color: transparent !important;
-}
-
-.actionsArea{
-  max-height: 100%;
-  width: 100%;
-  max-width: 100%;
-  background: rgb(246, 246, 246);
-  border-radius: 8px;
-  overflow: hidden;
-  padding: 15px;
-  border: 1px solid transparent;
-  transition: 0.2s;
-}
-
-.actionsArea:hover{
-  border: 1px solid #c5c5c5;
-}
-
-.ql-editor:has(h1:only-child){
-  overflow-y: hidden !important;
-}
-
-.actionsArea:has(h1:only-child){
-  background: rgb(255, 255, 255);
-}
-
-.actionsArea:has(.ggBox){
-  padding: 3px;
-}
-
-.grid-stack-item-content:has(h1:only-child)>.handle {
-  margin: auto;
-}
-
-.ql-formula{
-  direction: ltr;
-}
-
-#sidebar{
-  background-color: var(--theme);
-  min-width: 55px;
+#menuItems {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  transition: 0.3s;
-
 }
 
-svg{
+#myNotebooks {
+  font-size: 25px;
+  font-family: Rubik;
+  font-weight: 600;
+  margin-top: 14px;
+  width: 0px;
+  direction: rtl;
+  height: fit-content;
   -webkit-user-select: none;
-  -webkit-user-drag: none;
+  color: var(--theme);
+  filter: brightness(0.5) saturate(200%);
+  transition: 0.3s;
+  padding-bottom: 10px;
+  white-space: nowrap;
 }
-#sidebar .tool{
+
+#page {
+  min-height: 0px !important;
+}
+
+#settings {
+  margin-bottom: 10px;
+}
+#settings>svg{
+  transition: 0.4s;
+}
+#settings:hover>svg{
+  transform: rotate(60deg);
+}
+#settings:active>svg{
+  transform: rotate(300deg);
+}
+#search>svg{
+  transition: 0.4s;
+}
+#search:hover>svg{
+  transform: rotate(10deg);
+}
+#search:active>svg{
+  transform: rotate(-5deg);
+}
+#notebooks>svg{
+  transition: 0.4s;
+  perspective: 100px;
+
+}
+#notebooks:hover>svg{
+  transform: rotateX(-20deg);
+  perspective: 100px;
+
+}
+#notebooks:active>svg{
+  perspective: 100px;
+
+  transform: rotateX(20deg);
+}
+
+#sidebar .tool {
   -webkit-user-select: none;
   -webkit-user-drag: none;
   display: flex;
@@ -348,14 +467,32 @@ svg{
   align-items: center;
 }
 
-#sidebar .tool:hover{
-  filter: brightness(81%) saturate(240%);
-}
-#sidebar .tool:active{
+#sidebar .tool:active {
   filter: brightness(70%) saturate(240%);
 }
 
-#sidebarContainer{
+#sidebar .tool:hover {
+  filter: brightness(81%) saturate(240%);
+}
+#sidebar {
+  background-color: var(--theme);
+  min-width: 55px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: 0.3s;
+
+}
+
+#sidebarButtons {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+#sidebarContainer {
   border-left: 1px solid var(--theme);
   background-color: white;
   min-width: 0px;
@@ -363,103 +500,28 @@ svg{
   transition: min-width 0.6s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-#sidebarContent{
+
+#sidebarContent {
   display: flex;
   flex-direction: column;
   align-items: center;
 
 }
 
-#myNotebooks{
-  font-size: 25px;
-  font-family: Rubik;
-  font-weight: 600;
-  margin-top: 14px;
-  width: 0px;
-  direction: rtl;
-  height: fit-content;
-  -webkit-user-select: none;
-  color: var(--theme);
-  filter: brightness(0.5);
-  transition: 0.3s;
-  white-space: nowrap;
-}
-
-#sidebarButtons{
+#toolbar {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-}
-
-#settings{
-  margin-bottom: 10px;
-}
-
-#settings .icon{
-  width: 100% !important;
-}
-
-#logo{
-  margin-top: 10.5px;
-  margin-bottom: 10.5px;
-  transition: 0.1s;
-  filter: brightness(25%);
-  fill: var(--theme);
-}
-
-#logo:hover{
-  filter: brightness(40%);
-  cursor: pointer;
-}
-#logo:active{
-  filter: brightness(60%);
-  cursor: pointer;
-}
-
-math-field{
-  font-size: 30px;
-}
-
-#menuItems{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   gap: 10px;
+  margin-left: 20px;
 }
-
-.windowButton>.icon{
-  padding-top: 3px;
-}
-
-.ui-draggable-dragging>.grid-stack-item-content,.ui-resizable-resizing>.grid-stack-item-content {
-  box-shadow: 0 0 0px transparent;
-  opacity: 0.9;
-}
-.ui-resizeable-resizing>.grid-stack-item-content{
-  box-shadow: 0 0 0px transparent;
-  opacity: 0.9;
-}
-.grid-stack .grid-stack-placeholder>.placeholder-content {
-  background-color: var(--theme);
-  filter: opacity(20%);
-  border-radius: 8px;
-  margin: 0;
-  position: absolute;
-  width: calc(100% - 45px);
-  z-index: 0!important;
-  text-align: center;
-  transition: 0.3s;
-
-}
-
-.applet_scaler, .ggbTransform, .ggBox, .applet_dimensions{
+#toolbar>.tool>.icon {
   width: 100% !important;
-  height: 100% !important;
 }
 
-.GeoGebraFrame, .gwt-Label {
-
-  border-radius: 7px;
-  font-family: Rubik !important;
+#windowButtons {
+  margin-left: 60px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
 }

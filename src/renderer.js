@@ -16,20 +16,38 @@ function createFolderList() {
   contentList = []
   contentList.push('<div id="myNotebooks">המחברות שלי</div>')
   for (var n = 0; n < notebooks.length; n++){
-    let html = []
-    for (var file of notebooks[n].files){
-      if (html.includes(file) == false){
-        html.push(`<div class="listedFile" data-filename="${file.replace(".json", "")}" data-foldername="${notebooks[n].folder}" data-path="${notebooks[n].folder}/${file}"><div class="fileName">${file.replace(".json", "")}</div></div>`)
-      }
-    }
-    
-    let folder = `<div id="folder_${n}" class="folder"><div class="folderTitle"><img src="icons/book.svg" alt="notebook" class="notebookIcon">${notebooks[n].folder.replace("./files/", "")}</div><div class="folderContent">${html.join("")}</div></div>`
+    let folder = `<div id="folder_${notebooks[n].folder}" class="folder"><div class="folderTitle"><img src="icons/book.svg" alt="notebook" class="notebookIcon"><span class="folderTitleText">${notebooks[n].folder.replace("./files/", "")}</span></div><div class="folderContent"></div></div>`
     if (contentList.includes(folder) == false){
       contentList.push(folder)
     }
   }
   sidebarContent.innerHTML = contentList.join("")
 }
+
+function collapsableFolder(notebook){
+
+  switch (notebook.isOpen) {
+    case false:
+      document.getElementById(`folder_${notebook.folder}`).querySelector(".notebookIcon").src = "icons/openbook.svg"
+      document.getElementById(`folder_${notebook.folder}`).querySelector(".folderTitleText").id = "open"
+      document.getElementById(`folder_${notebook.folder}`).querySelector(".folderContent").style.height = "fit-content"
+      for (var file of notebook.files){
+        document.getElementById(`folder_${notebook.folder}`).querySelector(".folderContent").innerHTML += `<div class="listedFile" data-filename="${file.replace(".json", "")}" data-foldername="${notebook.folder}" data-path="${notebook.folder}/${file}"><div class="fileName">${file.replace(".json", "")}</div></div>`
+        for (var item of document.getElementById(`folder_${notebook.folder}`).getElementsByClassName("listedFile")) {item.style.width = "250px"}
+      }
+      notebook.isOpen = true
+      break;   
+    case true:
+      document.getElementById(`folder_${notebook.folder}`).querySelector(".folderContent").style.height = "0px"
+
+      document.getElementById(`folder_${notebook.folder}`).querySelector(".folderTitleText").id = "closed"
+      document.getElementById(`folder_${notebook.folder}`).querySelector(".notebookIcon").src = "icons/book.svg"
+      document.getElementById(`folder_${notebook.folder}`).querySelector(".folderContent").innerHTML = ""
+      notebook.isOpen = false
+      break;
+  }
+}
+
 
 const getRandomColor = () => {
   const h = Math.floor(Math.random() * 360),
@@ -464,14 +482,14 @@ function toggleSidebar() {
     setTimeout(() => {
       document.getElementById("myNotebooks").style.width = "250px"
       for (var folder of document.getElementsByClassName("folder")) {folder.style.width = "250px"}
-      for (var folderName of document.getElementsByClassName("folderTitle")) {folderName.style.fontSize = "18px"}
+      for (var folderName of document.getElementsByClassName("folderTitleText")) {folderName.style.fontSize = "18px"}
       for (var item of document.getElementsByClassName("listedFile")) {item.style.width = "250px"}
     }, 30)
   } else {
     sidebarStatus = 0
     document.getElementById("myNotebooks").style.width = "0px"
     for (var folder of document.getElementsByClassName("folder")) {folder.style.width = "0px"}
-    for (var folderName of document.getElementsByClassName("folderTitle")) {folderName.style.fontSize = "0px"}
+    for (var folderName of document.getElementsByClassName("folderTitleText")) {folderName.style.fontSize = "0px"}
     for (var item of document.getElementsByClassName("listedFile")) {item.style.width = "0px"}
     sidebar.style.minWidth = "0px"
     sidebarContent.innerHTML = ""
@@ -507,9 +525,22 @@ document.addEventListener("dblclick", function (e) {
     removeWidget(target.closest(".grid-stack-item"))
   }
 });
+
+document.addEventListener("click", function (e) {
+  const target = e.target.closest(".folderTitle");
+  if (target) {
+    collapsableFolder(notebooks.find(folder => folder.folder == `./files/${target.innerText}`))
+  }
+});
+
 document.addEventListener("click", function (e) {
   const target = e.target.closest(".listedFile");
   if (target) {
+    target.firstChild.id = "open"
+    for (var file of document.getElementsByClassName("listedFile")){
+      if (file != target)
+      file.firstChild.id = "closed"
+    }
     let path = target.getAttribute("data-path")
     let fileName = target.getAttribute("data-filename")
     let folderName = target.getAttribute("data-foldername").replace("./files/", "")

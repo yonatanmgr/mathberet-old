@@ -122,7 +122,7 @@ async function createWindow() {
     .map(dirent => `./files/${dirent.name}`)
     
     for (var folder of folders("./files")){
-      expanded.push({folder: folder, files: fs.readdirSync(folder)})
+      expanded.push({folder: folder, files: fs.readdirSync(folder), isOpen: false})
       }
 
     win.webContents.send("gotNotebooks", expanded);
