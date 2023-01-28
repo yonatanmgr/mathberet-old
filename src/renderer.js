@@ -55,6 +55,12 @@ const getRandomColor = () => {
   document.querySelector(":root").style.setProperty("--theme", `hsl(${h},${s},${l})`);
 };
 
+function saveAnimation() {
+  var x = document.getElementById("snackbar");
+  x.className = "show";
+  setTimeout(function(){ x.className = x.className.replace("show", ""); }, 1200);
+}
+
 window.addEventListener("resize", resizeAll);
 document.getElementById("logo").addEventListener("dblclick", getRandomColor);
 document.getElementById("minimize").addEventListener("click", window.api.minimize);
@@ -64,9 +70,349 @@ document.getElementById("notebooks").addEventListener("click", toggleSidebar);
 document.getElementById("addQuill").addEventListener("click", addQuill);
 document.getElementById("addGgb").addEventListener("click", addGgb);
 document.getElementById("addMF").addEventListener("click", addMF);
-// document.getElementById("save").addEventListener("click", saveGrid);
 
 let drag = "icons/drag-indicator-svgrepo-com.svg"
+
+
+let maximizeStatus = 0
+let sidebarStatus = 0
+
+function toggleMaximize() {
+  if (maximizeStatus == 0) {
+    window.api.maximize();
+    maximizeStatus = 1
+  } else {
+    window.api.unmaximize();
+    maximizeStatus = 0
+  }
+}
+
+function toggleSidebar() {
+  if (sidebarStatus == 0) {
+    sidebarStatus = 1
+    createFolderList()
+    sidebar.style.minWidth = "280px"
+    sidebar.style.borderLeft = "1px solid #BEBEBE;"
+    setTimeout(() => {
+      document.getElementById("myNotebooks").style.width = "250px"
+      for (var folder of document.getElementsByClassName("folder")) {folder.style.width = "250px"}
+      for (var folderName of document.getElementsByClassName("folderTitleText")) {folderName.style.fontSize = "18px"}
+      for (var item of document.getElementsByClassName("listedFile")) {item.style.width = "250px"}
+    }, 30)
+  } else {
+    sidebarStatus = 0
+    document.getElementById("myNotebooks").style.width = "0px"
+    for (var folder of document.getElementsByClassName("folder")) {folder.style.width = "0px"}
+    for (var folderName of document.getElementsByClassName("folderTitleText")) {folderName.style.fontSize = "0px"}
+    for (var item of document.getElementsByClassName("listedFile")) {item.style.width = "0px"}
+    sidebar.style.minWidth = "0px"
+    sidebarContent.innerHTML = ""
+  }
+  setTimeout(() => {resizeAll()}, 600)
+}
+
+function expand(expression) {
+  return ce.box(["Expand", ce.parse(expression)]).evaluate().latex
+}
+
+var grid = GridStack.init({
+  float: false,
+  handle: '.handle',
+  resizable: {
+    handles: 's,sw,w'
+  },
+  margin: 7,
+  cellHeight: 50
+});
+
+function removeWidget(el) {
+  if (el.type == "Graph") {
+    el.blockContent.getAppletObject().remove();
+  }
+  el.remove();
+  grid.removeWidget(el);
+}
+
+document.addEventListener("dblclick", function (e) {
+  const target = e.target.closest(".handle");
+  if (target) {
+    removeWidget(target.closest(".grid-stack-item"))
+  }
+});
+
+document.addEventListener("click", function (e) {
+  const target = e.target.closest(".folderTitle");
+  if (target) {
+    collapsableFolder(notebooks.find(folder => folder.folder == `./files/${target.innerText}`))
+  }
+});
+
+document.addEventListener("click", function (e) {
+  const target = e.target.closest(".listedFile");
+  if (target) {
+    target.firstChild.id = "open"
+    for (var file of document.getElementsByClassName("listedFile")){
+      if (file != target)
+      file.firstChild.id = "closed"
+    }
+    let path = target.getAttribute("data-path")
+    let fileName = target.getAttribute("data-filename")
+    let folderName = target.getAttribute("data-foldername").replace("./files/", "")
+    loadGrid(path, fileName, folderName)
+  }
+});
+
+function focus(e){
+  let focused = e.target
+    if (focused.closest(".actionsArea")) {
+      document.querySelector(".pageContainer").style.border = "1px solid #DDD"
+      focused = e.target.closest(".actionsArea")
+      currentBlock = focused.closest(".grid-stack-item").gridstackNode
+      currentBlock.el.querySelector(".actionsArea").style.border = "1px solid #BBB"
+      for (var area of document.getElementsByClassName("actionsArea")){
+        if (area != focused)
+        area.style.border = "0px solid transparent"
+      }
+    }
+    else if (focused.closest(".pageContainer")){
+      focused = e.target.closest(".pageContainer")
+      for (var area of document.getElementsByClassName("actionsArea")){area.style.border = "0px solid transparent"}
+      focused.style.border = "1px solid #BBB"
+    }
+    else {
+      for (var area of document.getElementsByClassName("actionsArea")){area.style.border = "0px solid transparent"}
+      document.querySelector(".pageContainer").style.border = "1px solid #DDD"
+    }
+  }
+
+
+document.addEventListener("click", e => focus(e))
+
+grid.on('resizestop', function (el) {
+  let resized = el.target.gridstackNode;
+  if (resized.type == "Graph") {
+    let a = resized.blockContent;
+    a.getAppletObject()
+      .setSize(
+        document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+        document.getElementById(`ggBox_${resized.id}`).offsetHeight
+      );
+  }
+})
+
+function resizeAll() {
+  let items = grid.getGridItems()
+  for (var item of items) {
+    if (item.gridstackNode.type == "Graph") {
+      item.gridstackNode.blockContent.getAppletObject().setSize(
+        document.getElementById(`ggBox_${item.gridstackNode.id}`).offsetWidth,
+        document.getElementById(`ggBox_${item.gridstackNode.id}`).offsetHeight
+      )
+    }
+  }
+}
+
+function blockData(html, id, type, h, blockContent = {}, x = 12, y = 1000, w = 6, minW = 2, minH = 2) {
+  return {
+    id: id,
+    content: html,
+    x: x,
+    y: y,
+    h: h,
+    w: w,
+    minW: minW,
+    minH: minH,
+    type: type,
+    blockContent: blockContent
+  }
+}
+
+function createQuill(id) {
+  let bindings = {
+    ltr: {
+      key: 219,
+      ctrlKey: true,
+      handler: function (range) {
+        this.quill.formatLine(range, 'direction', '');
+        this.quill.formatLine(range, 'align', '')
+      }
+    },
+    rtl: {
+      key: 221,
+      ctrlKey: true,
+      handler: function (range) {
+        this.quill.formatLine(range, 'direction', 'rtl');
+        this.quill.formatLine(range, 'align', 'right')
+      }
+    }
+  }
+
+  var quill = new Quill(`#textEdit_${id}`, {
+    modules: {
+      keyboard: {
+        bindings: bindings
+      },
+      toolbar: [
+        ["formula"]
+      ]
+    },
+    theme: 'bubble'
+  });
+  quill.format('direction', 'rtl');
+  quill.format('align', 'right');
+  new QuillMarkdown(quill)
+  return quill
+}
+
+function addQuill() {
+  let id = Date.now();
+  let html = `<img src=${drag} class="handle"></img><div class="actionsArea"><div id="textEdit_${id}" class="textBlock"></div></div>`
+  let block = blockData(html, id, "Text", 2)
+  grid.addWidget(block);
+  createQuill(id).focus()
+};
+
+function createGgb(id, base64) {
+  let options = {
+    "appName": "suite",
+    "showToolBar": true,
+    "height": document.getElementById(`ggBox_${id}`).offsetHeight,
+    "width": document.getElementById(`ggBox_${id}`).offsetWidth,
+    "showToolBarHelp": false,
+    "showAlgebraInput": true,
+    "useBrowserForJS": true,
+    "showMenuBar": true,
+    "buttonShadows": false,
+    "id": id,
+    "ggbBase64": base64
+  };
+
+  var applet = new GGBApplet(options, true);
+  applet.setHTML5Codebase('Geogebra/HTML5/5.0/web3d/');
+  applet.inject(`ggBox_${id}`);
+  return applet
+}
+
+function addGgb() {
+  let id = Date.now();
+  var html = `<img src=${drag} class="handle"></img><div class="actionsArea"><div id="ggBox_${id}" class="ggBox"></div></div>`
+  let block = blockData(html, id, "Graph", 10) 
+  grid.addWidget(block);
+  let box = document.getElementById(`ggBox_${id.toString()}`)
+  box.closest(".grid-stack-item").gridstackNode.blockContent = createGgb(id, "")
+};
+
+function createMF(id) {
+  let mf = new MathfieldElement();
+  mf.setOptions({
+    inlineShortcuts: defShortcuts,
+    plonkSound: null,
+    id: id,
+    onExport: (mf, latex) => `${latex}`
+  })
+  document.getElementById(`mf_${id}`).appendChild(mf)
+  return mf
+}
+
+function addMF() {
+  let id = Date.now();
+  let html = `<img src=${drag} class="handle"></img><div class="actionsArea"><div id="mf_${id}" class="mathBlock"></div></div>`
+  let block = blockData(html, id, "Math", 2)
+  grid.addWidget(block)
+  createMF(id).focus()
+};
+
+function saveApplet(applet) {
+  if (applet) {
+    return applet.getAppletObject().getBase64()
+  }
+}
+
+function saveBlockContent(block) {
+  switch (block.type) {
+    case "Text":
+      block.blockContent = document.getElementById(`textEdit_${block.id}`).__quill.getContents()
+      break;
+    case "Math":
+      block.blockContent = document.getElementById(`mf_${block.id}`).firstChild.value
+      break;
+    case "Graph":
+      block.blockContent = block.blockContent.getAppletObject().getBase64()
+      break;
+    default:
+      break;
+  }
+}
+
+function loadBlockContent(block) {
+  switch (block.type) {
+    case "Text":
+      block.content = `<img src=${drag} class="handle"></img><div class="actionsArea"><div id="textEdit_${block.id}" class="textBlock"></div></div>`
+      break;
+    case "Math":
+      block.content = `<img src=${drag} class="handle"></img><div class="actionsArea"><div id="mf_${block.id}" class="mathBlock"></div></div>`
+      break;
+    case "Graph":
+      block.content = `<img src=${drag} class="handle"></img><div class="actionsArea"><div id="ggBox_${block.id}" class="ggBox"></div></div>`
+      break;
+    default:
+      break;
+  }
+}
+
+function loadBlock(block) {
+  switch (block.type) {
+    case "Text":
+      block.blockContent = createQuill(block.id).setContents(block.blockContent)
+      break;
+    case "Math":
+      block.blockContent = createMF(block.id).setValue(block.blockContent)
+      break;
+    case "Graph":
+      let box = document.getElementById(`ggBox_${block.id}`)
+      box.closest(".grid-stack-item").gridstackNode.blockContent = createGgb(block.id, block.blockContent)
+      break;
+    default:
+      break;
+  }
+}
+
+function saveGrid() {
+  let items = grid.save();
+  for (var item of items) {
+    saveBlockContent(item);
+    item.content = ""
+  }
+  window.api.save(JSON.stringify(items), currentfile);
+  saveAnimation()
+}
+
+function loadGrid(path, file, folder) {
+  window.api.load(path);
+  document.getElementById("slash").innerText = " / "
+  document.getElementById("fileName").innerText = file
+  document.getElementById("notebookName").innerText = folder
+  currentfile = path
+  window.api.receive("fromMain", (data) => {
+    let items = JSON.parse(data.toString());
+    grid.removeAll();
+    items.map(loadBlockContent)
+    grid.load(items);
+    items.map(loadBlock)
+  });
+}
+
+window.api.receive("Text", () => addQuill())
+window.api.receive("Graph", () => addGgb())
+window.api.receive("Math", () => addMF())
+window.api.receive("toggleNotebooks", () => toggleSidebar())
+window.api.receive("Save", () => {
+  if (currentfile == null){
+    return
+  } else {saveGrid()}
+})
+window.api.receive("Search", () => {})
+
 let defShortcuts = {
   'sr': '^2',
   'cb': '^3',
@@ -458,341 +804,3 @@ let defShortcuts = {
       '>->>':                  '\\twoheadrightarrowtail'
   */
 };
-
-let maximizeStatus = 0
-let sidebarStatus = 0
-
-function toggleMaximize() {
-  if (maximizeStatus == 0) {
-    window.api.maximize();
-    maximizeStatus = 1
-  } else {
-    window.api.unmaximize();
-    maximizeStatus = 0
-  }
-}
-
-function toggleSidebar() {
-  if (sidebarStatus == 0) {
-    sidebarStatus = 1
-    createFolderList()
-    sidebar.style.minWidth = "280px"
-    sidebar.style.borderLeft = "1px solid #BEBEBE;"
-    setTimeout(() => {
-      document.getElementById("myNotebooks").style.width = "250px"
-      for (var folder of document.getElementsByClassName("folder")) {folder.style.width = "250px"}
-      for (var folderName of document.getElementsByClassName("folderTitleText")) {folderName.style.fontSize = "18px"}
-      for (var item of document.getElementsByClassName("listedFile")) {item.style.width = "250px"}
-    }, 30)
-  } else {
-    sidebarStatus = 0
-    document.getElementById("myNotebooks").style.width = "0px"
-    for (var folder of document.getElementsByClassName("folder")) {folder.style.width = "0px"}
-    for (var folderName of document.getElementsByClassName("folderTitleText")) {folderName.style.fontSize = "0px"}
-    for (var item of document.getElementsByClassName("listedFile")) {item.style.width = "0px"}
-    sidebar.style.minWidth = "0px"
-    sidebarContent.innerHTML = ""
-  }
-  setTimeout(() => {resizeAll()}, 600)
-}
-
-function expand(expression) {
-  return ce.box(["Expand", ce.parse(expression)]).evaluate().latex
-}
-
-var grid = GridStack.init({
-  float: false,
-  handle: '.handle',
-  resizable: {
-    handles: 's,sw,w'
-  },
-  margin: 7,
-  cellHeight: 50
-});
-
-function removeWidget(el) {
-  if (el.type == "Graph") {
-    el.blockContent.getAppletObject().remove();
-  }
-  el.remove();
-  grid.removeWidget(el);
-}
-
-document.addEventListener("dblclick", function (e) {
-  const target = e.target.closest(".handle");
-  if (target) {
-    removeWidget(target.closest(".grid-stack-item"))
-  }
-});
-
-document.addEventListener("click", function (e) {
-  const target = e.target.closest(".folderTitle");
-  if (target) {
-    collapsableFolder(notebooks.find(folder => folder.folder == `./files/${target.innerText}`))
-  }
-});
-
-document.addEventListener("click", function (e) {
-  const target = e.target.closest(".listedFile");
-  if (target) {
-    target.firstChild.id = "open"
-    for (var file of document.getElementsByClassName("listedFile")){
-      if (file != target)
-      file.firstChild.id = "closed"
-    }
-    let path = target.getAttribute("data-path")
-    let fileName = target.getAttribute("data-filename")
-    let folderName = target.getAttribute("data-foldername").replace("./files/", "")
-    loadGrid(path, fileName, folderName)
-  }
-});
-
-function focus(e){
-  let focused = e.target
-    if (focused.closest(".actionsArea")) {
-      document.querySelector(".pageContainer").style.border = "1px solid #DDD"
-      focused = e.target.closest(".actionsArea")
-      currentBlock = focused.closest(".grid-stack-item").gridstackNode
-      currentBlock.el.querySelector(".actionsArea").style.border = "1px solid #BBB"
-      for (var area of document.getElementsByClassName("actionsArea")){
-        if (area != focused)
-        area.style.border = "0px solid transparent"
-      }
-    }
-    else if (focused.closest(".pageContainer")){
-      focused = e.target.closest(".pageContainer")
-      for (var area of document.getElementsByClassName("actionsArea")){area.style.border = "0px solid transparent"}
-      focused.style.border = "1px solid #BBB"
-    }
-    else {
-      for (var area of document.getElementsByClassName("actionsArea")){area.style.border = "0px solid transparent"}
-      document.querySelector(".pageContainer").style.border = "1px solid #DDD"
-    }
-  }
-
-
-document.addEventListener("click", e => focus(e))
-
-grid.on('resizestop', function (el) {
-  let resized = el.target.gridstackNode;
-  if (resized.type == "Graph") {
-    let a = resized.blockContent;
-    a.getAppletObject()
-      .setSize(
-        document.getElementById(`ggBox_${resized.id}`).offsetWidth,
-        document.getElementById(`ggBox_${resized.id}`).offsetHeight
-      );
-  }
-})
-
-function resizeAll() {
-  let items = grid.getGridItems()
-  for (var item of items) {
-    if (item.gridstackNode.type == "Graph") {
-      item.gridstackNode.blockContent.getAppletObject().setSize(
-        document.getElementById(`ggBox_${item.gridstackNode.id}`).offsetWidth,
-        document.getElementById(`ggBox_${item.gridstackNode.id}`).offsetHeight
-      )
-    }
-  }
-}
-
-function blockData(html, id, type, h, blockContent = {}, x = 12, y = 1000, w = 6, minW = 2, minH = 2) {
-  return {
-    id: id,
-    content: html,
-    x: x,
-    y: y,
-    h: h,
-    w: w,
-    minW: minW,
-    minH: minH,
-    type: type,
-    blockContent: blockContent
-  }
-}
-
-function createQuill(id) {
-  let bindings = {
-    ltr: {
-      key: 219,
-      ctrlKey: true,
-      handler: function (range) {
-        this.quill.formatLine(range, 'direction', '');
-        this.quill.formatLine(range, 'align', '')
-      }
-    },
-    rtl: {
-      key: 221,
-      ctrlKey: true,
-      handler: function (range) {
-        this.quill.formatLine(range, 'direction', 'rtl');
-        this.quill.formatLine(range, 'align', 'right')
-      }
-    }
-  }
-
-  var quill = new Quill(`#textEdit_${id}`, {
-    modules: {
-      keyboard: {
-        bindings: bindings
-      },
-      toolbar: [
-        ["formula"]
-      ]
-    },
-    theme: 'bubble'
-  });
-  quill.format('direction', 'rtl');
-  quill.format('align', 'right');
-  new QuillMarkdown(quill)
-  return quill
-}
-
-function addQuill() {
-  let id = Date.now();
-  let html = `<img src=${drag} class="handle"></img><div class="actionsArea"><div id="textEdit_${id}" class="textBlock"></div></div>`
-  let block = blockData(html, id, "Text", 2)
-  grid.addWidget(block);
-  createQuill(id).focus()
-};
-
-function createGgb(id, base64) {
-  let options = {
-    "appName": "suite",
-    "showToolBar": true,
-    "height": document.getElementById(`ggBox_${id}`).offsetHeight,
-    "width": document.getElementById(`ggBox_${id}`).offsetWidth,
-    "showToolBarHelp": false,
-    "showAlgebraInput": true,
-    "useBrowserForJS": true,
-    "showMenuBar": true,
-    "buttonShadows": false,
-    "id": id,
-    "ggbBase64": base64
-  };
-
-  var applet = new GGBApplet(options, true);
-  applet.setHTML5Codebase('Geogebra/HTML5/5.0/web3d/');
-  applet.inject(`ggBox_${id}`);
-  return applet
-}
-
-function addGgb() {
-  let id = Date.now();
-  var html = `<img src=${drag} class="handle"></img><div class="actionsArea"><div id="ggBox_${id}" class="ggBox"></div></div>`
-  let block = blockData(html, id, "Graph", 10) 
-  grid.addWidget(block);
-  let box = document.getElementById(`ggBox_${id.toString()}`)
-  box.closest(".grid-stack-item").gridstackNode.blockContent = createGgb(id, "")
-};
-
-function createMF(id) {
-  let mf = new MathfieldElement();
-  mf.setOptions({
-    inlineShortcuts: defShortcuts,
-    plonkSound: null,
-    id: id,
-    onExport: (mf, latex) => `${latex}`
-  })
-  document.getElementById(`mf_${id}`).appendChild(mf)
-  return mf
-}
-
-function addMF() {
-  let id = Date.now();
-  let html = `<img src=${drag} class="handle"></img><div class="actionsArea"><div id="mf_${id}" class="mathBlock"></div></div>`
-  let block = blockData(html, id, "Math", 2)
-  grid.addWidget(block)
-  createMF(id).focus()
-};
-
-function saveApplet(applet) {
-  if (applet) {
-    return applet.getAppletObject().getBase64()
-  }
-}
-
-function saveBlockContent(block) {
-  switch (block.type) {
-    case "Text":
-      block.blockContent = document.getElementById(`textEdit_${block.id}`).__quill.getContents()
-      break;
-    case "Math":
-      block.blockContent = document.getElementById(`mf_${block.id}`).firstChild.value
-      break;
-    case "Graph":
-      block.blockContent = block.blockContent.getAppletObject().getBase64()
-      break;
-    default:
-      break;
-  }
-}
-
-function loadBlockContent(block) {
-  switch (block.type) {
-    case "Text":
-      block.content = `<img src=${drag} class="handle"></img><div class="actionsArea"><div id="textEdit_${block.id}" class="textBlock"></div></div>`
-      break;
-    case "Math":
-      block.content = `<img src=${drag} class="handle"></img><div class="actionsArea"><div id="mf_${block.id}" class="mathBlock"></div></div>`
-      break;
-    case "Graph":
-      block.content = `<img src=${drag} class="handle"></img><div class="actionsArea"><div id="ggBox_${block.id}" class="ggBox"></div></div>`
-      break;
-    default:
-      break;
-  }
-}
-
-function loadBlock(block) {
-  switch (block.type) {
-    case "Text":
-      block.blockContent = createQuill(block.id).setContents(block.blockContent)
-      break;
-    case "Math":
-      block.blockContent = createMF(block.id).setValue(block.blockContent)
-      break;
-    case "Graph":
-      let box = document.getElementById(`ggBox_${block.id}`)
-      box.closest(".grid-stack-item").gridstackNode.blockContent = createGgb(block.id, block.blockContent)
-      break;
-    default:
-      break;
-  }
-}
-
-function saveGrid() {
-  let items = grid.save();
-  for (var item of items) {
-    saveBlockContent(item);
-    item.content = ""
-  }
-  window.api.save(JSON.stringify(items), currentfile);
-}
-
-function loadGrid(path, file, folder) {
-  window.api.load(path);
-  document.getElementById("slash").innerText = " / "
-  document.getElementById("fileName").innerText = file
-  document.getElementById("notebookName").innerText = folder
-  currentfile = path
-  window.api.receive("fromMain", (data) => {
-    let items = JSON.parse(data.toString());
-    grid.removeAll();
-    items.map(loadBlockContent)
-    grid.load(items);
-    items.map(loadBlock)
-  });
-}
-
-window.api.receive("Text", () => addQuill())
-window.api.receive("Graph", () => addGgb())
-window.api.receive("Math", () => addMF())
-window.api.receive("toggleNotebooks", () => toggleSidebar())
-window.api.receive("Save", () => {
-  if (currentfile == null){
-    return
-  } else {saveGrid()}
-})
-window.api.receive("Search", () => {})
