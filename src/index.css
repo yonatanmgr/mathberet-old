@@ -324,15 +324,6 @@ svg {
   fill: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
 }
 
-#fileTrashCan:hover {
-  background-color: hsl(0, var(--theme-s), var(--theme-l)) !important;
-}
-
-#fileTrashCan:hover>.icon {
-  fill: hsl(0, var(--theme-s), var(--theme-l)) !important;
-}
-
-
 .listedFile {
   width: 0px;
   height: 35px;
@@ -522,9 +513,12 @@ svg {
   -webkit-user-select: none;
   cursor: default;
   direction: rtl;
-  font-size: 26px;
+  font-size: 25px;
   font-weight: 100;
   color: #777;
+}
+.placeHolderText.space {
+  font-size: 10px;
 }
 
 #content {

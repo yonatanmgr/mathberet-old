@@ -80,6 +80,19 @@ function trashFile(event) {
   window.api.receive("gotNotebooks", (data) => {notebooks = data})
 }
 
+const trashCanTarget = document.getElementById("fileTrashCan");
+trashCanTarget.addEventListener("dragenter", (event) => {
+  if (trashCanTarget.classList.contains("trashZone")) {
+    trashCanTarget.classList.add("dragover");
+  }
+});
+
+trashCanTarget.addEventListener("dragleave", (event) => {
+  if (trashCanTarget.classList.contains("trashZone")) {
+    trashCanTarget.classList.remove("dragover");
+  }
+});
+
 function onDragOver(event) {
   event.preventDefault();
 }
@@ -147,6 +160,7 @@ document.getElementById('settings').addEventListener('click', window.api.toggle)
 document.getElementById("logo").addEventListener("click", getRandomColor);
 document.getElementById("minimize").addEventListener("click", window.api.minimize);
 document.getElementById("close").addEventListener("click", window.api.close);
+document.getElementById("newFile").addEventListener("click", newFile);
 document.getElementById("maximize").addEventListener("click", toggleMaximize);
 document.getElementById("notebooks").addEventListener("click", toggleSidebar);
 document.getElementById("addQuill").addEventListener("click", addQuill);
@@ -504,9 +518,7 @@ function loadGrid(path, file, folder) {
   });
 }
 
-window.api.receive("Text", () => document.getElementById("addQuill").click())
-window.api.receive("Graph", () => addGgb())
-window.api.receive("newFile", () => {
+function newFile() {
   window.api.newFile()
   document.getElementById("placeHolder").style.display = "none"
   document.getElementById("content").style.display = "flex"
@@ -517,7 +529,11 @@ window.api.receive("newFile", () => {
   window.api.receive("fromMain", (data) => {grid.load([])})
   window.api.getNotebooks()
   window.api.receive("gotNotebooks", (data) => {notebooks = data})
-;})
+}
+
+window.api.receive("Text", () => document.getElementById("addQuill").click())
+window.api.receive("Graph", () => addGgb())
+window.api.receive("newFile", () => newFile())
 window.api.receive("Math", () => addMF())
 window.api.receive("toggleNotebooks", () => toggleSidebar())
 window.api.receive("Save", () => {if (currentfile == null){return} else {
