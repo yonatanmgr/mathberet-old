@@ -182,6 +182,13 @@ document.addEventListener("click", function (e) {
   }
 });
 
+document.addEventListener("dblclick", function (e) {
+  const target = e.target.closest("#content");
+  if (target) {scrollToTop()}
+});
+
+function scrollToTop(){document.querySelector(".pageContainer").scrollTop = 0}
+
 document.addEventListener("click", e => focus(e))
 
 function focus(e){

@@ -81,12 +81,12 @@
   }
 }
 
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: light) {
   #content {
     background: #ddd;
     color: black;
   }
-}
+} */
 
 [contenteditable]:focus {
   outline: 0px solid transparent;
@@ -207,6 +207,14 @@ svg {
   gap: 8px;
   transition: 0.3s;
   overflow-y: hidden;
+}
+
+.folderContent>.listedFile{
+  width: 215px !important;
+}
+
+.folderContent>.listedFile>.fileIcon{
+  padding-right: 10px !important;
 }
 
 .folderTitleText {
@@ -355,6 +363,7 @@ svg {
   overflow-y: scroll !important;
   border: 1px solid #DDD;
   min-height: 100% !important;
+  scroll-behavior: smooth;
   padding-top: 10px;
   transition: ease 0.2s;
 }
