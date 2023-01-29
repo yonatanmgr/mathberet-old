@@ -1,6 +1,91 @@
 :root {
-  --theme: hsl(203, 65%, 89%);
+  --theme-h: 203;
+  --theme-s: 65%;
+  --theme-l: 89%;
   font-family: Rubik !important;
+}
+
+@media (prefers-color-scheme: dark) {
+
+  #content,
+  #header,
+  #sidebarContainer,
+  .pageContainer {
+    background: #111 !important;
+    color: white;
+    --theme-l: 30% !important;
+    --theme-s: 20% !important;
+    border-color: rgba(100, 100, 100, 0.2) !important;
+  }
+  
+  .actionsArea{
+    background: #222 !important;
+    color: white;
+    --theme-l: 30% !important;
+    --theme-s: 20% !important;
+  }
+  .actionsArea:has(h1:only-child) {
+    background: #111 !important;
+  }
+
+  #logo{
+    fill: hsl(var(--theme-h), 20%, 30%) !important; 
+  }
+
+  .handle{
+    fill: white;
+  }
+
+  #myNotebooks{
+    color: white !important;
+  }
+
+  .windowButton{
+    background: #111 !important;
+  }
+  .windowButton img{
+    filter: brightness(500%) !important;
+  }
+  .windowButton#close:active {
+    background-color: rgb(255, 48, 90) !important;
+  }
+  
+  .windowButton#close:hover {
+    background-color: rgb(255, 69, 106) !important;
+  }
+  #sidebar{
+    background-color: hsl(var(--theme-h), 20%, 30%) !important;
+  }  
+  #sidebar .tool{
+    background-color: hsl(var(--theme-h), 12%, 28%) !important;
+  }
+  #toolbar .tool:hover{
+    filter: brightness(130%) !important;
+  }
+  #sidebar .tool svg{
+    fill: hsl(var(--theme-h), 10%, 30%) !important; 
+  }
+
+  .folderTitle:hover>.notebookIcon,
+  .listedFile:hover>.fileIcon {
+    filter: brightness(150%);
+}
+
+  .listedFile {
+    background: #111 !important;
+    color: white !important;
+  }
+
+  .icon>svg {
+    filter: brightness(500%) !important
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  #content {
+    background: #ddd;
+    color: black;
+  }
 }
 
 [contenteditable]:focus {
@@ -10,7 +95,10 @@
 html {
   overflow-y: hidden;
 }
-html, body, .app {
+
+html,
+body,
+.app {
   width: 100%;
   height: 100%;
   margin: 0;
@@ -18,17 +106,20 @@ html, body, .app {
 
 math-field {
   font-size: 30px;
+  --hue: var(--theme-h)
 }
 
 svg {
   -webkit-user-select: none;
   -webkit-user-drag: none;
 }
+
 .GeoGebraFrame {
   border-color: transparent !important;
 }
 
-.GeoGebraFrame, .gwt-Label {
+.GeoGebraFrame,
+.gwt-Label {
 
   border-radius: 7px;
   font-family: Rubik !important;
@@ -64,7 +155,11 @@ svg {
   min-height: 100%;
   min-width: 100%;
 }
-.applet_scaler, .ggbTransform, .ggBox, .applet_dimensions {
+
+.applet_scaler,
+.ggbTransform,
+.ggBox,
+.applet_dimensions {
   width: 100% !important;
   height: 100% !important;
 }
@@ -75,15 +170,25 @@ svg {
   min-height: 100%;
   min-width: 100%;
   overflow-x: auto;
-
 }
 
 .fileName {
-  padding-right: 10px;
-  font-size: 16px;
+  font-size: 17px;
   overflow: hidden;
   white-space: nowrap;
   -webkit-user-select: none;
+}
+
+.folderContent .fileName {
+  font-size: 17px;
+  overflow: hidden;
+  white-space: nowrap;
+  -webkit-user-select: none;
+}
+
+.folderContent .fileIcon {
+  padding-right: 36px;
+  width: 15px;
 }
 
 .folder {
@@ -94,6 +199,7 @@ svg {
   flex-direction: column;
   transition: 0.3s;
 }
+
 .folderContent {
   height: 0px;
   display: flex;
@@ -103,25 +209,28 @@ svg {
   overflow-y: hidden;
 }
 
-.folderTitleText{
+.folderTitleText {
   direction: rtl;
   font-size: 0px;
   transition: font-weight 0.1s;
   font-weight: 400;
 }
-.folderTitle:hover>.folderTitleText, .folderTitleText#open {
+
+.folderTitle:hover>.folderTitleText,
+.folderTitleText#open {
   font-weight: 550;
 }
-.folderTitle:hover>.notebookIcon{
-  filter: brightness(150%);
-}
-.folderTitle:active>.folderTitleText{
+
+.folderTitle:active>.folderTitleText {
   font-weight: 400;
 }
-.folderTitle:active>.notebookIcon{
+
+.folderTitle:active>.notebookIcon {
   filter: brightness(100%);
 }
-.folderTitle:hover, .folderTitle:active{
+
+.folderTitle:hover,
+.folderTitle:active {
   cursor: pointer;
 }
 
@@ -143,7 +252,7 @@ svg {
 }
 
 .grid-stack .grid-stack-placeholder>.placeholder-content {
-  background-color: var(--theme);
+  background-color: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
   filter: opacity(20%);
   border-radius: 8px;
   margin: 0;
@@ -168,23 +277,30 @@ svg {
 }
 
 .grid-stack-item-content:has(h1:only-child)>.handle {
-  margin: auto;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .handle {
   height: 22px;
   padding-left: 5px;
   -webkit-user-select: none;
+  transition: 0.3s;
 }
 
 .handle:hover {
   cursor: pointer;
+  opacity: 50%;
+}
+.handle:active {
+  cursor: pointer;
+  opacity: 60%;
 }
 
 .icon {
   -webkit-user-drag: none;
   filter: brightness(30%) saturate(400%);
-  fill: var(--theme);
+  fill: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
 }
 
 
@@ -192,54 +308,63 @@ svg {
 .listedFile {
   width: 0px;
   height: 35px;
-  background-color:#FFFFFF;
+  background-color: #FFFFFF;
   border-radius: 10px;
   overflow-x: hidden;
   overflow-y: hidden;
-  transition: 0.3s;
+  transition: 0.3s width, 0.2s background-color;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-end;
-}
-.listedFile:has(.fileName#closed) {
-  background-color:#FFFFFF;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  align-items: center;
+  white-space: nowrap;
 }
 
-.listedFile:has(.fileName#open){
+.listedFile:has(.fileName#closed) {
+  background-color: #FFFFFF;
+}
+
+.listedFile:has(.fileName#open) {
   filter: brightness(90%);
 }
+
 .listedFile:hover {
   filter: brightness(94%);
-
 }
 
 .listedFile:active {
   filter: brightness(80%);
 }
-.notebookIcon {
+
+.notebookIcon,
+.fileIcon {
   height: 20px;
   margin-top: auto;
   margin-bottom: auto;
+  padding-right: 8px;
   padding-left: 8px;
   transition: 0.1s;
+  fill: hsl(var(--theme-h), 50%, 30%);
 }
-
 
 .pageContainer {
   background-color: white;
   width: 73%;
   border-radius: 20px 20px 0px 0px;
-  height: 100%;
+  height: 100% !important;
   overflow-y: scroll !important;
   border: 1px solid #DDD;
-  min-height: 0px !important;
+  min-height: 100% !important;
   padding-top: 10px;
-  transition: 0.2s;
+  transition: ease 0.2s;
 }
 
 .pageContainer::-webkit-scrollbar {
   display: none;
+}
+
+#page {
+  min-height: 10000% !important;
 }
 
 .ql-editor:has(h1:only-child) {
@@ -258,7 +383,7 @@ svg {
   height: 50px;
   border-radius: 15px;
   border-color: transparent;
-  background-color: var(--theme);
+  background-color: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
   transition: ease 0.2s;
   transform: scale(1)
 }
@@ -273,14 +398,25 @@ svg {
   filter: brightness(94%) saturate(250%);
   cursor: pointer;
 }
-.ui-draggable-dragging>.grid-stack-item-content, .ui-resizable-resizing>.grid-stack-item-content {
+
+.ui-draggable-dragging>.grid-stack-item-content,
+.ui-resizable-resizing>.grid-stack-item-content {
   box-shadow: 0 0 0px transparent;
   opacity: 0.9;
 }
+
 .ui-resizeable-resizing>.grid-stack-item-content {
   box-shadow: 0 0 0px transparent;
   opacity: 0.9;
 }
+
+.grid-stack-item-removing .actionsArea {
+  max-width: 30px;
+  max-height: 30px;
+  opacity: 0.3;
+  background-color: hsl(0, var(--theme-s), var(--theme-l))  !important;
+}
+
 .windowButton {
   -webkit-app-region: no-drag;
   display: block;
@@ -302,16 +438,21 @@ svg {
 .windowButton#close:active {
   background-color: rgb(255, 66, 104);
 }
+
 .windowButton#close:hover {
   background-color: rgb(255, 104, 134);
 }
-.windowButton#maximize:active, .windowButton#minimize:active {
+
+.windowButton#maximize:active,
+.windowButton#minimize:active {
   filter: brightness(80%);
 }
 
-.windowButton#maximize:hover, .windowButton#minimize:hover {
+.windowButton#maximize:hover,
+.windowButton#minimize:hover {
   filter: brightness(90%);
 }
+
 .windowButton:hover {
   cursor: pointer;
 }
@@ -344,10 +485,13 @@ svg {
   margin-bottom: auto;
   justify-content: center;
   height: -webkit-fill-available;
+  transition: 0.2s ease;
 }
 
 #fileName {
+  direction: rtl;
   font-weight: bold;
+  -webkit-app-region: none
 }
 
 #filepath {
@@ -371,6 +515,8 @@ svg {
   border-bottom: 1px solid #d2d2d2;
   margin-top: auto;
   margin-bottom: auto;
+  transition: 0.2s ease;
+
 }
 
 #logo {
@@ -378,13 +524,14 @@ svg {
   margin-bottom: 10.5px;
   transition: 0.1s;
   filter: brightness(25%);
-  fill: var(--theme);
+  fill: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
 }
 
 #logo:hover {
   filter: brightness(40%) saturate(120%);
   cursor: pointer;
 }
+
 #logo:active {
   filter: brightness(60%) saturate(160%);
   cursor: pointer;
@@ -399,56 +546,64 @@ svg {
 
 #myNotebooks {
   font-size: 25px;
-  font-weight: 600;
+  font-weight: 700;
   margin-top: 14px;
+  padding-right: 10px;
   width: 0px;
   direction: rtl;
   height: fit-content;
   -webkit-user-select: none;
-  color: var(--theme);
-  filter: brightness(0.5) saturate(200%);
+  color: hsl(var(--theme-h), 40%, 30%);
+  opacity: 50%;
   transition: 0.3s;
   padding-bottom: 10px;
   white-space: nowrap;
 }
 
 
-#page {
-  min-height: 0px !important;
-}
+
 
 #settings {
   margin-bottom: 10px;
 }
-#settings>svg{
-  transition: 0.4s;
+
+#settings>svg {
+  transition: transform 0.4s;
 }
-#settings:hover>svg{
+
+#settings:hover>svg {
   transform: rotate(60deg);
 }
-#settings:active>svg{
+
+#settings:active>svg {
   transform: rotate(300deg);
 }
-#search>svg{
+
+#search>svg {
   transition: 0.4s;
 }
-#search:hover>svg{
+
+#search:hover>svg {
   transform: rotate(10deg);
 }
-#search:active>svg{
+
+#search:active>svg {
   transform: rotate(-5deg);
 }
-#notebooks>svg{
+
+#notebooks>svg {
   transition: 0.4s;
   perspective: 100px;
 
 }
-#notebooks:hover>svg{
+
+#notebooks:hover>svg {
   transform: rotateX(-20deg);
   perspective: 100px;
 
 }
-#notebooks:active>svg{
+
+#notebooks:active>svg {
   perspective: 100px;
   transform: rotateX(20deg);
 }
@@ -474,8 +629,9 @@ svg {
 #sidebar .tool:hover {
   filter: brightness(81%) saturate(240%);
 }
+
 #sidebar {
-  background-color: var(--theme);
+  background-color: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
   min-width: 55px;
   display: flex;
   flex-direction: column;
@@ -493,11 +649,11 @@ svg {
 }
 
 #sidebarContainer {
-  border-left: 0.3px solid var(--theme);
+  border-left: 0.3px solid hsl(var(--theme-h), var(--theme-s), var(--theme-l));
   background-color: white;
   min-width: 0px;
   min-height: 100%;
-  transition: min-width 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: min-width 0.5s cubic-bezier(0.19, 1, 0.22, 1), border-color 0.2s ease, background-color 0.2s ease;
 }
 
 
@@ -529,9 +685,20 @@ svg {
   gap: 6px;
 }
 
-.GeoGebraFrame .toolbar .header-open-portrait, .GeoGebraFrame .toolbar .header-close-portrait, .GeoGebraFrame .closeLandscape.toolbar{
+.GeoGebraFrame .toolbar .header-open-portrait,
+.GeoGebraFrame .toolbar .header-close-portrait,
+.GeoGebraFrame .closeLandscape.toolbar {
   box-shadow: none !important;
 }
+
+#trashCan {
+  background-color: hsl(0, var(--theme-s), var(--theme-l));
+}
+
+#trashCan>.icon {
+  fill: hsl(0, var(--theme-s), var(--theme-l));
+}
+
 
 #snackbar {
   direction: rtl;
@@ -549,6 +716,7 @@ svg {
   bottom: 30px;
 }
 
+
 #snackbar.show {
   visibility: visible;
   -webkit-animation: fadein 0.2s, fadeout 0.3s 1s;
@@ -556,21 +724,49 @@ svg {
 }
 
 @-webkit-keyframes fadein {
-  from {bottom: 0; opacity: 0;}
-  to {bottom: 30px; opacity: 1;}
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
 }
 
 @keyframes fadein {
-  from {bottom: 0; opacity: 0;}
-  to {bottom: 30px; opacity: 1;}
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
 }
 
 @-webkit-keyframes fadeout {
-  from {bottom: 30px; opacity: 1;}
-  to {bottom: 0; opacity: 0;}
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
+
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
 }
 
 @keyframes fadeout {
-  from {bottom: 30px; opacity: 1;}
-  to {bottom: 0; opacity: 0;}
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
+
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
 }

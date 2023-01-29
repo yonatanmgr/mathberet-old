@@ -22,11 +22,12 @@ contextBridge.exposeInMainWorld(
           }
       },
       getNotebooks: () => {ipcRenderer.send("getNotebooks")},
-      save: (data, file) => {ipcRenderer.send("save", data, file)},
+      save: (data, file, newName) => {ipcRenderer.send("save", data, file, newName)},
       load: (file) => {ipcRenderer.send("load", file)},
       maximize: () => {ipcRenderer.send("maximize")},
       unmaximize: () => {ipcRenderer.send("unmaximize")},
       minimize: () => {ipcRenderer.send("minimize")},
-      close: () => {ipcRenderer.send("close")}
+      close: () => {ipcRenderer.send("close")},
+      toggle: () => {ipcRenderer.send('dark-mode:toggle')}
   }
 );

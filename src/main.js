@@ -4,7 +4,8 @@ const {
   BrowserWindow,
   ipcMain,
   Menu,
-  MenuItem
+  MenuItem,
+  nativeTheme
 } = require('electron')
 const path = require('path')
 const fs = require("fs")
@@ -26,6 +27,7 @@ async function createWindow() {
 
   // and load the index.html of the app.
   win.loadFile('./src/index.html')
+  fs.readFile("./preferences.json", "utf-8", (error, data)=>{nativeTheme.themeSource = JSON.parse(data).theme})
 
   const menu = new Menu()
   menu.append(new MenuItem({
@@ -103,8 +105,9 @@ async function createWindow() {
     win.close()
   })
 
-  ipcMain.on("save", (event, data, file) => {
+  ipcMain.on("save", (event, data, file, newName) => {
     fs.writeFileSync(file, data, "utf-8");
+    fs.rename(file, `./files/${newName}`, ()=>{})
   })
 
   ipcMain.on("load", (event, file) => {
@@ -113,16 +116,45 @@ async function createWindow() {
     });
   })
   
+  ipcMain.on('dark-mode:toggle', () => {
+    if (nativeTheme.shouldUseDarkColors) {
+      nativeTheme.themeSource = 'light'
+      fs.readFile("./preferences.json", "utf-8", (error, data)=>{
+        let readData = JSON.parse(data)
+        readData.theme = 'light'
+        let newdata = JSON.stringify(readData)
+        fs.writeFileSync("./preferences.json", newdata, "utf-8");
+      });
+      
+    } else {
+      nativeTheme.themeSource = 'dark'
+      fs.readFile("./preferences.json", "utf-8", (error, data)=>{
+        let readData = JSON.parse(data)
+        readData.theme = 'dark'
+        let newdata = JSON.stringify(readData)
+        fs.writeFileSync("./preferences.json", newdata, "utf-8");
+      });
+
+    }
+  })
 
   ipcMain.on("getNotebooks", (event, args) => {
     const expanded = []
+
+    const files = source => (fs.readdirSync(source, {withFileTypes: true}))
+    .filter(file => file.isFile())
+    .map(file => file = {path: `./files/${file.name}`, fileName: file.name.replace(".json", "")})
     
+    for (var file of files("./files")){
+      expanded.push({type: "file", fileName: file.fileName, path: file.path})
+      }
+
     const folders = source => (fs.readdirSync(source, {withFileTypes: true}))
     .filter(dirent => dirent.isDirectory())
     .map(dirent => `./files/${dirent.name}`)
     
     for (var folder of folders("./files")){
-      expanded.push({folder: folder, files: fs.readdirSync(folder), isOpen: false})
+      expanded.push({type: "folder", folder: folder, files: fs.readdirSync(folder), isOpen: false})
       }
 
     win.webContents.send("gotNotebooks", expanded);
