@@ -76,10 +76,24 @@ const getRandomColor = () => {
   document.querySelector(":root").style.setProperty("--theme-h", h);
 };
 
-function saveAnimation() {
-  var x = document.getElementById("snackbar");
-  x.className = "show";
-  setTimeout(function(){ x.className = x.className.replace("show", ""); }, 1200);
+function saveAnimation(scene) {
+  switch (scene) {
+    case "save":
+      var x = document.getElementById("snackbar");
+      x.innerText = "הדף נשמר!"
+      x.className = "show";
+      setTimeout(function(){ x.className = x.className.replace("show", ""); }, 1200);    
+      break;
+    case "clean":
+      var x = document.getElementById("snackbar");
+      x.innerText = "הדף נוקה!"
+      x.className = "show";
+      setTimeout(function(){ x.className = x.className.replace("show", ""); }, 1200);    
+      break;
+  
+    default:
+      break;
+  }
 }
 
 window.addEventListener("resize", resizeAll);
@@ -153,12 +167,14 @@ grid.on("remove", function (el) {
     el.blockContent.getAppletObject().remove();
   }
 })
-// document.addEventListener("dblclick", function (e) {
-//   const target = e.target.closest(".handle");
-//   if (target) {
-//     removeWidget(target.closest(".grid-stack-item"))
-//   }
-// });
+document.addEventListener("dblclick", function (e) {
+  const target = e.target.closest("#trashCan");
+  if (target) {
+    for (var item of grid.getGridItems()){
+    removeWidget(item)
+    saveAnimation("clean")
+  }}
+});
 
 document.addEventListener("click", function (e) {
   const target = e.target.closest(".folderTitle");
@@ -413,7 +429,7 @@ function saveGrid() {
     item.content = ""
   }
   window.api.save(JSON.stringify(items), currentfile, `${document.getElementById("fileName").innerText}.json`);
-  saveAnimation()
+  saveAnimation("save")
 }
 
 function loadGrid(path, file, folder) {
