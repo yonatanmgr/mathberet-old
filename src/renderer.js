@@ -71,7 +71,6 @@ function moveFile(event) {
 
 function trashFile(event) {
   if (event.target.closest("#fileTrashCan")){
-    console.log(event.target.closest("#fileTrashCan"));
     const id = event.dataTransfer.getData('text');
     event.dataTransfer.clearData(); 
     window.api.delete(id.replace("file_", ""))
@@ -99,7 +98,8 @@ function collapsableFolder(notebook){
       document.getElementById(`folder_${notebook.folder}`).querySelector(".folderTitleText").id = "open"
       document.getElementById(`folder_${notebook.folder}`).querySelector(".folderContent").style.height = "fit-content"
       for (var file of notebook.files){
-        document.getElementById(`folder_${notebook.folder}`).querySelector(".folderContent").innerHTML += `<div id="file_${notebook.folder}/${file}" class="listedFile" ondragstart="onDragStart(event)" draggable="true" data-filename="${file.replace(".json", "")}" data-foldername="${notebook.folder}" data-path="${notebook.folder}/${file}">${fileIcon}<div class="fileName">${file.replace(".json", "")}</div></div>`
+        let fileHTML = `<div id="file_${notebook.folder}/${file}" class="listedFile" ondragstart="onDragStart(event)" draggable="true" data-filename="${file.replace(".json", "")}" data-foldername="${notebook.folder}" data-path="${notebook.folder}/${file}">${fileIcon}<div class="fileName">${file.replace(".json", "")}</div></div>`
+        document.getElementById(`folder_${notebook.folder}`).querySelector(".folderContent").innerHTML += fileHTML
         for (var item of document.getElementById(`folder_${notebook.folder}`).getElementsByClassName("listedFile")) {item.style.width = "250px"}
       }
       notebook.isOpen = true
@@ -513,7 +513,7 @@ window.api.receive("newFile", () => {
   document.getElementById("slash").innerText = ""
   document.getElementById("notebookName").innerText = ""
   document.getElementById("fileName").innerText = "קובץ חדש"
-  currentfile = "./files/קובץ חדש"
+  currentfile = "./files/קובץ חדש.json"
   window.api.receive("fromMain", (data) => {grid.load([])})
   window.api.getNotebooks()
   window.api.receive("gotNotebooks", (data) => {notebooks = data})

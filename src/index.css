@@ -324,6 +324,13 @@ svg {
   fill: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
 }
 
+#fileTrashCan:hover {
+  background-color: hsl(0, var(--theme-s), var(--theme-l)) !important;
+}
+
+#fileTrashCan:hover>.icon {
+  fill: hsl(0, var(--theme-s), var(--theme-l)) !important;
+}
 
 
 .listedFile {

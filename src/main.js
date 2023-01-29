@@ -7,10 +7,8 @@ const {
   MenuItem,
   nativeTheme
 } = require('electron')
-
-const trash = require('trash')
 const path = require('path')
-const fs = require("fs");
+const fs = require("fs")
 
 let win;
 
@@ -125,7 +123,7 @@ async function createWindow() {
     let name = file.split("/").pop()
     fs.rename(file, file.replace(name, newName), ()=>{})
   })
-  ipcMain.on("delete", (event, file) => {trash(file)})
+  ipcMain.on("delete", (event, file) => {fs.rm(file, ()=>{});})
 
   ipcMain.on("move", (event, oldDir, newDir) => {fs.rename(oldDir, newDir, ()=>{})})
 
