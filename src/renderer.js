@@ -171,8 +171,8 @@ document.addEventListener("dblclick", function (e) {
   const target = e.target.closest("#trashCan");
   if (target) {
     for (var item of grid.getGridItems()){
-    removeWidget(item)
-    saveAnimation("clean")
+      removeWidget(item)
+      saveAnimation("clean")
   }}
 });
 
