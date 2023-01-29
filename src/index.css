@@ -23,7 +23,7 @@
   #sidebarContainer,
   #placeHolder,
   .pageContainer {
-    background: #111 !important;
+    background: #121212 !important;
     color: white;
     --theme-l: 30% !important;
     --theme-s: 20% !important;
@@ -37,7 +37,7 @@
     --theme-s: 20% !important;
   }
   .actionsArea:has(h1:only-child) {
-    background: #111 !important;
+    background: #121212 !important;
   }
 
   #logo{
@@ -53,7 +53,7 @@
   }
 
   .windowButton{
-    background: #111 !important;
+    background: #121212 !important;
   }
   .windowButton img{
     filter: brightness(500%) !important;
@@ -66,13 +66,14 @@
     background-color: rgb(255, 69, 106) !important;
   }
   #sidebar{
-    background-color: hsl(var(--theme-h), 20%, 30%) !important;
+    background-color: hsl(var(--theme-h), 40%, 35%) !important;
   }  
   #sidebar .tool{
-    background-color: hsl(var(--theme-h), 12%, 28%) !important;
+    background-color: hsl(var(--theme-h), 52%, 28%) !important;
+    filter: none !important;
   }
   #toolbar .tool:hover{
-    filter: brightness(130%) !important;
+    fill: hsl(var(--theme-h), 50%, 30%) !important; 
   }
   #sidebar .tool svg{
     fill: hsl(var(--theme-h), 10%, 30%) !important; 
@@ -84,7 +85,7 @@
 }
 
   .listedFile {
-    background: #111 !important;
+    background: #121212 !important;
     color: white !important;
   }
 

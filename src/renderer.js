@@ -69,12 +69,23 @@ function moveFile(event) {
   window.api.receive("gotNotebooks", (data) => {notebooks = data})
 }
 
+function resetPage(){
+  currentfile = undefined;
+  closeSidebar()
+  document.getElementById("placeHolder").style.display = "flex"
+  document.getElementById("content").style.display = "none"
+  document.getElementById("notebookName").innerText = ""
+  document.getElementById("slash").innerText = ""
+  document.getElementById("fileName").innerText = ""
+}
+
 function trashFile(event) {
   if (event.target.closest("#fileTrashCan")){
     const id = event.dataTransfer.getData('text');
     event.dataTransfer.clearData(); 
     window.api.delete(id.replace("file_", ""))
     document.getElementById(id).remove()
+    resetPage()
   }
   window.api.getNotebooks()
   window.api.receive("gotNotebooks", (data) => {notebooks = data})
@@ -157,7 +168,8 @@ function saveAnimation(scene) {
 
 window.addEventListener("resize", resizeAll);
 document.getElementById('settings').addEventListener('click', window.api.toggle)
-document.getElementById("logo").addEventListener("click", getRandomColor);
+document.getElementById("settings").addEventListener("contextmenu", getRandomColor);
+document.getElementById("logo").addEventListener("click", resetPage);
 document.getElementById("minimize").addEventListener("click", window.api.minimize);
 document.getElementById("close").addEventListener("click", window.api.close);
 document.getElementById("newFile").addEventListener("click", newFile);
@@ -177,27 +189,31 @@ function toggleMaximize() {
   }
 }
 
+function openSidebar(){
+  sidebarStatus = 1
+  createFolderList()
+  sidebar.style.minWidth = "280px"
+  sidebar.style.borderLeft = "1px solid #BEBEBE;"
+  setTimeout(() => {
+    document.getElementById("myNotebooks").style.width = "250px"
+    for (var folder of document.getElementsByClassName("folder")) {folder.style.width = "250px"}
+    for (var folderName of document.getElementsByClassName("folderTitleText")) {folderName.style.fontSize = "18px"}
+    for (var item of document.getElementsByClassName("listedFile")) {item.style.width = "250px"}
+  }, 30)
+}
+
+function closeSidebar(){
+  sidebarStatus = 0
+  document.getElementById("myNotebooks").style.width = "0px"
+  for (var folder of document.getElementsByClassName("folder")) {folder.style.width = "0px"}
+  for (var folderName of document.getElementsByClassName("folderTitleText")) {folderName.style.fontSize = "0px"}
+  for (var item of document.getElementsByClassName("listedFile")) {item.style.width = "0px"}
+  sidebar.style.minWidth = "0px"
+  sidebarContent.innerHTML = ""
+}
+
 function toggleSidebar() {
-  if (sidebarStatus == 0) {
-    sidebarStatus = 1
-    createFolderList()
-    sidebar.style.minWidth = "280px"
-    sidebar.style.borderLeft = "1px solid #BEBEBE;"
-    setTimeout(() => {
-      document.getElementById("myNotebooks").style.width = "250px"
-      for (var folder of document.getElementsByClassName("folder")) {folder.style.width = "250px"}
-      for (var folderName of document.getElementsByClassName("folderTitleText")) {folderName.style.fontSize = "18px"}
-      for (var item of document.getElementsByClassName("listedFile")) {item.style.width = "250px"}
-    }, 30)
-  } else {
-    sidebarStatus = 0
-    document.getElementById("myNotebooks").style.width = "0px"
-    for (var folder of document.getElementsByClassName("folder")) {folder.style.width = "0px"}
-    for (var folderName of document.getElementsByClassName("folderTitleText")) {folderName.style.fontSize = "0px"}
-    for (var item of document.getElementsByClassName("listedFile")) {item.style.width = "0px"}
-    sidebar.style.minWidth = "0px"
-    sidebarContent.innerHTML = ""
-  }
+  if (sidebarStatus == 0) { openSidebar() } else { closeSidebar() }
   setTimeout(() => {resizeAll()}, 600)
 }
 
