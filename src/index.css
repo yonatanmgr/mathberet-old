@@ -286,6 +286,7 @@ svg {
 .grid-stack-item {
   background: transparent;
   overflow-y: hidden !important;
+  transition: display 0.2s;
 }
 
 .grid-stack-item-content {
