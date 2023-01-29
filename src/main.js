@@ -18,6 +18,7 @@ async function createWindow() {
     width: 1500,
     height: 900,
     titleBarStyle: 'hidden',
+    icon: "src\icons\iconizer-mathberet.ico",
     webPreferences: {
       contextIsolation: true, // protect against prototype pollution
       enableRemoteModule: false, // turn off remote

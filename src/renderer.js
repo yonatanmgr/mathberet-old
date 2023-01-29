@@ -84,7 +84,7 @@ function saveAnimation() {
 
 window.addEventListener("resize", resizeAll);
 document.getElementById('settings').addEventListener('click', window.api.toggle)
-document.getElementById("logo").addEventListener("dblclick", getRandomColor);
+document.getElementById("logo").addEventListener("click", getRandomColor);
 document.getElementById("minimize").addEventListener("click", window.api.minimize);
 document.getElementById("close").addEventListener("click", window.api.close);
 document.getElementById("maximize").addEventListener("click", toggleMaximize);
@@ -300,7 +300,7 @@ function addQuill() {
 
 function createGgb(id, base64) {
   let options = {
-    "appName": "suite",
+    "appName": "geometry",
     "showToolBar": true,
     "height": document.getElementById(`ggBox_${id}`).offsetHeight,
     "width": document.getElementById(`ggBox_${id}`).offsetWidth,
@@ -417,6 +417,8 @@ function saveGrid() {
 }
 
 function loadGrid(path, file, folder) {
+  document.getElementById("placeHolder").style.display = "none"
+  document.getElementById("content").style.display = "flex"
   window.api.load(path);
   if (folder != ""){document.getElementById("slash").innerText = " / "} else {document.getElementById("slash").innerText = ""}
   document.getElementById("fileName").innerText = file

@@ -1,5 +1,5 @@
 module.exports = {
-  packagerConfig: {},
+  packagerConfig: {icon: 'src\icons\iconizer-mathberet'},
   rebuildConfig: {},
   makers: [
     {

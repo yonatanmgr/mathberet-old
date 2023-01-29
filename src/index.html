@@ -27,6 +27,7 @@
 
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self' 'unsafe-eval' 'unsafe-inline' data: filesystem:; connect-src https://www.geogebra.org/api/json.php; script-src 'unsafe-eval' 'self' 'unsafe-inline' data: filesystem:; style-src 'self' 'unsafe-inline'">
+    <link href="./kbd.min.css" rel="stylesheet">
     <link href="./index.css" rel="stylesheet">
     <title>Mathberet</title>
 </head>
@@ -86,7 +87,7 @@
                     <div id="sidebarContainer">
                         <div id="sidebarContent"></div>
                     </div>
-                    <div id="content">
+                    <div id="content" style="display: none;">
                         <div id="toolbar">
                             <div class="tool" id="addQuill">
                                 <svg class="icon" width="24" height="24" viewBox="0 0 10 10"
@@ -122,6 +123,12 @@
                             <div id="snackbar">הקובץ נשמר!</div>
 
                         </div>
+                    </div>
+                    <div id="placeHolder">
+                        <div class="placeHolderText">כדי להתחיל,</div>
+                        <div class="placeHolderText">לחצו על כפתור המחברות שבצד ימין ( או <kbd class="kbc-button">O</kbd>+<kbd class="kbc-button">Ctrl</kbd> ),</div>
+                        <div class="placeHolderText">ובחרו קובץ או מחברת</div>
+                        <div class="placeHolderText"><br><br></div>
                     </div>
                 </div>
 
