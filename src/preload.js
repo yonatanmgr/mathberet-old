@@ -15,13 +15,16 @@ contextBridge.exposeInMainWorld(
           }
       },
       receive: (channel, func) => {
-          let validChannels = ["Save", "fromMain", "Text", "Graph", "Math", "gotNotebooks", "toggleNotebooks", "Search"];
+          let validChannels = ["newFile", "Save", "fromMain", "Text", "Graph", "Math", "gotNotebooks", "toggleNotebooks", "Search"];
           if (validChannels.includes(channel)) {
               // Deliberately strip event as it includes `sender` 
               ipcRenderer.on(channel, (event, ...args) => func(...args));
           }
       },
       getNotebooks: () => {ipcRenderer.send("getNotebooks")},
+      delete: (file) => {ipcRenderer.send("delete", file)},
+      newFile: () => {ipcRenderer.send("newFile")},
+      move: (oldDir, newDir) => {ipcRenderer.send("move", oldDir, newDir)},
       save: (data, file, newName) => {ipcRenderer.send("save", data, file, newName)},
       load: (file) => {ipcRenderer.send("load", file)},
       maximize: () => {ipcRenderer.send("maximize")},

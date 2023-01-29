@@ -7,8 +7,10 @@ const {
   MenuItem,
   nativeTheme
 } = require('electron')
+
+const trash = require('trash')
 const path = require('path')
-const fs = require("fs")
+const fs = require("fs");
 
 let win;
 
@@ -60,6 +62,11 @@ async function createWindow() {
       click: () => {win.webContents.openDevTools();}
     },
     {
+      role: 'Create a new File...',
+      accelerator: 'Ctrl+N',
+      click: () => {win.webContents.send("newFile");}
+    },
+    {
       role: 'Save',
       accelerator: 'Ctrl+S',
       click: () => {win.webContents.send("Save");}
@@ -106,10 +113,21 @@ async function createWindow() {
     win.close()
   })
 
+  ipcMain.on("newFile", (event, data) => {
+    fs.writeFileSync(`./files/קובץ חדש.json`, "[]", "utf-8");
+    fs.readFile(`./files/קובץ חדש.json`, "utf-8", (error, data) => {
+      win.webContents.send("fromMain", data);
+    });
+  })
+
   ipcMain.on("save", (event, data, file, newName) => {
     fs.writeFileSync(file, data, "utf-8");
-    fs.rename(file, `./files/${newName}`, ()=>{})
+    let name = file.split("/").pop()
+    fs.rename(file, file.replace(name, newName), ()=>{})
   })
+  ipcMain.on("delete", (event, file) => {trash(file)})
+
+  ipcMain.on("move", (event, oldDir, newDir) => {fs.rename(oldDir, newDir, ()=>{})})
 
   ipcMain.on("load", (event, file) => {
     fs.readFile(file, "utf-8", (error, data) => {

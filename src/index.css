@@ -185,6 +185,7 @@ svg {
 }
 
 .fileName {
+  direction: rtl;
   font-size: 17px;
   overflow: hidden;
   white-space: nowrap;
@@ -206,7 +207,6 @@ svg {
 .folder {
   width: 0px;
   height: fit-content;
-  margin-top: 15px;
   display: flex;
   flex-direction: column;
   transition: 0.3s;
@@ -216,7 +216,7 @@ svg {
   height: 0px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   transition: 0.3s;
   overflow-y: hidden;
 }
@@ -258,10 +258,10 @@ svg {
   -webkit-user-select: none;
   display: flex;
   flex-direction: row-reverse;
-  align-items: flex-start;
+  align-items: center;
+  height: 35px;
   justify-content: flex-start;
   transition: 0.1s;
-  padding-bottom: 10px;
 }
 
 
@@ -525,7 +525,7 @@ svg {
   flex: 1;
   overflow-y: hidden;
   padding-top: 70px;
-  display: flex;
+  display: none;
   flex-direction: row-reverse;
   align-items: flex-start;
   /* margin-top: auto; */
@@ -708,7 +708,7 @@ svg {
   display: flex;
   flex-direction: column;
   align-items: center;
-
+  gap: 4px
 }
 
 #toolbar {

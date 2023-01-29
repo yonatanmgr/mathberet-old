@@ -29,18 +29,64 @@ let sidebar = document.getElementById("sidebarContainer")
 let sidebarContent = document.getElementById("sidebarContent")
 
 function createFolderList() {
+  window.api.getNotebooks()
+  window.api.receive("gotNotebooks", (data) => {notebooks = data})
+
   contentList = []
   contentList.push('<div id="myNotebooks">המחברות שלי</div>')
-  for (var n = 0; n < notebooks.length; n++){
-    if (notebooks[n].type == "folder"){
-        let folder = `<div id="folder_${notebooks[n].folder}" class="folder"><div class="folderTitle">${folderIconClosed}<span class="folderTitleText">${notebooks[n].folder.replace("./files/", "")}</span></div><div class="folderContent"></div></div>`
+  for (var item of notebooks){
+    if (item.type == "folder"){
+        let folder = `<div id="folder_${item.folder}" class="folder" ondragover="onDragOver(event)" ondrop="moveFile(event)"><div class="folderTitle">${folderIconClosed}<span class="folderTitleText">${item.folder.replace("./files/", "")}</span></div><div class="folderContent"></div></div>`
         if (contentList.includes(folder) == false){contentList.push(folder)}
     } else {
-        let file = `<div id="file_${notebooks[n].path}" class="listedFile" data-foldername="" data-filename="${notebooks[n].fileName}" data-path="${notebooks[n].path}">${fileIcon}<div class="fileName">${notebooks[n].fileName}</div></div>`
+        let file = `<div id="file_${item.path}" class="listedFile" draggable="true" ondragstart="onDragStart(event)" data-foldername="" data-filename="${item.fileName}" data-path="${item.path}">${fileIcon}<div class="fileName">${item.fileName}</div></div>`
         if (contentList.includes(file) == false){contentList.push(file)}
     }
   }
   sidebarContent.innerHTML = contentList.join("")
+  for (var el of document.getElementsByClassName(".listedFile")){el.id = el.id.replace("./files/./files/", "./files/")}
+
+}
+
+function moveFile(event) {
+  for (var el of document.getElementsByClassName(".listedFile")){el.id = el.id.replace("./files/./files/", "./files/")}
+  if (event.target.closest(".folder")){
+    const id = event.dataTransfer.getData('text');
+    const draggableElement = document.getElementById(id);
+    const dropzone = event.target.closest(".folder");
+    dropzone.querySelector(".folderContent").appendChild(draggableElement);
+    event.dataTransfer.clearData(); 
+    window.api.move(`./files/${id.split("/").slice(-1).join("/")}`, `${dropzone.id.replace("folder_", "")}/${id.split("/").splice(-1)}`)
+  }
+  else if (event.target.closest("#sidebarContainer")) {
+    const id = event.dataTransfer.getData('text');
+    const draggableElement = document.getElementById(id);
+    document.getElementById("sidebarContent").append(draggableElement);
+    event.dataTransfer.clearData(); 
+    window.api.move(`./files/${id.split("/").slice(-2).join("/")}`, `./files/${id.split("/").splice(-1)}`)
+  }
+  window.api.getNotebooks()
+  window.api.receive("gotNotebooks", (data) => {notebooks = data})
+}
+
+function trashFile(event) {
+  if (event.target.closest("#fileTrashCan")){
+    console.log(event.target.closest("#fileTrashCan"));
+    const id = event.dataTransfer.getData('text');
+    event.dataTransfer.clearData(); 
+    window.api.delete(id.replace("file_", ""))
+    document.getElementById(id).remove()
+  }
+  window.api.getNotebooks()
+  window.api.receive("gotNotebooks", (data) => {notebooks = data})
+}
+
+function onDragOver(event) {
+  event.preventDefault();
+}
+
+function onDragStart(event) {
+  event.dataTransfer.setData('text/plain', event.target.id);
 }
 
 function collapsableFolder(notebook){
@@ -53,7 +99,7 @@ function collapsableFolder(notebook){
       document.getElementById(`folder_${notebook.folder}`).querySelector(".folderTitleText").id = "open"
       document.getElementById(`folder_${notebook.folder}`).querySelector(".folderContent").style.height = "fit-content"
       for (var file of notebook.files){
-        document.getElementById(`folder_${notebook.folder}`).querySelector(".folderContent").innerHTML += `<div class="listedFile" data-filename="${file.replace(".json", "")}" data-foldername="${notebook.folder}" data-path="${notebook.folder}/${file}">${fileIcon}<div class="fileName">${file.replace(".json", "")}</div></div>`
+        document.getElementById(`folder_${notebook.folder}`).querySelector(".folderContent").innerHTML += `<div id="file_${notebook.folder}/${file}" class="listedFile" ondragstart="onDragStart(event)" draggable="true" data-filename="${file.replace(".json", "")}" data-foldername="${notebook.folder}" data-path="${notebook.folder}/${file}">${fileIcon}<div class="fileName">${file.replace(".json", "")}</div></div>`
         for (var item of document.getElementById(`folder_${notebook.folder}`).getElementsByClassName("listedFile")) {item.style.width = "250px"}
       }
       notebook.isOpen = true
@@ -190,7 +236,12 @@ document.addEventListener("click", function (e) {
     for (var file of document.getElementsByClassName("listedFile")){
       if (file != target)
       file.querySelector(".fileName").id = "closed"
-    }
+    }  }
+});
+document.addEventListener("dblclick", function (e) {
+  const target = e.target.closest(".listedFile");
+  if (target) {
+
     let path = target.getAttribute("data-path")
     let fileName = target.getAttribute("data-filename")
     let folderName = target.getAttribute("data-foldername").replace("./files/", "")
@@ -316,7 +367,7 @@ function addQuill() {
 
 function createGgb(id, base64) {
   let options = {
-    "appName": "geometry",
+    "appName": "suite",
     "showToolBar": true,
     "height": document.getElementById(`ggBox_${id}`).offsetHeight,
     "width": document.getElementById(`ggBox_${id}`).offsetWidth,
@@ -428,11 +479,15 @@ function saveGrid() {
     saveBlockContent(item);
     item.content = ""
   }
+  
   window.api.save(JSON.stringify(items), currentfile, `${document.getElementById("fileName").innerText}.json`);
   saveAnimation("save")
+  // createFolderList()
+
 }
 
 function loadGrid(path, file, folder) {
+  if (currentfile != undefined) {saveGrid()}
   document.getElementById("placeHolder").style.display = "none"
   document.getElementById("content").style.display = "flex"
   window.api.load(path);
@@ -451,9 +506,23 @@ function loadGrid(path, file, folder) {
 
 window.api.receive("Text", () => document.getElementById("addQuill").click())
 window.api.receive("Graph", () => addGgb())
+window.api.receive("newFile", () => {
+  window.api.newFile()
+  document.getElementById("placeHolder").style.display = "none"
+  document.getElementById("content").style.display = "flex"
+  document.getElementById("slash").innerText = ""
+  document.getElementById("notebookName").innerText = ""
+  document.getElementById("fileName").innerText = "קובץ חדש"
+  currentfile = "./files/קובץ חדש"
+  window.api.receive("fromMain", (data) => {grid.load([])})
+  window.api.getNotebooks()
+  window.api.receive("gotNotebooks", (data) => {notebooks = data})
+;})
 window.api.receive("Math", () => addMF())
 window.api.receive("toggleNotebooks", () => toggleSidebar())
-window.api.receive("Save", () => {if (currentfile == null){return} else {saveGrid()}})
+window.api.receive("Save", () => {if (currentfile == null){return} else {
+  saveGrid()
+}})
 window.api.receive("Search", () => {})
 
 let defShortcuts = {

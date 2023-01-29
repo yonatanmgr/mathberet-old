@@ -22,7 +22,8 @@
     "gridstack": "^7.2.2",
     "jquery": "^3.6.3",
     "katex": "^0.16.4",
-    "quill-mathlive-blot": "^1.5.0"
+    "quill-mathlive-blot": "^1.5.0",
+    "trash": "^8.1.0"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.4",
@@ -30,6 +31,7 @@
     "@electron-forge/maker-rpm": "^6.0.4",
     "@electron-forge/maker-squirrel": "^6.0.4",
     "@electron-forge/maker-zip": "^6.0.4",
-    "electron": "^22.0.2"
+    "electron": "^22.0.2",
+    "electron-rebuild": "^3.2.9"
   }
 }
