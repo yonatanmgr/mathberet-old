@@ -17,7 +17,11 @@
 .kbc-button:after{
   border: 1px solid #222;
 }
-  
+
+.placeHolderText{
+  color: #555 !important; 
+}
+
   #content,
   #header,
   #sidebarContainer,
@@ -72,9 +76,16 @@
     background-color: hsl(var(--theme-h), 52%, 28%) !important;
     filter: none !important;
   }
-  #toolbar .tool:hover{
-    fill: hsl(var(--theme-h), 50%, 30%) !important; 
+  #sidebar .tool:hover{
+    filter: brightness(90%) !important;
   }
+  #toolbar .tool{
+    filter: brightness(100%) saturate(200%) !important;
+  }
+  #toolbar .tool:hover{
+    filter: brightness(85%) saturate(240%) !important;
+  }
+  
   #sidebar .tool svg{
     fill: hsl(var(--theme-h), 10%, 30%) !important; 
   }
@@ -94,12 +105,15 @@
   }
 }
 
-/* @media (prefers-color-scheme: light) {
-  #content {
-    background: #ddd;
-    color: black;
+@media (prefers-color-scheme: light) {
+  #sidebar .tool:active {
+    filter: brightness(70%) saturate(240%);
   }
-} */
+  
+  #sidebar .tool:hover {
+    filter: brightness(81%) saturate(240%);
+  }
+}
 
 [contenteditable]:focus {
   outline: 0px solid transparent;
@@ -213,6 +227,15 @@ svg {
   transition: 0.3s;
 }
 
+#notebookList{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  max-height: 100%;
+  flex-grow: 1;
+}
+
 .folderContent {
   height: 0px;
   display: flex;
@@ -220,6 +243,11 @@ svg {
   gap: 4px;
   transition: 0.3s;
   overflow-y: hidden;
+}
+
+.folderContent>.listedFile:first-child{
+  padding-top: 4px;
+
 }
 
 .folderContent>.listedFile{
@@ -671,13 +699,7 @@ svg {
   align-items: center;
 }
 
-#sidebar .tool:active {
-  filter: brightness(70%) saturate(240%);
-}
 
-#sidebar .tool:hover {
-  filter: brightness(81%) saturate(240%);
-}
 
 #sidebar {
   background-color: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
@@ -698,10 +720,12 @@ svg {
 }
 
 #sidebarContainer {
+  display: flex;
   border-left: 0.3px solid hsl(var(--theme-h), var(--theme-s), var(--theme-l));
   background-color: white;
   min-width: 0px;
   min-height: 100%;
+  max-height: 100%;
   transition: min-width 0.5s cubic-bezier(0.19, 1, 0.22, 1), border-color 0.2s ease, background-color 0.2s ease;
 }
 
@@ -710,7 +734,8 @@ svg {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px
+  gap: 4px;
+  flex-grow: 1;
 }
 
 #toolbar {

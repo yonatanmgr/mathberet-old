@@ -34,6 +34,8 @@ function createFolderList() {
 
   contentList = []
   contentList.push('<div id="myNotebooks">המחברות שלי</div>')
+  contentList.push('<div id="notebookList" ondragover="onDragOver(event)" ondrop="moveFile(event)">')
+
   for (var item of notebooks){
     if (item.type == "folder"){
         let folder = `<div id="folder_${item.folder}" class="folder" ondragover="onDragOver(event)" ondrop="moveFile(event)"><div class="folderTitle">${folderIconClosed}<span class="folderTitleText">${item.folder.replace("./files/", "")}</span></div><div class="folderContent"></div></div>`
@@ -43,6 +45,7 @@ function createFolderList() {
         if (contentList.includes(file) == false){contentList.push(file)}
     }
   }
+  contentList.push('</div>')
   sidebarContent.innerHTML = contentList.join("")
   for (var el of document.getElementsByClassName(".listedFile")){el.id = el.id.replace("./files/./files/", "./files/")}
 
@@ -61,7 +64,7 @@ function moveFile(event) {
   else if (event.target.closest("#sidebarContainer")) {
     const id = event.dataTransfer.getData('text');
     const draggableElement = document.getElementById(id);
-    document.getElementById("sidebarContent").append(draggableElement);
+    document.getElementById("notebookList").append(draggableElement);
     event.dataTransfer.clearData(); 
     window.api.move(`./files/${id.split("/").slice(-2).join("/")}`, `./files/${id.split("/").splice(-1)}`)
   }
@@ -91,18 +94,18 @@ function trashFile(event) {
   window.api.receive("gotNotebooks", (data) => {notebooks = data})
 }
 
-const trashCanTarget = document.getElementById("fileTrashCan");
-trashCanTarget.addEventListener("dragenter", (event) => {
-  if (trashCanTarget.classList.contains("trashZone")) {
-    trashCanTarget.classList.add("dragover");
-  }
-});
+// const trashCanTarget = document.getElementById("fileTrashCan");
+// trashCanTarget.addEventListener("dragenter", (event) => {
+//   if (trashCanTarget.classList.contains("trashZone")) {
+//     trashCanTarget.classList.add("dragover");
+//   }
+// });
 
-trashCanTarget.addEventListener("dragleave", (event) => {
-  if (trashCanTarget.classList.contains("trashZone")) {
-    trashCanTarget.classList.remove("dragover");
-  }
-});
+// trashCanTarget.addEventListener("dragleave", (event) => {
+//   if (trashCanTarget.classList.contains("trashZone")) {
+//     trashCanTarget.classList.remove("dragover");
+//   }
+// });
 
 function onDragOver(event) {
   event.preventDefault();
@@ -142,7 +145,9 @@ function collapsableFolder(notebook){
 
 
 const getRandomColor = () => {
-  const h = Math.floor(Math.random() * 360);
+  // colors = [40, 80, 120, 160, 200, 240, 280, 320, 0]
+  colors = 360
+  const h = Math.floor(Math.random() * colors);
   document.querySelector(":root").style.setProperty("--theme-h", h);
 };
 
@@ -171,7 +176,7 @@ document.getElementById('settings').addEventListener('click', window.api.toggle)
 document.getElementById("settings").addEventListener("contextmenu", getRandomColor);
 document.getElementById("logo").addEventListener("click", resetPage);
 document.getElementById("minimize").addEventListener("click", window.api.minimize);
-document.getElementById("close").addEventListener("click", window.api.close);
+document.getElementById("close").addEventListener("click", ()=>{saveGrid(); window.api.close()});
 document.getElementById("newFile").addEventListener("click", newFile);
 document.getElementById("maximize").addEventListener("click", toggleMaximize);
 document.getElementById("notebooks").addEventListener("click", toggleSidebar);
