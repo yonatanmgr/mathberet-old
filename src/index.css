@@ -405,8 +405,6 @@ svg {
 .notebookIcon,
 .fileIcon {
   height: 20px;
-  margin-top: auto;
-  margin-bottom: auto;
   padding-right: 8px;
   padding-left: 8px;
   transition: 0.1s;

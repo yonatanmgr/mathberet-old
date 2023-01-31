@@ -59,7 +59,7 @@ function renderDirTree(){
     if (item.files){
       let subGridItems = [];
       for (var file of item.files){
-        let html = `<div class="listedFile">${fileIcon}<div class="fileName">${file.name}</div></div>`
+        let html = `<div class="listedFile">${fileIcon}<div class="fileName">${file.name.replace(".json", "")}</div></div>`
         let gridItem = {
           content: html,
           w: 1, h: 1,
@@ -85,7 +85,7 @@ function renderDirTree(){
         html = `<div class="folder"><div class="folderTitle">${folderIconClosed}<span class="folderTitleText">${item.name}</span></div><div class="folderContent"></div></div>`
         gridItem = {content: html, w: 1, h: item.files.length+1, id: item.path, subGridDynamic: true, isFolder: true}
       } else {
-        html = `<div class="listedFile">${fileIcon}<div class="fileName">${item.name}</div></div>`
+        html = `<div class="listedFile">${fileIcon}<div class="fileName">${item.name.replace(".json", "")}</div></div>`
         gridItem = {content: html, w: 1, h: 1, id: item.path}
       }
     sidebarGrid.addWidget(gridItem)
@@ -283,7 +283,7 @@ function openSidebar(){
           let ogfolder = findInTree(originalGrid.parentGridItem) // find original folder
           movedItem.path = movedItem.path.replace(ogfolder.path, targetFolder.path) // change path to new path
           targetGrid.update(newWidget.el, {id: movedItem.path})
-          
+
           ogfolder.files.pop(movedItem) // removed moved item from og folder
           targetFolder.files.push(movedItem) // add moved item to target folder
 
@@ -318,36 +318,9 @@ function openSidebar(){
       addEvents(grid);
     })
 
-  // sidebarGrid.on('dropped', function(event, previousWidget, newWidget) {    
-  //   if (previousWidget){
-  //     console.log("aaaa");
-  //   }
-  //   if (newWidget){
-  //     console.log("Bbbb");
-  //   }
-  //   if (newWidget.grid.parentGridItem){
-  //     let sidebarItem = dirTree.find(a => a.path == newWidget.grid.parentGridItem.id)
-  //     let sidebarItemChild = dirTree.find(a => a.path == newWidget.id)
-  //     sidebarItem.files.push(sidebarItemChild)
-  //     // moved.path = newWidget.id moved.name
-  //     sidebarGrid.update(newWidget.grid.parentGridItem.el, {h: sidebarItem.files.length+1, id: sidebarItem.path})
-  //   } 
-  //   else {
-  //     let sidebarItem = dirTree.find(a => a.path == previousWidget.grid.parentGridItem.id)
-  //     let sidebarItemChild = dirTree.find(a => a.path == previousWidget.id)
-  //     let moved = sidebarItem.files.pop(sidebarItemChild)
-  //     // moved.path = newWidget.id moved.name
-  //     dirTree.push(moved)
-  //     sidebarGrid.update(previousWidget.grid.parentGridItem.el, {h: sidebarItem.files.length+1, id: sidebarItem.path})
-
-  //   }
-
-  // })
-
   sidebar.style.minWidth = "280px"
   sidebar.style.borderLeft = "1px solid #BEBEBE;"
   setTimeout(() => {
-    document.getElementById("myNotebooks").style.width = "250px"
     for (var folder of document.getElementsByClassName("folder")) {folder.style.width = "250px"}
     for (var folderName of document.getElementsByClassName("folderTitleText")) {folderName.style.fontSize = "18px"}
     for (var item of document.getElementsByClassName("listedFile")) {item.style.width = "250px"}
@@ -356,16 +329,11 @@ function openSidebar(){
 
 function closeSidebar(){
   sidebarStatus = 0
-  document.getElementById("myNotebooks").style.width = "0px"
-  for (var folder of document.getElementsByClassName("folder")) {folder.style.width = "0px"}
-  for (var folderName of document.getElementsByClassName("folderTitleText")) {folderName.style.fontSize = "0px"}
-  for (var item of document.getElementsByClassName("listedFile")) {item.style.width = "0px"}
   sidebar.style.minWidth = "0px"
-  sidebarContent.innerHTML = ""
 }
 
 function toggleSidebar() {
-  if (sidebarStatus == 0) { openSidebar() } else { closeSidebar() }
+  if (sidebarStatus == 0) { openSidebar() } else { sidebarGrid.destroy(); closeSidebar() }
   setTimeout(() => {resizeAll()}, 600)
 }
 
@@ -423,10 +391,10 @@ document.addEventListener("click", function (e) {
 document.addEventListener("dblclick", function (e) {
   const target = e.target.closest(".listedFile");
   if (target) {
-
-    let path = target.getAttribute("data-path")
-    let fileName = target.getAttribute("data-filename")
-    let folderName = target.getAttribute("data-foldername").replace("./files/", "")
+    console.log(target.closest(".grid-stack-item"));
+    let path = target.closest(".grid-stack-item").gridstackNode.id
+    let fileName = target.closest(".grid-stack-item").gridstackNode.id.split("/").pop()
+    let folderName = target.closest(".grid-stack-item").gridstackNode.id.split("/").slice(-2, -1)[0]
     loadGrid(path, fileName, folderName)
   }
 });
