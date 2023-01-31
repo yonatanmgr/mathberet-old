@@ -154,6 +154,7 @@ math-field {
 
 svg {
   -webkit-user-select: none;
+  user-select: none;
   -webkit-user-drag: none;
 }
 
@@ -221,6 +222,7 @@ svg {
   overflow: hidden;
   white-space: nowrap;
   -webkit-user-select: none;
+  user-select: none;
 }
 
 .folderContent .fileName {
@@ -228,6 +230,7 @@ svg {
   overflow: hidden;
   white-space: nowrap;
   -webkit-user-select: none;
+  user-select: none;
 }
 
 .folderContent .fileIcon {
@@ -303,6 +306,7 @@ svg {
 
 .folderTitle {
   -webkit-user-select: none;
+  user-select: none;
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
@@ -353,6 +357,7 @@ svg {
   height: 22px;
   padding-left: 5px;
   -webkit-user-select: none;
+  user-select: none;
   transition: 0.3s;
 }
 
@@ -492,7 +497,7 @@ svg {
   background-color: #FFFFFF;
   margin: auto;
   -webkit-user-select: none;
-
+  user-select: none;
   transition: 0.2s;
 }
 
@@ -556,6 +561,7 @@ svg {
 
 .placeHolderText {
   -webkit-user-select: none;
+  user-select: none;
   cursor: default;
   direction: rtl;
   font-size: 25px;
@@ -646,6 +652,7 @@ svg {
   direction: rtl;
   height: fit-content;
   -webkit-user-select: none;
+  user-select: none;
   color: hsl(var(--theme-h), 40%, 30%);
   opacity: 50%;
   transition: 0.3s;
@@ -703,6 +710,7 @@ svg {
 
 #sidebar .tool {
   -webkit-user-select: none;
+  
   -webkit-user-drag: none;
   display: flex;
   width: 40px;
