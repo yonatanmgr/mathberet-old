@@ -14,6 +14,11 @@
   border: 1px solid #464646;
 }
 
+.actionsArea:hover {
+  border: 1px solid #333 !important;
+}
+
+
 .kbc-button:after{
   border: 1px solid #222;
 }
@@ -95,6 +100,14 @@
     filter: brightness(150%);
 }
 
+  .listedFile:hover {
+    filter: brightness(90%) !important;
+  }
+
+  .listedFile:has(.fileName#open) {
+    filter: brightness(85%);
+  }
+
   .listedFile {
     background: #121212 !important;
     color: white !important;
@@ -131,6 +144,22 @@ body,
   margin: 0;
 }
 
+.sidebarGrid{
+  width: 100%;
+  height: fit-content !important;
+}
+
+#notebookList{
+  width: 100% !important;
+} 
+
+.notebook{
+  width: 100%;
+  height: 100%;
+}
+
+
+
 math-field {
   font-size: 30px;
   --hue: var(--theme-h)
@@ -138,6 +167,7 @@ math-field {
 
 svg {
   -webkit-user-select: none;
+  user-select: none;
   -webkit-user-drag: none;
 }
 
@@ -205,6 +235,7 @@ svg {
   overflow: hidden;
   white-space: nowrap;
   -webkit-user-select: none;
+  user-select: none;
 }
 
 .folderContent .fileName {
@@ -212,19 +243,15 @@ svg {
   overflow: hidden;
   white-space: nowrap;
   -webkit-user-select: none;
+  user-select: none;
 }
 
 .folderContent .fileIcon {
-  padding-right: 36px;
   width: 15px;
 }
 
-.folder {
-  width: 0px;
-  height: fit-content;
-  display: flex;
-  flex-direction: column;
-  transition: 0.3s;
+.notebook .grid-stack-item-content{
+  padding-right: 18px;
 }
 
 #notebookList{
@@ -237,32 +264,20 @@ svg {
 }
 
 .folderContent {
-  height: 0px;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  transition: 0.3s;
-  overflow-y: hidden;
-}
-
-.folderContent>.listedFile:first-child{
-  padding-top: 4px;
-
-}
-
-.folderContent>.listedFile{
-  width: 215px !important;
-}
-
-.folderContent>.listedFile>.fileIcon{
-  padding-right: 10px !important;
+  transition: 0.2s;
+  /* overflow-y: hidden; */
+  width: 250px !important;
+  min-height: fit-content !important;
 }
 
 .folderTitleText {
   direction: rtl;
-  font-size: 0px;
-  transition: font-weight 0.1s;
+  font-size: 18px;
   font-weight: 400;
+  transition: 0.1s;
 }
 
 .folderTitle:hover>.folderTitleText,
@@ -285,15 +300,18 @@ svg {
 
 .folderTitle {
   -webkit-user-select: none;
+  user-select: none;
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
   height: 35px;
   justify-content: flex-start;
-  transition: 0.1s;
 }
 
-
+.fileIcon.toDelete{
+  fill: hsl(0, var(--theme-s), 40%) !important;
+  cursor: pointer;
+}
 
 .ggbContainer {
   height: 100%;
@@ -309,7 +327,19 @@ svg {
   width: calc(100% - 45px);
   z-index: 0 !important;
   text-align: center;
-  transition: 0.3s;
+  transition: 0.2s;
+}
+.sidebarGrid .grid-stack-placeholder>.placeholder-content {
+  background-color: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
+  filter: opacity(20%);
+  border-radius: 8px;
+  margin: 0;
+  position: absolute;
+  width: 90%;
+  height: 35px;
+  z-index: 0 !important;
+  text-align: center;
+  transition: 0.2s;
 }
 
 .grid-stack-item {
@@ -335,6 +365,7 @@ svg {
   height: 22px;
   padding-left: 5px;
   -webkit-user-select: none;
+  user-select: none;
   transition: 0.3s;
 }
 
@@ -353,14 +384,23 @@ svg {
   fill: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
 }
 
+.sidebarItem>.grid-stack-item-content{
+  height: fit-content;
+  /* padding-right: 30px; */
+}
+
+.notebook .listedFile{
+  width: 100%;
+}
+
 .listedFile {
-  width: 0px;
+  width: 100%;
   height: 35px;
   background-color: #FFFFFF;
   border-radius: 10px;
   overflow-x: hidden;
   overflow-y: hidden;
-  transition: 0.3s width, 0.2s background-color;
+  transition: 0.2s filter, 0.2s background-color;
   display: flex;
   flex-direction: row-reverse;
   justify-content: flex-start;
@@ -387,11 +427,9 @@ svg {
 .notebookIcon,
 .fileIcon {
   height: 20px;
-  margin-top: auto;
-  margin-bottom: auto;
   padding-right: 8px;
   padding-left: 8px;
-  transition: 0.1s;
+  transition: 0.2s;
   fill: hsl(var(--theme-h), 50%, 30%);
 }
 
@@ -405,7 +443,7 @@ svg {
   min-height: 100% !important;
   scroll-behavior: smooth;
   padding-top: 10px;
-  transition: ease 0.2s;
+  transition: 0.2s;
 }
 
 .pageContainer::-webkit-scrollbar {
@@ -476,7 +514,7 @@ svg {
   background-color: #FFFFFF;
   margin: auto;
   -webkit-user-select: none;
-
+  user-select: none;
   transition: 0.2s;
 }
 
@@ -512,6 +550,7 @@ svg {
 }
 
 #con {
+  background-color: white;
   height: 100%;
   width: 100%;
   display: flex;
@@ -519,7 +558,7 @@ svg {
   align-items: flex-start;
   flex: 1;
   overflow-y: hidden;
-
+  transition: 0.2s background-color;
 }
 
 #placeHolder {
@@ -530,16 +569,20 @@ svg {
   align-content: center;
   justify-content: center;
   align-items: center;
+  background-color: white;
+  transition: 0.2s;
 }
 
 .kbc-button {
   color: #777 !important;
   font-family: Rubik;
   font-weight: 100;
+  transition: 0.2s;
 }
 
 .placeHolderText {
   -webkit-user-select: none;
+  user-select: none;
   cursor: default;
   direction: rtl;
   font-size: 25px;
@@ -562,7 +605,7 @@ svg {
   margin-bottom: auto;
   justify-content: center;
   height: -webkit-fill-available;
-  transition: 0.2s ease;
+  transition: 0.2s;
 }
 
 #fileName {
@@ -592,14 +635,14 @@ svg {
   border-bottom: 1px solid #d2d2d2;
   margin-top: auto;
   margin-bottom: auto;
-  transition: 0.2s ease;
+  transition: 0.2s;
 
 }
 
 #logo {
   margin-top: 10.5px;
   margin-bottom: 10.5px;
-  transition: 0.1s;
+  transition: 0.2s;
   filter: brightness(25%);
   fill: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
 }
@@ -622,18 +665,19 @@ svg {
 }
 
 #myNotebooks {
+  display: none;
   font-size: 25px;
   font-weight: 700;
   margin-top: 14px;
-  padding-right: 10px;
-  width: 0px;
+  padding-right: 20px;
+  /* width: 0px; */
   direction: rtl;
   height: fit-content;
   -webkit-user-select: none;
+  user-select: none;
   color: hsl(var(--theme-h), 40%, 30%);
   opacity: 50%;
-  transition: 0.3s;
-  padding-bottom: 10px;
+  padding-bottom: 7px;
   white-space: nowrap;
 }
 
@@ -687,6 +731,7 @@ svg {
 
 #sidebar .tool {
   -webkit-user-select: none;
+  user-select: none;
   -webkit-user-drag: none;
   display: flex;
   width: 40px;
@@ -708,7 +753,7 @@ svg {
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  transition: 0.3s;
+  transition: 0.2s;
 
 }
 
@@ -726,15 +771,14 @@ svg {
   min-width: 0px;
   min-height: 100%;
   max-height: 100%;
-  transition: min-width 0.5s cubic-bezier(0.19, 1, 0.22, 1), border-color 0.2s ease, background-color 0.2s ease;
+  transition: min-width 0.5s cubic-bezier(0.19, 1, 0.22, 1), border-color 0.2s, background-color 0.2s;
 }
 
 
 #sidebarContent {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  align-items: flex-end;
   flex-grow: 1;
 }
 

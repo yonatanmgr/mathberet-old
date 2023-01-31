@@ -122,10 +122,10 @@ async function createWindow() {
     fs.writeFileSync(file, data, "utf-8");
     let name = file.split("/").pop()
     fs.rename(file, file.replace(name, newName), ()=>{})
+    ipcMain.on("delete", (event, file) => {fs.rm(file, ()=>{});})
   })
-  ipcMain.on("delete", (event, file) => {fs.rm(file, ()=>{});})
 
-  ipcMain.on("move", (event, oldDir, newDir) => {fs.rename(oldDir, newDir, ()=>{})})
+  ipcMain.on("move", (event, oldDir, newDir) => {fs.renameSync(oldDir, newDir)})
 
   ipcMain.on("load", (event, file) => {
     fs.readFile(file, "utf-8", (error, data) => {
@@ -156,25 +156,20 @@ async function createWindow() {
   })
 
   ipcMain.on("getNotebooks", (event, args) => {
-    const expanded = []
-
-    const files = source => (fs.readdirSync(source, {withFileTypes: true}))
-    .filter(file => file.isFile())
-    .map(file => file = {path: `./files/${file.name}`, fileName: file.name.replace(".json", "")})
-    
-    for (var file of files("./files")){
-      expanded.push({type: "file", fileName: file.fileName, path: file.path})
+    const all = () => (fs.readdirSync("./files", {withFileTypes: true})).map(
+      file => file = {
+        "path": `./files/${file.name}`,
+        "name": file.name,
+        "files": file.isDirectory() ? fs.readdirSync(`./files/${file.name}`, {withFileTypes: true})
+        .map(subfile => subfile = {
+          "path": `./files/${file.name}/${subfile.name}`,
+          "name": subfile.name,
+          "isOpen": false
+        }) : null,
+        "isOpen": false
       }
-
-    const folders = source => (fs.readdirSync(source, {withFileTypes: true}))
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => `./files/${dirent.name}`)
-    
-    for (var folder of folders("./files")){
-      expanded.push({type: "folder", folder: folder, files: fs.readdirSync(folder), isOpen: false})
-      }
-
-    win.webContents.send("gotNotebooks", expanded);
+    ) 
+    win.webContents.send("gotNotebooks", all());
   })
 }
 
