@@ -252,8 +252,9 @@ function findInTree(a){
   if (attempt == undefined){
     for (var item of dirTree){
       if (item.files && item.files.length > 0){
-        return item.files.find(t => t.path == a.id)
-      }
+        let secondTry = item.files.find(t => t.path == a.id)
+        if (secondTry != undefined){return secondTry} else continue
+      } else continue
     }
   } else {return attempt}
 }
@@ -262,53 +263,54 @@ function findInTree(a){
 function openSidebar(){
   
   sidebarStatus = 1
-  // createFolderList()
   renderDirTree()
 
   function addEvents(grid) {
     grid.on('dropped', function(event, previousWidget, newWidget) { 
-      
-      let originalGrid = previousWidget.grid
+      let movedItem = findInTree(previousWidget) // find the relevant dirtree item
+      let sourceGrid = previousWidget.grid
       let targetGrid = newWidget.grid
 
-      if (newWidget.grid.parentGridItem){ // if newloacted to a folder
-        console.log(newWidget.id);
-        
-        if (originalGrid.parentGridItem){ // if original location is also a folder
-          let movedItem = findInTree(newWidget) // find the relevant dirtree item
-  
-          // console.log(movedItem);
-          let targetFolder = findInTree(newWidget.grid.parentGridItem) // find target folder
+      if (targetGrid.parentGridItem){ // if moved into a folder
+        if (sourceGrid.parentGridItem){ // if original location is also a folder
+          let targetFolder = findInTree(targetGrid.parentGridItem) // find target folder
+          let sourceFolder = findInTree(sourceGrid.parentGridItem) // find original folder
 
-          let ogfolder = findInTree(originalGrid.parentGridItem) // find original folder
-          movedItem.path = movedItem.path.replace(ogfolder.path, targetFolder.path) // change path to new path
+          movedItem.path = movedItem.path.replace(sourceFolder.path, targetFolder.path) // change path to new path
           targetGrid.update(newWidget.el, {id: movedItem.path})
+          window.api.move(previousWidget.id, newWidget.id)
 
-          ogfolder.files.pop(movedItem) // removed moved item from og folder
+          sourceFolder.files.pop(movedItem) // removed moved item from og folder
           targetFolder.files.push(movedItem) // add moved item to target folder
 
           sidebarGrid.update(targetGrid.parentGridItem.el, {h: targetFolder.files.length+1}) // update h for target folder
-          sidebarGrid.update(originalGrid.parentGridItem.el, {h: ogfolder.files.length+1}) // update h for og folder
-          // console.log(newWidget.grid.getGridItems());
+          sidebarGrid.update(sourceGrid.parentGridItem.el, {h: sourceFolder.files.length+1}) // update h for og folder
 
         }
-        // else {
-        //   dirTree.pop(movedItem)
-        //   targetFolder.files.push(movedItem)
-        //   sidebarGrid.update(newWidget.grid.parentGridItem.el, {h: targetFolder.files.length+1, id: targetFolder.path})
-        // }
-      // console.log(movedItem);
-    } 
-    // console.log(dirTree);
-    // else {
-    //   let sidebarItem = dirTree.find(a => a.path == previousWidget.grid.parentGridItem.id)
-    //   let sidebarItemChild = dirTree.find(a => a.path == previousWidget.id)
-    //   let moved = sidebarItem.files.pop(sidebarItemChild)
-    //   moved.path = "./files/"+moved.name
-    //   dirTree.push(moved)
-    //   sidebarGrid.update(previousWidget.grid.parentGridItem.el, {h: sidebarItem.files.length+1, id: sidebarItem.path})
+        else if (sourceGrid === sidebarGrid){
+          let targetFolder = findInTree(targetGrid.parentGridItem)
+          
+          movedItem.path = `${targetFolder.path}/${movedItem.name}`
+          targetGrid.update(newWidget.el, {id: movedItem.path})
+          window.api.move(previousWidget.id, newWidget.id)
 
-    // }
+          dirTree.pop(movedItem)
+          targetFolder.files.push(movedItem)
+
+          sidebarGrid.update(targetGrid.parentGridItem.el, {h: targetFolder.files.length+1})
+        }
+    } else {
+      let sourceFolder = findInTree(sourceGrid.parentGridItem)
+      movedItem.path = `./files/${movedItem.name}`
+      targetGrid.update(newWidget.el, {id: movedItem.path})
+      window.api.move(previousWidget.id, newWidget.id)
+      sourceFolder.files.pop(movedItem)
+      dirTree.push(movedItem)
+      sidebarGrid.update(sourceGrid.parentGridItem.el, {h: sourceFolder.files.length+1})
+    }
+    window.api.getNotebooks()
+    window.api.receive("gotNotebooks", (data) => {dirTree = data})
+
     });
   }
     
