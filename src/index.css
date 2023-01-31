@@ -14,6 +14,11 @@
   border: 1px solid #464646;
 }
 
+.actionsArea:hover {
+  border: 1px solid #333 !important;
+}
+
+
 .kbc-button:after{
   border: 1px solid #222;
 }
@@ -317,6 +322,18 @@ svg {
   margin: 0;
   position: absolute;
   width: calc(100% - 45px);
+  z-index: 0 !important;
+  text-align: center;
+  transition: 0.2s;
+}
+.sidebarGrid .grid-stack-placeholder>.placeholder-content {
+  background-color: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
+  filter: opacity(20%);
+  border-radius: 8px;
+  margin: 0;
+  position: absolute;
+  width: 90%;
+  height: 35px;
   z-index: 0 !important;
   text-align: center;
   transition: 0.2s;
