@@ -308,7 +308,10 @@ svg {
   justify-content: flex-start;
 }
 
-
+.fileIcon.toDelete{
+  fill: hsl(0, var(--theme-s), 40%) !important;
+  cursor: pointer;
+}
 
 .ggbContainer {
   height: 100%;
@@ -666,7 +669,7 @@ svg {
   font-size: 25px;
   font-weight: 700;
   margin-top: 14px;
-  padding-right: 10px;
+  padding-right: 20px;
   /* width: 0px; */
   direction: rtl;
   height: fit-content;
