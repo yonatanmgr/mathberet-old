@@ -1,6 +1,6 @@
 // loadGrid()
 
-let notebooks, currentfile, currentBlock;
+let dirTree, currentfile, currentBlock;
 let maximizeStatus, sidebarStatus = 0
 
 let drag = `<svg class="handle" opacity="0.3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -23,54 +23,113 @@ const parser = new DOMParser();
 const toDOM = (el) => {return parser.parseFromString(el, "image/svg+xml")}
 
 window.api.getNotebooks()
-window.api.receive("gotNotebooks", (data) => {notebooks = data})
+window.api.receive("gotNotebooks", (data) => {dirTree = data})
 
 let sidebar = document.getElementById("sidebarContainer")
 let sidebarContent = document.getElementById("sidebarContent")
+let notebookList = document.createElement('div')
+notebookList.id = "notebookList"
+sidebarContent.append(notebookList)
 
-function createFolderList() {
+let sidebarGrid;
+
+function renderDirTree(){
+  let options = {
+    class: "sidebarGrid",
+    float: false,
+    removable: '#fileTrashCan',
+    dragOut: false,
+    acceptWidgets: true,
+    dragIn: '.sidebarItem',
+    disableResize: true,
+    // rtl: true,
+    column: 1,
+    itemClass: "sidebarItem",
+    cellHeight: 50
+  };
+
+  sidebarGrid = GridStack.addGrid(document.getElementById('notebookList'), options)
+
   window.api.getNotebooks()
-  window.api.receive("gotNotebooks", (data) => {notebooks = data})
-
-  contentList = []
-  contentList.push('<div id="myNotebooks">המחברות שלי</div>')
-  contentList.push('<div id="notebookList" ondragover="onDragOver(event)" ondrop="moveFile(event)">')
-
-  for (var item of notebooks){
-    if (item.type == "folder"){
-        let folder = `<div id="folder_${item.folder}" class="folder" ondragover="onDragOver(event)" ondrop="moveFile(event)"><div class="folderTitle">${folderIconClosed}<span class="folderTitleText">${item.folder.replace("./files/", "")}</span></div><div class="folderContent"></div></div>`
-        if (contentList.includes(folder) == false){contentList.push(folder)}
-    } else {
-        let file = `<div id="file_${item.path}" class="listedFile" draggable="true" ondragstart="onDragStart(event)" data-foldername="" data-filename="${item.fileName}" data-path="${item.path}">${fileIcon}<div class="fileName">${item.fileName}</div></div>`
-        if (contentList.includes(file) == false){contentList.push(file)}
+  window.api.receive("gotNotebooks", (data) => {dirTree = data})
+  for (var item of dirTree){
+    let html = ""
+    let isSubgrid = false
+    let subgridOptions, gridItem;
+    if (item.files){
+      let subGridItems = [];
+      for (var file of item.files){
+        let html = `<div class="listedFile">${fileIcon}<div class="fileName">${file.name}</div></div>`
+        let gridItem = {
+          content: html,
+          w: 1, h: 1,
+          id: file.path
+        }
+        subGridItems.push(gridItem)
+      }
+        isSubgrid = true;
+        subgridOptions = {
+          class: "notebook",
+          float: false,
+          removable: '#fileTrashCan',
+          acceptWidgets: true,
+          dragOut: true,
+          dragIn: ".sidebarItem",
+          disableResize: true,
+          // rtl: true,
+          column: 1,
+          itemClass: "sidebarItem",
+          cellHeight: 50,
+          children: subGridItems
+        }
+        html = `<div class="folder"><div class="folderTitle">${folderIconClosed}<span class="folderTitleText">${item.name}</span></div><div class="folderContent"></div></div>`
+        gridItem = {content: html, w: 1, h: item.files.length+1, id: item.path, subGridDynamic: true, isFolder: true}
+      } else {
+        html = `<div class="listedFile">${fileIcon}<div class="fileName">${item.name}</div></div>`
+        gridItem = {content: html, w: 1, h: 1, id: item.path}
+      }
+    sidebarGrid.addWidget(gridItem)
+    // let sidebarItem = document.querySelector('.sidebarGrid')
+    //     .gridstack.getGridItems()
+    //     .find(a => a.gridstackNode.id == item.path)
+    
+    // sidebarItem.style.minHeight = "400px";
+    if (isSubgrid){
+      GridStack.addGrid(
+        document.querySelector('.sidebarGrid')
+        .gridstack.getGridItems()
+        .find(a => a.gridstackNode.id == item.path)
+        .querySelector(".folderContent"), subgridOptions)
     }
   }
-  contentList.push('</div>')
-  sidebarContent.innerHTML = contentList.join("")
-  for (var el of document.getElementsByClassName(".listedFile")){el.id = el.id.replace("./files/./files/", "./files/")}
+  
 
 }
 
-function moveFile(event) {
-  for (var el of document.getElementsByClassName(".listedFile")){el.id = el.id.replace("./files/./files/", "./files/")}
-  if (event.target.closest(".folder")){
-    const id = event.dataTransfer.getData('text');
-    const draggableElement = document.getElementById(id);
-    const dropzone = event.target.closest(".folder");
-    dropzone.querySelector(".folderContent").appendChild(draggableElement);
-    event.dataTransfer.clearData(); 
-    window.api.move(`./files/${id.split("/").slice(-1).join("/")}`, `${dropzone.id.replace("folder_", "")}/${id.split("/").splice(-1)}`)
-  }
-  else if (event.target.closest("#sidebarContainer")) {
-    const id = event.dataTransfer.getData('text');
-    const draggableElement = document.getElementById(id);
-    document.getElementById("notebookList").append(draggableElement);
-    event.dataTransfer.clearData(); 
-    window.api.move(`./files/${id.split("/").slice(-2).join("/")}`, `./files/${id.split("/").splice(-1)}`)
-  }
-  window.api.getNotebooks()
-  window.api.receive("gotNotebooks", (data) => {notebooks = data})
-}
+
+// function createFolderList() {
+//   window.api.getNotebooks()
+//   window.api.receive("gotNotebooks", (data) => {dirTree = data})
+
+//   contentList = []
+//   contentList.push('<div id="myNotebooks">המחברות שלי</div>')
+//   contentList.push('<div id="notebookList" ondragover="onDragOver(event)" ondrop="moveFile(event)">')
+
+//   for (var item of dirTree){
+//     if (item.type == "folder"){
+//         let folder = `<div id="folder_${item.folder}" class="folder" ondragover="onDragOver(event)" ondrop="moveFile(event)"><div class="folderTitle">${folderIconClosed}<span class="folderTitleText">${item.folder.replace("./files/", "")}</span></div><div class="folderContent"></div></div>`
+//         if (contentList.includes(folder) == false){contentList.push(folder)}
+//     } else {
+//         let file = `<div id="file_${item.path}" class="listedFile" draggable="true" ondragstart="onDragStart(event)" data-foldername="" data-filename="${item.fileName}" data-path="${item.path}">${fileIcon}<div class="fileName">${item.fileName}</div></div>`
+//         if (contentList.includes(file) == false){contentList.push(file)}
+//     }
+//   }
+//   contentList.push('</div>')
+//   sidebarContent.innerHTML = contentList.join("")
+//   for (var el of document.getElementsByClassName(".listedFile")){el.id = el.id.replace("./files/./files/", "./files/")}
+
+// }
+
 
 function resetPage(){
   currentfile = undefined;
@@ -91,7 +150,7 @@ function trashFile(event) {
     resetPage()
   }
   window.api.getNotebooks()
-  window.api.receive("gotNotebooks", (data) => {notebooks = data})
+  window.api.receive("gotNotebooks", (data) => {dirTree = data})
 }
 
 // const trashCanTarget = document.getElementById("fileTrashCan");
@@ -107,13 +166,6 @@ function trashFile(event) {
 //   }
 // });
 
-function onDragOver(event) {
-  event.preventDefault();
-}
-
-function onDragStart(event) {
-  event.dataTransfer.setData('text/plain', event.target.id);
-}
 
 function collapsableFolder(notebook){
 
@@ -194,9 +246,96 @@ function toggleMaximize() {
   }
 }
 
+
+function findInTree(a){
+  let attempt = dirTree.find(t => t.path == a.id)
+  if (attempt == undefined){
+    for (var item of dirTree){
+      if (item.files){
+        return item.files.find(t => t.path == a.id)
+      }
+    }
+  } else {return attempt}
+}
+
+
 function openSidebar(){
+  
   sidebarStatus = 1
-  createFolderList()
+  // createFolderList()
+  renderDirTree()
+
+  function addEvents(grid) {
+  
+    grid.on('dropped', function(event, previousWidget, newWidget) { 
+    if (newWidget.grid.parentGridItem){ // if newloacted to a folder
+      console.log(previousWidget.id);
+      let movedItem = findInTree(previousWidget) // find the relevant dirtree item
+      // console.log(movedItem);
+      let targetFolder = findInTree(newWidget.grid.parentGridItem) // find target folder
+      if (previousWidget.grid.parentGridItem){ // if original location is also a folder
+        let ogfolder = findInTree(previousWidget.grid.parentGridItem) // find original folder
+        movedItem.path = movedItem.path.replace(ogfolder.path, targetFolder.path) // change path to new path
+        ogfolder.files.pop(movedItem) // removed moved item from og folder
+        targetFolder.files.push(movedItem) // add moved item to target folder
+        newWidget.grid.update(newWidget, {id: movedItem.path})
+        sidebarGrid.update(newWidget.grid.parentGridItem.el, {h: targetFolder.files.length+1}) // update h for target folder
+        sidebarGrid.update(previousWidget.grid.parentGridItem.el, {h: ogfolder.files.length+1}) // update h for og folder
+        // console.log(newWidget.grid.getGridItems());
+
+      } else {
+        dirTree.pop(movedItem)
+        targetFolder.files.push(movedItem)
+        sidebarGrid.update(newWidget.grid.parentGridItem.el, {h: targetFolder.files.length+1, id: targetFolder.path})
+      }
+
+      // console.log(movedItem);
+    } 
+    // console.log(dirTree);
+    // else {
+    //   let sidebarItem = dirTree.find(a => a.path == previousWidget.grid.parentGridItem.id)
+    //   let sidebarItemChild = dirTree.find(a => a.path == previousWidget.id)
+    //   let moved = sidebarItem.files.pop(sidebarItemChild)
+    //   moved.path = "./files/"+moved.name
+    //   dirTree.push(moved)
+    //   sidebarGrid.update(previousWidget.grid.parentGridItem.el, {h: sidebarItem.files.length+1, id: sidebarItem.path})
+
+    // }
+    });
+  }
+    
+    let gridEls = GridStack.getElements('.grid-stack');
+    gridEls.forEach(gridEl => {
+      let grid = gridEl.gridstack;
+      addEvents(grid);
+    })
+
+  // sidebarGrid.on('dropped', function(event, previousWidget, newWidget) {    
+  //   if (previousWidget){
+  //     console.log("aaaa");
+  //   }
+  //   if (newWidget){
+  //     console.log("Bbbb");
+  //   }
+  //   if (newWidget.grid.parentGridItem){
+  //     let sidebarItem = dirTree.find(a => a.path == newWidget.grid.parentGridItem.id)
+  //     let sidebarItemChild = dirTree.find(a => a.path == newWidget.id)
+  //     sidebarItem.files.push(sidebarItemChild)
+  //     // moved.path = newWidget.id moved.name
+  //     sidebarGrid.update(newWidget.grid.parentGridItem.el, {h: sidebarItem.files.length+1, id: sidebarItem.path})
+  //   } 
+  //   else {
+  //     let sidebarItem = dirTree.find(a => a.path == previousWidget.grid.parentGridItem.id)
+  //     let sidebarItemChild = dirTree.find(a => a.path == previousWidget.id)
+  //     let moved = sidebarItem.files.pop(sidebarItemChild)
+  //     // moved.path = newWidget.id moved.name
+  //     dirTree.push(moved)
+  //     sidebarGrid.update(previousWidget.grid.parentGridItem.el, {h: sidebarItem.files.length+1, id: sidebarItem.path})
+
+  //   }
+
+  // })
+
   sidebar.style.minWidth = "280px"
   sidebar.style.borderLeft = "1px solid #BEBEBE;"
   setTimeout(() => {
@@ -260,7 +399,7 @@ document.addEventListener("dblclick", function (e) {
 document.addEventListener("click", function (e) {
   const target = e.target.closest(".folderTitle");
   if (target) {
-    collapsableFolder(notebooks.find(folder => folder.folder == `./files/${target.innerText}`))
+    collapsableFolder(dirTree.find(folder => folder.folder == `./files/${target.innerText}`))
   }
 });
 
@@ -549,7 +688,7 @@ function newFile() {
   currentfile = "./files/קובץ חדש.json"
   window.api.receive("fromMain", (data) => {grid.load([])})
   window.api.getNotebooks()
-  window.api.receive("gotNotebooks", (data) => {notebooks = data})
+  window.api.receive("gotNotebooks", (data) => {dirTree = data})
 }
 
 window.api.receive("Text", () => document.getElementById("addQuill").click())
