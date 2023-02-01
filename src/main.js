@@ -29,7 +29,7 @@ async function createWindow() {
 
   // and load the index.html of the app.
   win.loadFile('./src/index.html')
-  fs.readFile("./preferences.json", "utf-8", (error, data)=>{nativeTheme.themeSource = JSON.parse(data).theme})
+  fs.readFile(path.join(__dirname, "..", "preferences.json"), "utf-8", (error, data)=>{nativeTheme.themeSource = JSON.parse(data).theme})
 
   const menu = new Menu()
   menu.append(new MenuItem({
@@ -113,21 +113,21 @@ async function createWindow() {
   })
 
   ipcMain.on("newFile", (event, data) => {
-    fs.writeFileSync(`./files/קובץ חדש.json`, "[]", "utf-8");
-    fs.readFile(`./files/קובץ חדש.json`, "utf-8", (error, data) => {
+    fs.writeFileSync(path.join(__dirname, "..", "files", "קובץ חדש.json"), "[]", "utf-8");
+    fs.readFile(path.join(__dirname, "..", "files", "קובץ חדש.json"), "utf-8", (error, data) => {
       win.webContents.send("fromMain", data);
     });
   })
 
   ipcMain.on("save", (event, data, file, newName) => {
     fs.writeFileSync(file, data, "utf-8");
-    let name = file.split("/").pop()
+    let name = file.split("\\").pop()
     fs.rename(file, file.replace(name, newName), ()=>{})
   })
   
   ipcMain.on("delete", (event, file) => {shell.trashItem(path.resolve(file)).then((res) => {}).catch((err) => {})})
 
-  ipcMain.on("openFiles", (event) => {shell.openPath(path.resolve("./files")).then((res) => {}).catch((err) => {})})
+  ipcMain.on("openFiles", (event) => {shell.openPath(path.resolve(path.join(__dirname, "..", "files"))).then((res) => {}).catch((err) => {})})
 
   ipcMain.on("move", (event, oldDir, newDir) => {fs.renameSync(oldDir, newDir)})
 
@@ -138,42 +138,47 @@ async function createWindow() {
   })
   
   ipcMain.on('dark-mode:toggle', () => {
+    const preferencesPath = path.join(__dirname, "..", "preferences.json")
     if (nativeTheme.shouldUseDarkColors) {
       nativeTheme.themeSource = 'light'
-      fs.readFile("./preferences.json", "utf-8", (error, data)=>{
+      fs.readFile(preferencesPath, "utf-8", (error, data)=>{
         let readData = JSON.parse(data)
         readData.theme = 'light'
         let newdata = JSON.stringify(readData)
-        fs.writeFileSync("./preferences.json", newdata, "utf-8");
+        fs.writeFileSync(preferencesPath, newdata, "utf-8");
       });
       
     } else {
       nativeTheme.themeSource = 'dark'
-      fs.readFile("./preferences.json", "utf-8", (error, data)=>{
+      fs.readFile(preferencesPath, "utf-8", (error, data)=>{
         let readData = JSON.parse(data)
         readData.theme = 'dark'
         let newdata = JSON.stringify(readData)
-        fs.writeFileSync("./preferences.json", newdata, "utf-8");
+        fs.writeFileSync(preferencesPath, newdata, "utf-8");
       });
 
     }
   })
 
   ipcMain.on("getNotebooks", (event, args) => {
-    const all = () => (fs.readdirSync("./files", {withFileTypes: true})).map(
-      file => file = {
-        "path": `./files/${file.name}`,
+    const filesPath = path.join(__dirname, "..", "files")
+    const all = () => (fs.readdirSync(filesPath, {withFileTypes: true})).map(
+      file => file = 
+      {
+        "parentFolder": filesPath,
+        "path": path.join(filesPath, file.name),
         "name": file.name,
-        "files": file.isDirectory() ? fs.readdirSync(`./files/${file.name}`, {withFileTypes: true})
+        "files": file.isDirectory() ? fs.readdirSync(path.join(filesPath, file.name), {withFileTypes: true})
         .map(subfile => subfile = {
-          "path": `./files/${file.name}/${subfile.name}`,
+          "parentFolder": path.join(filesPath, file.name),
+          "path": path.join(filesPath, file.name, subfile.name),
           "name": subfile.name,
           "isOpen": false
         }) : null,
         "isOpen": false
       }
     ) 
-    win.webContents.send("gotNotebooks", all());
+    win.webContents.send("gotNotebooks", {"filesPath": filesPath, "allFiles": all()});
   })
 }
 

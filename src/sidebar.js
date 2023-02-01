@@ -1,3 +1,4 @@
+let currentFile;
 let sidebar = document.getElementById("sidebarContainer")
 let sidebarContent = document.getElementById("sidebarContent")
 let notebookList = document.createElement('div')
@@ -26,7 +27,7 @@ function openSidebar() {
       let movedItem = findInTree(previousWidget) // find the relevant dirtree item
       let sourceGrid = previousWidget.grid
       let targetGrid = newWidget.grid
-      let targetGridItems = targetGrid.getGridItems().map(item => item.gridstackNode.id.split("/").slice(-1)[0])
+      let targetGridItems = targetGrid.getGridItems().map(item => item.gridstackNode.id.split("\\").slice(-1)[0])
       if (hasDuplicates(targetGridItems) || movedItem.files){
         popupAnimation("cantMove");
         targetGrid.removeWidget(newWidget.el)
@@ -39,6 +40,8 @@ function openSidebar() {
   
             movedItem.path = movedItem.path.replace(sourceFolder.path, targetFolder.path) // change path to new path
             targetGrid.update(newWidget.el, {id: movedItem.path})
+            console.log(previousWidget.id);
+            console.log(newWidget.id);
             window.api.move(previousWidget.id, newWidget.id)
   
             sourceFolder.files.pop(movedItem) // removed moved item from og folder
@@ -50,7 +53,7 @@ function openSidebar() {
           } else if (sourceGrid === sidebarGrid) {
             let targetFolder = findInTree(targetGrid.parentGridItem)
   
-            movedItem.path = `${targetFolder.path}/${movedItem.name}`
+            movedItem.path = `${targetFolder.path}\\${movedItem.name}`
             targetGrid.update(newWidget.el, {id: movedItem.path})
             window.api.move(previousWidget.id, newWidget.id)
   
@@ -61,7 +64,7 @@ function openSidebar() {
           }
         } else {
           let sourceFolder = findInTree(sourceGrid.parentGridItem)
-          movedItem.path = `./files/${movedItem.name}`
+          movedItem.path = `${dirTreeLocation}\\${movedItem.name}`
           targetGrid.update(newWidget.el, {id: movedItem.path})
           window.api.move(previousWidget.id, newWidget.id)
           sourceFolder.files.pop(movedItem)
@@ -95,7 +98,7 @@ function toggleSidebar() {
 // Fetch dirTree from files folder
 function reloadDirTree() {
   window.api.getNotebooks();
-  window.api.receive("gotNotebooks", (data) => { dirTree = data });
+  window.api.receive("gotNotebooks", (data) => { dirTree = data.allFiles; dirTreeLocation = data.filesPath });
 }
 
 // Render the dirTree grid in the sidebar
@@ -330,15 +333,15 @@ document.addEventListener("dblclick", function (e) {
     const target = e.target.closest(".listedFile");
     if (target) {
         let path = target.closest(".grid-stack-item").gridstackNode.id
-        let fileName = target.closest(".grid-stack-item").gridstackNode.id.split("/").pop()
-        let folderName = target.closest(".grid-stack-item").gridstackNode.id.split("/").slice(-2, -1)[0]
+        let fileName = findInTree(target.closest(".grid-stack-item").gridstackNode).name
+        let folderName = findInTree(target.closest(".grid-stack-item").gridstackNode).parentFolder.split("\\").pop()
         loadGrid(path, fileName, folderName)
     }
 });
 
 // Create a new file
 function newFile() {
-    if (dirTree.map(file => file = file.path).includes("./files/קובץ חדש.json")) {popupAnimation("cantCreate")}
+    if (dirTree.map(file => file = file.path).includes(`${dirTreeLocation}\\קובץ חדש.json`)) {popupAnimation("cantCreate")}
     else {
       window.api.newFile()
       document.getElementById("placeHolder").style.display = "none"
@@ -346,7 +349,7 @@ function newFile() {
       document.getElementById("slash").innerText = ""
       document.getElementById("notebookName").innerText = ""
       document.getElementById("fileName").innerText = "קובץ חדש"
-      currentfile = "./files/קובץ חדש.json"
+      currentfile = `${dirTreeLocation}\\קובץ חדש.json`
       if (sidebarStatus == 1){
         sidebarGrid.addWidget({
           content: `<div class="listedFile">${fileIcon}<div class="fileName">קובץ חדש</div></div>`,

@@ -59,11 +59,13 @@ function hasDuplicates(array) {
   return false;
 }
 
+document.getElementById('fileName').addEventListener('keydown', (evt) => {if (evt.key === 'Enter') {evt.preventDefault();}});
+
 // Buttons
 document.getElementById("close").addEventListener("click", () => { setTimeout(() => {window.api.close()}, 2); });
-document.getElementById("logo").addEventListener("click", resetPage);
 document.getElementById("minimize").addEventListener("click", window.api.minimize);
 document.getElementById("maximize").addEventListener("click", toggleMaximize);
+document.getElementById("logo").addEventListener("click", resetPage);
 document.getElementById("settings").addEventListener('click', window.api.toggle)
 document.getElementById("settings").addEventListener("contextmenu", getRandomColor);
 
