@@ -146,7 +146,7 @@ body,
 
 .sidebarGrid{
   width: 100%;
-  height: fit-content !important;
+  flex-grow: 1;
 }
 
 #notebookList{
@@ -424,7 +424,13 @@ svg {
   filter: brightness(80%);
 }
 
-.notebookIcon,
+.notebookIcon{
+  height: 20px;
+  padding-right: 8px;
+  padding-left: 6px;
+  transition: 0.2s;
+  fill: hsl(var(--theme-h), 50%, 30%);
+}
 .fileIcon {
   height: 20px;
   padding-right: 8px;
@@ -821,6 +827,7 @@ svg {
 #snackbar {
   direction: rtl;
   visibility: hidden;
+  align-self: center;
   min-width: 120px;
   margin-left: -60px;
   background-color: #333;
@@ -830,7 +837,7 @@ svg {
   padding: 16px;
   position: fixed;
   z-index: 1;
-  left: 50%;
+  /* left: 50%; */
   bottom: 30px;
 }
 

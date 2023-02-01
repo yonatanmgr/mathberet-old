@@ -122,8 +122,9 @@ async function createWindow() {
     fs.writeFileSync(file, data, "utf-8");
     let name = file.split("/").pop()
     fs.rename(file, file.replace(name, newName), ()=>{})
-    ipcMain.on("delete", (event, file) => {fs.rm(file, ()=>{});})
   })
+  
+  ipcMain.on("delete", (event, file) => {fs.rm(file, ()=>{});})
 
   ipcMain.on("move", (event, oldDir, newDir) => {fs.renameSync(oldDir, newDir)})
 
