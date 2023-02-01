@@ -101,6 +101,10 @@ function blockData(html, id, type, h, blockContent = {}, x = 12, y = 1000, w = 6
   }
 }
 
+document.getElementById("addQuill").addEventListener("click", addQuill);
+document.getElementById("addGgb"  ).addEventListener("click", addGgb);
+document.getElementById("addMF"   ).addEventListener("click", addMF);
+
 function addQuill() {
   let id = Date.now();
   let html = `${drag}</img><div class="actionsArea"><div id="textEdit_${id}" class="textBlock"></div></div>`
@@ -286,3 +290,5 @@ function loadGrid(path, file, folder) {
     items.map(loadBlock)
   });
 }
+
+document.getElementById("close").addEventListener("click", saveGrid);

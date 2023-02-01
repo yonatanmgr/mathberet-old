@@ -60,22 +60,19 @@ function hasDuplicates(array) {
 }
 
 // Buttons
-document.getElementById("close"   ).addEventListener("click", () => {saveGrid(); window.api.close()});
-document.getElementById("logo"    ).addEventListener("click", resetPage);
+document.getElementById("close").addEventListener("click", () => { setTimeout(() => {window.api.close()}, 2); });
+document.getElementById("logo").addEventListener("click", resetPage);
 document.getElementById("minimize").addEventListener("click", window.api.minimize);
 document.getElementById("maximize").addEventListener("click", toggleMaximize);
-document.getElementById("addQuill").addEventListener("click", addQuill);
-document.getElementById("addGgb"  ).addEventListener("click", addGgb);
-document.getElementById("addMF"   ).addEventListener("click", addMF);
 document.getElementById("settings").addEventListener('click', window.api.toggle)
 document.getElementById("settings").addEventListener("contextmenu", getRandomColor);
 
 
 // Shortcuts
-window.api.receive("Text",            () => document.getElementById("addQuill").click())
-window.api.receive("Graph",           () => document.getElementById("addGgb").click())
-window.api.receive("Math",            () => document.getElementById("addMF").click())
-window.api.receive("newFile",         () => document.getElementById("newFile").click())
+window.api.receive("Text", () => document.getElementById("addQuill").click())
+window.api.receive("Graph", () => document.getElementById("addGgb").click())
+window.api.receive("Math", () => document.getElementById("addMF").click())
+window.api.receive("newFile", () => document.getElementById("newFile").click())
 window.api.receive("toggleNotebooks", () => document.getElementById("notebooks").click())
-window.api.receive("Save",            () => {if (currentfile == null) {return} else {saveGrid()}})
-window.api.receive("Search",          () => {})
+window.api.receive("Save", () => {if (currentfile == null) {return} else {saveGrid()}})
+window.api.receive("Search", () => {})
