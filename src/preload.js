@@ -15,7 +15,7 @@ contextBridge.exposeInMainWorld(
           }
       },
       receive: (channel, func) => {
-          let validChannels = ["newFile", "Save", "fromMain", "Text", "Graph", "Math", "gotNotebooks", "toggleNotebooks", "Search"];
+          let validChannels = ["openFiles", "newFile", "Save", "fromMain", "Text", "Graph", "Math", "gotNotebooks", "toggleNotebooks", "Search"];
           if (validChannels.includes(channel)) {
               // Deliberately strip event as it includes `sender` 
               ipcRenderer.on(channel, (event, ...args) => func(...args));
@@ -24,6 +24,7 @@ contextBridge.exposeInMainWorld(
       getNotebooks: () => {ipcRenderer.send("getNotebooks")},
       delete: (file) => {ipcRenderer.send("delete", file)},
       newFile: () => {ipcRenderer.send("newFile")},
+      openFiles: () => {ipcRenderer.send("openFiles")},
       move: (oldDir, newDir) => {ipcRenderer.send("move", oldDir, newDir)},
       save: (data, file, newName) => {ipcRenderer.send("save", data, file, newName)},
       load: (file) => {ipcRenderer.send("load", file)},
