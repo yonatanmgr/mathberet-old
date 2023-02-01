@@ -9,9 +9,13 @@ const {
   shell
 } = require('electron')
 const path = require('path')
+const Store = require('electron-store')
 const fs = require("fs")
 
 let win;
+
+
+
 
 async function createWindow() {
   // Create the browser window.
@@ -26,12 +30,24 @@ async function createWindow() {
       preload: path.join(__dirname, "preload.js") // use a preload script
     }
   })
-
+  
   // and load the index.html of the app.
-  win.loadFile('./src/index.html')
-  fs.readFile(path.join(__dirname, "..", "preferences.json"), "utf-8", (error, data)=>{nativeTheme.themeSource = JSON.parse(data).theme})
+  win.loadFile('./src/index.html');
+
+  const schema = {
+    theme: {type: 'string', default: 'light'},
+    color: {type: 'number', maximum: 360, minimum: 1, default: 203}
+  };
+
+  if (fs.readFileSync(path.join(app.getPath('userData'), "config.json")) == "") {
+    fs.writeFileSync(path.join(app.getPath('userData'), "config.json"), "{}")
+  }
+  const store = new Store({schema});
+
+  nativeTheme.themeSource = store.get('theme');
 
   const menu = new Menu()
+
   menu.append(new MenuItem({
     label: 'Blocks',
     submenu: [
@@ -51,7 +67,8 @@ async function createWindow() {
       click: () => {win.webContents.send("Graph");}
     }
   ]
-  })),
+  }))
+
   menu.append(new MenuItem({
     label: 'Misc',
     submenu: [
@@ -82,6 +99,7 @@ async function createWindow() {
     }
   ]
   }))
+
   menu.append(new MenuItem({
     label: 'Actions',
     submenu: [
@@ -97,20 +115,16 @@ async function createWindow() {
     }
   ]
   }))
+
   Menu.setApplicationMenu(menu)
   
-  ipcMain.on("maximize", () => {
-    win.maximize()
-  })
-  ipcMain.on("unmaximize", () => {
-    win.unmaximize()
-  })
-  ipcMain.on("minimize", () => {
-    win.minimize()
-  })
-  ipcMain.on("close", () => {
-    win.close()
-  })
+  ipcMain.on("maximize", () => {win.maximize()})
+
+  ipcMain.on("unmaximize", () => {win.unmaximize()})
+
+  ipcMain.on("minimize", () => {win.minimize()})
+
+  ipcMain.on("close", () => {win.close()})
 
   ipcMain.on("newFile", (event, data) => {
     fs.writeFileSync(path.join(__dirname, "..", "files", "קובץ חדש.json"), "[]", "utf-8");
@@ -131,33 +145,19 @@ async function createWindow() {
 
   ipcMain.on("move", (event, oldDir, newDir) => {fs.renameSync(oldDir, newDir)})
 
-  ipcMain.on("load", (event, file) => {
-    fs.readFile(file, "utf-8", (error, data) => {
-      win.webContents.send("fromMain", data);
-    });
+  ipcMain.on("load", (event, file) => {fs.readFile(file, "utf-8", (error, data) => {win.webContents.send("fromMain", data)})})
+  
+  ipcMain.on("setUserColor", (event, color) => {
+    store.set('color', color);
+  })
+
+  ipcMain.on("getUserColor", (event, args) => {
+    win.webContents.send("gotUserColor", store.get('color'))
   })
   
-  ipcMain.on('dark-mode:toggle', () => {
-    const preferencesPath = path.join(__dirname, "..", "preferences.json")
-    if (nativeTheme.shouldUseDarkColors) {
-      nativeTheme.themeSource = 'light'
-      fs.readFile(preferencesPath, "utf-8", (error, data)=>{
-        let readData = JSON.parse(data)
-        readData.theme = 'light'
-        let newdata = JSON.stringify(readData)
-        fs.writeFileSync(preferencesPath, newdata, "utf-8");
-      });
-      
-    } else {
-      nativeTheme.themeSource = 'dark'
-      fs.readFile(preferencesPath, "utf-8", (error, data)=>{
-        let readData = JSON.parse(data)
-        readData.theme = 'dark'
-        let newdata = JSON.stringify(readData)
-        fs.writeFileSync(preferencesPath, newdata, "utf-8");
-      });
-
-    }
+  ipcMain.on('dark-mode', () => {
+    if (nativeTheme.shouldUseDarkColors) {nativeTheme.themeSource = 'light'; store.set('theme', 'light')} 
+    else {nativeTheme.themeSource = 'dark'; store.set('theme', 'dark')}
   })
 
   ipcMain.on("getNotebooks", (event, args) => {

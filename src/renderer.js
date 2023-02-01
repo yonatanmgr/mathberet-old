@@ -1,5 +1,14 @@
 let dirTree, currentfile, currentBlock;
 let maximizeStatus, sidebarStatus = 0
+function getColor() {
+  window.api.getUserColor()
+  window.api.receive("gotUserColor", (color)=>{
+    document.querySelector(":root").style.setProperty("--theme-h", color);
+  })
+}
+
+getColor()
+
 
 // GENERAL
 
@@ -43,6 +52,7 @@ function getRandomColor() {
   // colors = [40, 80, 120, 160, 200, 240, 280, 320, 0]
   colors = 360
   const h = Math.floor(Math.random() * colors);
+  window.api.setUserColor(h)
   document.querySelector(":root").style.setProperty("--theme-h", h);
 };
 
