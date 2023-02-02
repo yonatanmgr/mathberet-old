@@ -1,26 +1,24 @@
 let currentFile;
 let sidebar = document.getElementById("sidebarContainer")
 let sidebarContent = document.getElementById("sidebarContent")
-let notebookList = document.createElement('div')
-notebookList.id = "notebookList"
-sidebarContent.append(notebookList)
-let sidebarGrid;
+let sidebarList = document.createElement('div')
+sidebarList.id = "sidebarList"
+sidebarContent.append(sidebarList)
+let sidebarGrid, sidebarScene;
 
-document.getElementById("notebooks").addEventListener("click", toggleSidebar);
+document.getElementById("notebooks").addEventListener("click", () => {toggleSidebar("notebooks")});
 
 reloadDirTree();
 
-// Self explainatory
-function openSidebar() {
-  sidebarStatus = 1
-  sidebar.style.minWidth = "280px"
-
+let createMyNotebooks = () => {
+  sidebarScene = "notebooks";
+  document.getElementById("sidebarTitle").innerText = "המחברות שלי"
   setTimeout(() => {
     renderDirTree();
     GridStack.getElements('.sidebarGrid, .notebook').forEach(gridEl => {addEvents(gridEl.gridstack)})
-    document.getElementById("myNotebooks").style.display = "block"
+    document.getElementById("sidebarTitle").style.display = "block"
   }, 50)
-  setTimeout(() => {renderDirTree();}, 1)
+  setTimeout(() => {renderDirTree()}, 1)
 
   function addEvents(grid) {
     grid.on('dropped', function (event, previousWidget, newWidget) {
@@ -75,21 +73,75 @@ function openSidebar() {
       
       window.api.getNotebooks()
     });
+  }
+}
 
+let createSettings = () => {
+  sidebarScene = "settings";
+  
+  document.getElementById("sidebarTitle").innerText = "הגדרות"
+  document.getElementById("sidebarList").innerHTML += "<div id='settingsZone'></div>"
+  document.getElementById("settingsZone").innerHTML += `<div class='settingsArea'><span class='settingsText'>ערכת נושא</span><div class='settingsButton' id='themeSwitcher'>${getTheme()}</div></div>`
+  document.getElementById("themeSwitcher").addEventListener('click', ()=>{
+    let theme;
+    switch (getElementById("themeSwitcher").innerText) {
+      case "מצב אור":
+        theme = "מצב חושך"
+        break;
+      case "מצב חושך":
+        theme = "מצב אור"
+        break;
+      }
+    document.getElementById("themeSwitcher").innerText = theme
+    window.api.toggle()
+  })
+
+  setTimeout(() => {
+    document.getElementById("sidebarTitle").style.display = "block"
+  }, 50)
+}
+
+// Self explainatory
+function openSidebar(scene) {
+  sidebarStatus = 1
+  sidebar.style.minWidth = "280px"
+
+  switch (scene) {
+    case "notebooks":
+      document.getElementById("sidebarList").innerHTML = ""
+      createMyNotebooks();
+      break;
+    case "settings":
+      if (sidebarScene == "notebooks") { sidebarGrid.destroy(); document.getElementById("sidebarList").innerHTML = "" }
+      createSettings();
+      break;
+  
+    default:
+      break;
   }
 }
 
 // Self explainatory
 function closeSidebar() {
-  document.getElementById("myNotebooks").style.display = "none"
+  document.getElementById("sidebarTitle").style.display = "none"
   sidebarGrid.destroy();
   sidebarStatus = 0;
   sidebar.style.minWidth = "0px"
+  document.getElementById("sidebarList").innerHTML = ""
 }
 
 // Self explainatory
-function toggleSidebar() {
-  sidebarStatus == 0 ? openSidebar() : closeSidebar();
+function toggleSidebar(scene) {
+  if (sidebarStatus == 0) {
+    openSidebar(scene)
+  } else {
+    if (scene == sidebarScene) {
+      closeSidebar()
+    } else {
+      openSidebar(scene)
+    }
+  }
+  // sidebarStatus == 0 ? openSidebar(scene) : closeSidebar();
   setTimeout(() => {
     resizeAll();
   }, 400)
@@ -121,11 +173,10 @@ function renderDirTree() {
     cellHeight: 45
   };
 
-  sidebarGrid = GridStack.addGrid(document.getElementById('notebookList'), options)
+  sidebarGrid = GridStack.addGrid(document.getElementById('sidebarList'), options)
 
   for (var item of dirTree) {
     let html = ""
-    let isSubgrid = false
     let subgridOptions, gridItem;
     if (item.files) {
       let subGridItems = [];
@@ -276,7 +327,7 @@ document.addEventListener("click", function (e) {
 });
 
 // Open files folder on myNotebooks double click
-document.addEventListener("dblclick", function (e) {if (e.target.closest("#myNotebooks")) {window.api.openFiles()}});
+document.addEventListener("dblclick", function (e) {if (sidebarScene == "notebooks" && e.target.closest("#sidebarTitle")) {window.api.openFiles()}});
 
 // File deletion context menu
 document.addEventListener('contextmenu', function(e) {

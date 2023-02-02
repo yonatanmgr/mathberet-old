@@ -1,4 +1,4 @@
-let dirTree, currentfile, currentBlock;
+let dirTree, currentfile, currentBlock, currentTheme;
 let maximizeStatus, sidebarStatus = 0
 function getColor() {
   window.api.getUserColor()
@@ -6,8 +6,16 @@ function getColor() {
     document.querySelector(":root").style.setProperty("--theme-h", color);
   })
 }
-
+function getTheme() {
+  window.api.getUserTheme()
+  window.api.receive("gotUserTheme", (theme)=>{
+    if (theme == 'light') {currentTheme = "מצב אור"}
+    else if (theme == 'dark') {currentTheme = "מצב חושך"}
+  })
+  return currentTheme
+}
 getColor()
+getTheme()
 
 
 // GENERAL
@@ -76,7 +84,7 @@ document.getElementById("close").addEventListener("click", () => { setTimeout(()
 document.getElementById("minimize").addEventListener("click", window.api.minimize);
 document.getElementById("maximize").addEventListener("click", toggleMaximize);
 document.getElementById("logo").addEventListener("click", resetPage);
-document.getElementById("settings").addEventListener('click', window.api.toggle)
+document.getElementById("settings").addEventListener('click', ()=>{toggleSidebar('settings')})
 document.getElementById("settings").addEventListener("contextmenu", getRandomColor);
 
 

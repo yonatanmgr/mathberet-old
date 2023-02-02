@@ -151,6 +151,10 @@ async function createWindow() {
     store.set('color', color);
   })
 
+  ipcMain.on("getUserTheme", (event, args) => {
+    win.webContents.send("gotUserTheme", store.get('theme'))
+  })
+
   ipcMain.on("getUserColor", (event, args) => {
     win.webContents.send("gotUserColor", store.get('color'))
   })

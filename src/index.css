@@ -83,81 +83,47 @@
   #sidebar .tool:hover{
     filter: brightness(90%) !important;
   }
-  #toolbar .tool{
-    filter: brightness(100%) saturate(200%) !important;
-  }
-  #toolbar .tool:hover{
-    filter: brightness(85%) saturate(240%) !important;
-  }
+  #toolbar .tool{ filter: brightness(100%) saturate(200%) !important; }
   
-  #sidebar .tool svg{
-    fill: hsl(var(--theme-h), 10%, 30%) !important; 
-  }
+  #toolbar .tool:hover{ filter: brightness(85%) saturate(240%) !important; }
+  
+  #sidebar .tool svg{ fill: hsl(var(--theme-h), 10%, 30%) !important; }
 
   .folderTitle:hover>.notebookIcon,
-  .listedFile:hover>.fileIcon {
-    filter: brightness(150%);
-}
+  .listedFile:hover>.fileIcon { filter: brightness(150%); }
 
-  .listedFile:hover {
-    filter: brightness(90%) !important;
-  }
+  .listedFile:hover { filter: brightness(90%) !important }
 
-  .listedFile:has(.fileName#open) {
-    filter: brightness(85%);
-  }
+  .listedFile:has(.fileName#open) { filter: brightness(85%); }
 
   .listedFile {
     background: #121212 !important;
     color: white !important;
   }
 
-  .icon>svg {
-    filter: brightness(500%) !important
-  }
+  .icon>svg { filter: brightness(500%) !important }
 }
 
 @media (prefers-color-scheme: light) {
-  #sidebar .tool:active {
-    filter: brightness(70%) saturate(240%);
-  }
+  #sidebar .tool:active { filter: brightness(70%) saturate(240%); }
   
-  #sidebar .tool:hover {
-    filter: brightness(81%) saturate(240%);
-  }
+  #sidebar .tool:hover { filter: brightness(81%) saturate(240%); }
 }
 
-[contenteditable]:focus {
-  outline: 0px solid transparent;
-}
+[contenteditable]:focus { outline: 0px solid transparent; }
 
-html {
-  overflow-y: hidden;
-}
+html { overflow-y: hidden; }
 
-html,
-body,
-.app {
+html, body, .app {
   width: 100%;
   height: 100%;
   margin: 0;
 }
 
-.sidebarGrid{
-  width: 100%;
-  flex-grow: 1;
-}
-
-#notebookList{
-  width: 100% !important;
-} 
-
-.notebook{
-  width: 100%;
-  height: 100%;
-}
+.sidebarGrid{ width: 100%; flex-grow: 1; }
 
 
+.notebook{ width: 100%; height: 100%; }
 
 math-field {
   font-size: 30px;
@@ -170,13 +136,10 @@ svg {
   -webkit-user-drag: none;
 }
 
-.GeoGebraFrame {
-  border-color: transparent !important;
-}
+.GeoGebraFrame { border-color: transparent !important; }
 
 .GeoGebraFrame,
 .gwt-Label {
-
   border-radius: 7px;
   font-family: Rubik !important;
 }
@@ -193,17 +156,11 @@ svg {
   transition: 0.2s;
 }
 
-.actionsArea:has(.ggBox) {
-  padding: 3px;
-}
+.actionsArea:has(.ggBox) { padding: 3px; }
 
-.actionsArea:has(h1:only-child) {
-  background: rgb(255, 255, 255);
-}
+.actionsArea:has(h1:only-child) { background: rgb(255, 255, 255); }
 
-.actionsArea:hover {
-  border: 1px solid #c5c5c5;
-}
+.actionsArea:hover { border: 1px solid #c5c5c5; }
 
 .appContainer {
   display: flex;
@@ -245,21 +202,53 @@ svg {
   user-select: none;
 }
 
-.folderContent .fileIcon {
-  width: 15px;
-}
+.folderContent .fileIcon { width: 15px; }
 
-.notebook .grid-stack-item-content{
-  padding-right: 18px;
-}
+.notebook .grid-stack-item-content{ padding-right: 18px; }
 
-#notebookList{
+#sidebarList{
+  width: 100% !important;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
   max-height: 100%;
   flex-grow: 1;
+}
+
+#settingsZone {
+  display: flex;
+  justify-content: center;
+  max-height: 100%;
+  width: 100% !important;
+  padding-top: 10px;
+}
+
+.settingsButton {
+  font-weight: 400;
+  transition: 0.15s;
+}
+.settingsButton:hover {
+  font-weight: 500;
+  cursor: pointer;
+}
+.settingsButton:active {
+  font-weight: 700;
+  cursor: pointer;
+}
+.settingsText {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.settingsArea {
+  align-self: flex-end;
+  /* padding-right: 20px; */
+  font-size: 18px;
+  direction: rtl;
+  display: flex;
+  justify-content: space-between;
+  width: 236px;
 }
 
 .folderContent {
@@ -269,6 +258,7 @@ svg {
   transition: 0.2s;
   /* overflow-y: hidden; */
   width: 250px !important;
+  min-height: -moz-fit-content !important;
   min-height: fit-content !important;
 }
 
@@ -279,23 +269,13 @@ svg {
   transition: 0.1s;
 }
 
-.folderTitle:hover>.folderTitleText,
-.folderTitleText#open {
-  font-weight: 550;
-}
+.folderTitle:hover>.folderTitleText, .folderTitleText#open { font-weight: 550; }
 
-.folderTitle:active>.folderTitleText {
-  font-weight: 400;
-}
+.folderTitle:active>.folderTitleText { font-weight: 400; }
 
-.folderTitle:active>.notebookIcon {
-  filter: brightness(100%);
-}
+.folderTitle:active>.notebookIcon { filter: brightness(100%); }
 
-.folderTitle:hover,
-.folderTitle:active {
-  cursor: pointer;
-}
+.folderTitle:hover, .folderTitle:active { cursor: pointer; }
 
 .folderTitle {
   -webkit-user-select: none;
@@ -383,14 +363,9 @@ svg {
   fill: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
 }
 
-.sidebarItem>.grid-stack-item-content{
-  height: fit-content;
-  /* padding-right: 30px; */
-}
+.sidebarItem>.grid-stack-item-content{ height: fit-content; }
 
-.notebook .listedFile{
-  width: 100%;
-}
+.notebook .listedFile{ width: 100%; }
 
 .listedFile {
   width: 100%;
@@ -407,21 +382,13 @@ svg {
   white-space: nowrap;
 }
 
-.listedFile:has(.fileName#closed) {
-  background-color: #FFFFFF;
-}
+.listedFile:has(.fileName#closed) { background-color: #FFFFFF; }
 
-.listedFile:has(.fileName#open) {
-  filter: brightness(90%);
-}
+.listedFile:has(.fileName#open) { filter: brightness(90%); }
 
-.listedFile:hover {
-  filter: brightness(94%);
-}
+.listedFile:hover { filter: brightness(94%); }
 
-.listedFile:active {
-  filter: brightness(80%);
-}
+.listedFile:active { filter: brightness(80%); }
 
 .notebookIcon{
   height: 20px;
@@ -451,21 +418,13 @@ svg {
   transition: 0.2s;
 }
 
-.pageContainer::-webkit-scrollbar {
-  display: none;
-}
+.pageContainer::-webkit-scrollbar { display: none; }
 
-#page {
-  min-height: 10000% !important;
-}
+#page { min-height: 10000% !important; }
 
-.ql-editor:has(h1:only-child) {
-  overflow-y: hidden !important;
-}
+.ql-editor:has(h1:only-child) { overflow-y: hidden !important; }
 
-.ql-formula {
-  direction: ltr;
-}
+.ql-formula { direction: ltr; }
 
 .tool {
   display: flex;
@@ -523,31 +482,17 @@ svg {
   transition: 0.2s;
 }
 
-.windowButton#close:active .icon {
-  filter: brightness(500%) !important;
-}
+.windowButton#close:active .icon { filter: brightness(500%) !important; }
 
-.windowButton#close:active {
-  background-color: rgb(255, 66, 104);
-}
+.windowButton#close:active { background-color: rgb(255, 66, 104); }
 
-.windowButton#close:hover {
-  background-color: rgb(255, 104, 134);
-}
+.windowButton#close:hover { background-color: rgb(255, 104, 134); }
 
-.windowButton#maximize:active,
-.windowButton#minimize:active {
-  filter: brightness(80%);
-}
+.windowButton#maximize:active, .windowButton#minimize:active { filter: brightness(80%); }
 
-.windowButton#maximize:hover,
-.windowButton#minimize:hover {
-  filter: brightness(90%);
-}
+.windowButton#maximize:hover, .windowButton#minimize:hover { filter: brightness(90%); }
 
-.windowButton:hover {
-  cursor: pointer;
-}
+.windowButton:hover { cursor: pointer; }
 
 .windowButton>.icon {
   width: 70%;
@@ -594,9 +539,7 @@ svg {
   font-weight: 100;
   color: #777;
 }
-.placeHolderText.space {
-  font-size: 10px;
-}
+.placeHolderText.space { font-size: 10px;}
 
 #content {
   background-color: rgb(255, 255, 255);
@@ -669,7 +612,7 @@ svg {
   gap: 10px;
 }
 
-#myNotebooks {
+#sidebarTitle {
   display: none;
   font-size: 25px;
   font-weight: 700;
@@ -686,47 +629,28 @@ svg {
   white-space: nowrap;
 }
 
+#settings { margin-bottom: 10px }
 
+#settings>svg { transition: transform 0.4s }
 
+#settings:hover>svg { transform: rotate(60deg) }
 
-#settings {
-  margin-bottom: 10px;
-}
+#settings:active>svg { transform: rotate(300deg) }
 
-#settings>svg {
-  transition: transform 0.4s;
-}
+#search>svg { transition: 0.4s }
 
-#settings:hover>svg {
-  transform: rotate(60deg);
-}
+#search:hover>svg { transform: rotate(10deg) }
 
-#settings:active>svg {
-  transform: rotate(300deg);
-}
-
-#search>svg {
-  transition: 0.4s;
-}
-
-#search:hover>svg {
-  transform: rotate(10deg);
-}
-
-#search:active>svg {
-  transform: rotate(-5deg);
-}
+#search:active>svg { transform: rotate(-5deg) }
 
 #notebooks>svg {
   transition: 0.4s;
   perspective: 100px;
-
 }
 
 #notebooks:hover>svg {
   transform: rotateX(-20deg);
   perspective: 100px;
-
 }
 
 #notebooks:active>svg {
@@ -749,8 +673,6 @@ svg {
   align-items: center;
 }
 
-
-
 #sidebar {
   background-color: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
   min-width: 55px;
@@ -759,7 +681,6 @@ svg {
   align-items: center;
   gap: 10px;
   transition: 0.2s;
-
 }
 
 #sidebarButtons {
@@ -795,10 +716,7 @@ svg {
   transition: 0.2s;
 }
 
-#toolbar>.tool>.icon {
-  width: 100% !important;
-}
-
+#toolbar>.tool>.icon { width: 100% !important }
 
 #windowButtons {
   margin-left: 60px;
@@ -814,14 +732,9 @@ svg {
   box-shadow: none !important;
 }
 
-#trashCan {
-  background-color: hsl(0, var(--theme-s), var(--theme-l));
-}
+#trashCan { background-color: hsl(0, var(--theme-s), var(--theme-l)) }
 
-#trashCan>.icon {
-  fill: hsl(0, var(--theme-s), var(--theme-l));
-}
-
+#trashCan>.icon { fill: hsl(0, var(--theme-s), var(--theme-l)) }
 
 #snackbar {
   direction: rtl;
@@ -848,49 +761,21 @@ svg {
 }
 
 @-webkit-keyframes fadein {
-  from {
-    bottom: 0;
-    opacity: 0;
-  }
-
-  to {
-    bottom: 30px;
-    opacity: 1;
-  }
+  from { bottom: 0; opacity: 0; }
+  to { bottom: 30px; opacity: 1; }
 }
 
 @keyframes fadein {
-  from {
-    bottom: 0;
-    opacity: 0;
-  }
-
-  to {
-    bottom: 30px;
-    opacity: 1;
-  }
+  from { bottom: 0; opacity: 0; }
+  to { bottom: 30px; opacity: 1; }
 }
 
 @-webkit-keyframes fadeout {
-  from {
-    bottom: 30px;
-    opacity: 1;
-  }
-
-  to {
-    bottom: 0;
-    opacity: 0;
-  }
+  from { bottom: 30px; opacity: 1; }
+  to { bottom: 0; opacity: 0; }
 }
 
 @keyframes fadeout {
-  from {
-    bottom: 30px;
-    opacity: 1;
-  }
-
-  to {
-    bottom: 0;
-    opacity: 0;
-  }
+  from { bottom: 30px; opacity: 1; }
+  to { bottom: 0; opacity: 0; }
 }
