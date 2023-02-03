@@ -1,7 +1,6 @@
 // Initialize pageGrid
 
 var pageGrid = GridStack.init({
-    dragOut: false,
     float: false,
     handle: '.handle',
     resizable: {handles: 's,sw,w'},
