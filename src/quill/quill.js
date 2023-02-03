@@ -11472,7 +11472,7 @@ var BubbleTooltip = function (_BaseTooltip) {
   return BubbleTooltip;
 }(_base.BaseTooltip);
 
-BubbleTooltip.TEMPLATE = ['<span class="ql-tooltip-arrow"></span>', '<div class="ql-tooltip-editor">', '<input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL">', '<a class="ql-close"></a>', '</div>'].join('');
+BubbleTooltip.TEMPLATE = ['<span class="ql-tooltip-arrow"></span>', '<div class="ql-tooltip-editor">', '<input type="text" data-formula="" data-link="https://quilljs.com" data-video="Embed URL">', '<a class="ql-close"></a>', '</div>'].join('');
 
 exports.BubbleTooltip = BubbleTooltip;
 exports.default = BubbleTheme;

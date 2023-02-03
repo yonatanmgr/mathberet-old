@@ -1,6 +1,7 @@
 // Initialize pageGrid
 
 var pageGrid = GridStack.init({
+    dragOut: false,
     float: false,
     handle: '.handle',
     resizable: {handles: 's,sw,w'},
@@ -110,7 +111,12 @@ var pageGrid = GridStack.init({
     let html = `${drag}</img><div class="actionsArea"><div id="textEdit_${id}" class="textBlock"></div></div>`
     let block = blockData(html, id, "Text", 2)
     pageGrid.addWidget(block);
-    createQuill(id).focus()
+    createQuill(id).focus();
+    document.querySelector('button.ql-formula').addEventListener("click", ()=>{
+      document.querySelector('.ql-tooltip-editor').innerHTML = `<math-field role="math" dir="ltr" aria-label="math input field" contenteditable="true" aria-multiline="false" tabindex="0"></math-field>`
+
+    })
+
   };
   
   function addMF() {
