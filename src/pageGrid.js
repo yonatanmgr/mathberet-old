@@ -134,38 +134,53 @@ var pageGrid = GridStack.init({
     let bindings = {
       ltr: {
         key: 219,
-        ctrlKey: true,
+        shortKey: true,
         handler: function (range) {
           this.quill.formatLine(range, 'direction', '');
           this.quill.formatLine(range, 'align', '')
+          this.quill.typingDirection = ''
+          this.quill.currentAlign = ''
         }
       },
       rtl: {
         key: 221,
-        ctrlKey: true,
+        shortKey: true,
         handler: function (range) {
           this.quill.formatLine(range, 'direction', 'rtl');
           this.quill.formatLine(range, 'align', 'right')
+          this.quill.typingDirection = 'rtl'
+          this.quill.currentAlign = 'right'
         }
+      },
+      math: {
+        key: 52,
+        shiftKey: true,
+        handler: async function (range) {
+          const text = await navigator.clipboard.readText();
+          let selection = this.quill.getSelection();
+          this.quill.insertEmbed(selection.index, 'formula', text);
+          this.quill.setSelection(30, 30);
+        } 
       }
     }
   
     var quill = new Quill(`#textEdit_${id}`, {
       modules: {
-        keyboard: {
-          bindings: bindings
-        },
-        toolbar: [
-          ["formula"]
-        ]
+        keyboard: {bindings: bindings},
+        toolbar: [["formula"]]
       },
       theme: 'bubble'
     });
     quill.format('direction', 'rtl');
     quill.format('align', 'right');
+    quill.typingDirection = 'rtl'
+    quill.currentAlign = 'right'
+
     new QuillMarkdown(quill)
+
     return quill
   }
+  
   
   function createMF(id) {
     let mf = new MathfieldElement();

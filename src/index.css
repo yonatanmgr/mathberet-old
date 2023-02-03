@@ -157,6 +157,10 @@ svg {
   font-family: Rubik !important;
 }
 
+.ql-formula .katex {
+  display: inline-flex;
+}
+
 .actionsArea {
   max-height: 100%;
   width: 100%;
