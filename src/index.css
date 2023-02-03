@@ -16,6 +16,9 @@
 .actionsArea:hover {
   border: 1px solid #333 !important;
 }
+#clr-picker{
+  background-color: #222 !important;
+}
 
 
 .kbc-button:after{
@@ -99,11 +102,12 @@
   #sidebar .tool svg{ fill: hsl(var(--theme-h), 10%, 30%) !important; }
 
   .folderTitle:hover>.notebookIcon,
-  .listedFile:hover>.fileIcon { filter: brightness(150%); }
+  .listedFile:hover>.fileIcon { filter: brightness(150%) !important; }
 
-  .listedFile:hover { filter: brightness(90%) !important }
+  .listedFile:hover { filter: brightness(130%) !important }
+  .listedFile:active { filter: brightness(180%) !important }
 
-  .listedFile:has(.fileName#open) { filter: brightness(85%); }
+  .listedFile:has(.fileName#open) { filter: brightness(150%) !important; }
 
   .listedFile {
     background: #121212 !important;
@@ -246,8 +250,18 @@ svg {
   transition: 0.2s;
 }
 
+#colorSwitcher:hover{
+  cursor: pointer;
+  transform: scale(1.03)
+}
+#colorSwitcher:active{
+  cursor: pointer;
+  transform: scale(0.97)
+}
+
 #clr-picker{
   width: 240px;
+  background-color: #fff;
 }
 
 .clr-alpha, .clr-alpha div, .clr-swatches button, .clr-preview:before, .clr-field button {
@@ -451,13 +465,12 @@ button:focus {outline:0;}
   border: 1px solid #DDD;
   min-height: 100% !important;
   scroll-behavior: smooth;
-  padding-top: 10px;
   transition: 0.2s;
 }
 
 .pageContainer::-webkit-scrollbar { display: none; }
 
-#page { min-height: 10000% !important; }
+#page { min-height: 10000% !important; margin: 10px; }
 
 .ql-editor:has(h1:only-child) { overflow-y: hidden !important; }
 

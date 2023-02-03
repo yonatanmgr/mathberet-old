@@ -75,7 +75,7 @@ let createMyNotebooks = () => {
 let createSettings = () => {
   sidebarScene = "settings";
   
-  document.getElementById("sidebarTitle").innerText = "הגדרות"
+  document.getElementById("sidebarTitle").innerText = "העדפות"
   document.getElementById("sidebarList").innerHTML = `
   <div id='settingsZone'>
     <div class='settingsArea'>
@@ -117,7 +117,6 @@ let createSettings = () => {
       ],
       format: 'hsl',
       margin: 10,
-      themeMode: currentTheme,
       swatchesOnly: true
     });
   })
