@@ -28,7 +28,7 @@
 
   #content,
   #header,
-  #sidebarContainer,
+  #sidebarContent,
   #placeHolder,
   .pageContainer {
     background: #121212 !important;
@@ -38,6 +38,15 @@
     border-color: rgba(100, 100, 100, 0.2) !important;
   }
   
+  #colorSwitcher{
+    background-color: hsl(var(--theme-h), 30%, var(--theme-l)) !important;
+    color: hsl(var(--theme-h), 30%, var(--theme-l)) !important;   
+  }
+
+  #sidebarTitle{
+    color: hsl(var(--theme-h), 40%, 60%) !important;
+  }
+
   .actionsArea{
     background: #222 !important;
     color: white;
@@ -217,16 +226,41 @@ svg {
 }
 
 #settingsZone {
+  gap: 8px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   max-height: 100%;
   width: 100% !important;
   padding-top: 10px;
 }
 
+#colorSwitcher{
+  cursor: pointer;
+  width: 75px;
+  height: 80%;
+  background-color: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
+  border-radius: 15px;
+  border: 0px solid transparent;
+  color: hsl(var(--theme-h), var(--theme-s), var(--theme-l)); 
+  transition: 0.2s;
+}
+
+#clr-picker{
+  width: 240px;
+}
+
+.clr-alpha, .clr-alpha div, .clr-swatches button, .clr-preview:before, .clr-field button {
+  background-image: none;
+}
+
+button:focus {outline:0;}
+
 .settingsButton {
+  -webkit-user-select: none;
+  user-select: none;
   font-weight: 400;
-  transition: 0.15s;
+  transition: font-weight 0.15s;
 }
 .settingsButton:hover {
   font-weight: 500;
@@ -237,18 +271,21 @@ svg {
   cursor: pointer;
 }
 .settingsText {
+  transition: font-color 0.2s;
   -webkit-user-select: none;
   user-select: none;
 }
 
 .settingsArea {
   align-self: flex-end;
-  /* padding-right: 20px; */
+  padding-right: 20px;
   font-size: 18px;
   direction: rtl;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  width: 236px;
+  height: 35px;
+  width: 240px;
 }
 
 .folderContent {
@@ -374,7 +411,7 @@ svg {
   border-radius: 10px;
   overflow-x: hidden;
   overflow-y: hidden;
-  transition: 0.2s filter, 0.2s background-color;
+  transition: filter 0.2s, background-color 0.2s;
   display: flex;
   flex-direction: row-reverse;
   justify-content: flex-start;
@@ -508,7 +545,7 @@ svg {
   align-items: flex-start;
   flex: 1;
   overflow-y: hidden;
-  transition: 0.2s background-color;
+  transition: background-color 0.2s;
 }
 
 #placeHolder {
@@ -613,7 +650,6 @@ svg {
 }
 
 #sidebarTitle {
-  display: none;
   font-size: 25px;
   font-weight: 700;
   margin-top: 14px;
@@ -637,14 +673,14 @@ svg {
 
 #settings:active>svg { transform: rotate(300deg) }
 
-#search>svg { transition: 0.4s }
+#search>svg { transition: transform 0.4s }
 
 #search:hover>svg { transform: rotate(10deg) }
 
 #search:active>svg { transform: rotate(-5deg) }
 
 #notebooks>svg {
-  transition: 0.4s;
+  transition: transform 0.4s;
   perspective: 100px;
 }
 
@@ -692,16 +728,30 @@ svg {
 
 #sidebarContainer {
   display: flex;
-  border-left: 0.3px solid hsl(var(--theme-h), var(--theme-s), var(--theme-l));
   background-color: white;
-  min-width: 0px;
   min-height: 100%;
   max-height: 100%;
-  transition: min-width 0.5s cubic-bezier(0.19, 1, 0.22, 1), border-color 0.2s, background-color 0.2s;
+  transition: 0.15s ease;
+
+  /* transition: min-width 0.5s cubic-bezier(0.19, 1, 0.22, 1), border-color 0.2s, background-color 0.2s; */
+}
+#sidebarContainer.closed {
+  min-width: 0px;
+}
+#sidebarContent.closed {
+  margin-right: -280px !important;
+}
+#sidebarContainer.open {
+  min-width: 280px;
+}
+#sidebarContent.open {
+  margin-right: 0px !important;
 }
 
 
 #sidebarContent {
+  border-left: 0.3px solid #d2d2d2;
+  transition: 0.15s ease;
   display: flex;
   flex-direction: column;
   align-items: flex-end;

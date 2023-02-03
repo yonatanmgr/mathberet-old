@@ -8,6 +8,9 @@
     <script src="..\node_modules\gridstack\dist\gridstack-all.js"></script>
     <link href="..\node_modules\gridstack\dist\gridstack.min.css" rel="stylesheet" />
 
+    <script src="Coloris/coloris.js"></script>
+    <link rel="stylesheet" href="Coloris/coloris.css">
+
     <script src="katex\katex.js"></script>
     <link rel="stylesheet" href="katex\katex.css">
 
@@ -80,9 +83,10 @@
                     </div>
                 </div>
                 <div id="con">
-                    <div id="sidebarContainer">
-                        <div id="sidebarContent">
+                    <div id="sidebarContainer" class="closed">
+                        <div id="sidebarContent" class="closed">
                             <div id="sidebarTitle"></div>
+                            <div id="sidebarList"></div>
                         </div>
                     </div>
                     <div id="content">

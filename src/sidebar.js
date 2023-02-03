@@ -1,9 +1,6 @@
 let currentFile;
 let sidebar = document.getElementById("sidebarContainer")
 let sidebarContent = document.getElementById("sidebarContent")
-let sidebarList = document.createElement('div')
-sidebarList.id = "sidebarList"
-sidebarContent.append(sidebarList)
 let sidebarGrid, sidebarScene;
 
 document.getElementById("notebooks").addEventListener("click", () => {toggleSidebar("notebooks")});
@@ -16,7 +13,6 @@ let createMyNotebooks = () => {
   setTimeout(() => {
     renderDirTree();
     GridStack.getElements('.sidebarGrid, .notebook').forEach(gridEl => {addEvents(gridEl.gridstack)})
-    document.getElementById("sidebarTitle").style.display = "block"
   }, 50)
   setTimeout(() => {renderDirTree()}, 1)
 
@@ -80,11 +76,18 @@ let createSettings = () => {
   sidebarScene = "settings";
   
   document.getElementById("sidebarTitle").innerText = "הגדרות"
-  document.getElementById("sidebarList").innerHTML += "<div id='settingsZone'></div>"
-  document.getElementById("settingsZone").innerHTML += `<div class='settingsArea'><span class='settingsText'>ערכת נושא</span><div class='settingsButton' id='themeSwitcher'>${getTheme()}</div></div>`
+  document.getElementById("sidebarList").innerHTML = `
+  <div id='settingsZone'>
+    <div class='settingsArea'>
+    <span class='settingsText'>ערכת נושא</span><div class='settingsButton' id='themeSwitcher'>${getTheme() == "light" ? "מצב אור" : "מצב חושך"}</div>
+    </div>
+    <div class='settingsArea'>
+      <span class='settingsText'>צבע נושא</span><input id="colorSwitcher" type="button" data-coloris>
+    </div>
+  </div>`
   document.getElementById("themeSwitcher").addEventListener('click', ()=>{
     let theme;
-    switch (getElementById("themeSwitcher").innerText) {
+    switch (document.getElementById("themeSwitcher").innerText) {
       case "מצב אור":
         theme = "מצב חושך"
         break;
@@ -93,18 +96,37 @@ let createSettings = () => {
         break;
       }
     document.getElementById("themeSwitcher").innerText = theme
+    Coloris.close();
     window.api.toggle()
   })
+  document.getElementById("colorSwitcher").addEventListener('click', (a)=>{
+    getTheme()
+    Coloris({
+      swatches: [
+        'hsl(192, 100%, 89%)',
+        'hsl(224, 100%, 89%)',
+        'hsl(256, 100%, 89%)',
+        'hsl(288, 100%, 89%)',
+        'hsl(330, 100%, 89%)',
+        'hsl(2, 100%, 89%)',
+        'hsl(32, 100%, 89%)',
+        'hsl(64, 100%, 89%)',
+        'hsl(96, 100%, 89%)',
+        'hsl(128, 100%, 89%)',
+        'hsl(160, 100%, 89%)'
+      ],
+      format: 'hsl',
+      margin: 10,
+      themeMode: currentTheme,
+      swatchesOnly: true
+    });
+  })
 
-  setTimeout(() => {
-    document.getElementById("sidebarTitle").style.display = "block"
-  }, 50)
 }
 
 // Self explainatory
 function openSidebar(scene) {
   sidebarStatus = 1
-  sidebar.style.minWidth = "280px"
 
   switch (scene) {
     case "notebooks":
@@ -112,7 +134,7 @@ function openSidebar(scene) {
       createMyNotebooks();
       break;
     case "settings":
-      if (sidebarScene == "notebooks") { sidebarGrid.destroy(); document.getElementById("sidebarList").innerHTML = "" }
+      if (sidebarScene == "notebooks") { document.getElementById("sidebarList").innerHTML = "" }
       createSettings();
       break;
   
@@ -123,19 +145,21 @@ function openSidebar(scene) {
 
 // Self explainatory
 function closeSidebar() {
-  document.getElementById("sidebarTitle").style.display = "none"
-  sidebarGrid.destroy();
   sidebarStatus = 0;
-  sidebar.style.minWidth = "0px"
-  document.getElementById("sidebarList").innerHTML = ""
 }
 
 // Self explainatory
 function toggleSidebar(scene) {
   if (sidebarStatus == 0) {
+    sidebar.classList.replace("closed", "open")
+    sidebarContent.classList.replace("closed", "open")
+  
     openSidebar(scene)
   } else {
     if (scene == sidebarScene) {
+      sidebar.classList.replace("open", "closed")
+      sidebarContent.classList.replace("open", "closed")
+    
       closeSidebar()
     } else {
       openSidebar(scene)

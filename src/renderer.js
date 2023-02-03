@@ -9,8 +9,7 @@ function getColor() {
 function getTheme() {
   window.api.getUserTheme()
   window.api.receive("gotUserTheme", (theme)=>{
-    if (theme == 'light') {currentTheme = "מצב אור"}
-    else if (theme == 'dark') {currentTheme = "מצב חושך"}
+    currentTheme = theme;
   })
   return currentTheme
 }
@@ -55,14 +54,6 @@ function popupAnimation(scene) {
   }, 1200);
 }
 
-// Get random theme color
-function getRandomColor() {
-  // colors = [40, 80, 120, 160, 200, 240, 280, 320, 0]
-  colors = 360
-  const h = Math.floor(Math.random() * colors);
-  window.api.setUserColor(h)
-  document.querySelector(":root").style.setProperty("--theme-h", h);
-};
 
 // Returns true if given array has duplicates, false otherwise
 function hasDuplicates(array) {
@@ -85,8 +76,10 @@ document.getElementById("minimize").addEventListener("click", window.api.minimiz
 document.getElementById("maximize").addEventListener("click", toggleMaximize);
 document.getElementById("logo").addEventListener("click", resetPage);
 document.getElementById("settings").addEventListener('click', ()=>{toggleSidebar('settings')})
-document.getElementById("settings").addEventListener("contextmenu", getRandomColor);
-
+document.addEventListener('coloris:pick', event => {
+  window.api.setUserColor(parseInt(event.detail.color.split(",")[0].split("(")[1]))
+  document.querySelector(":root").style.setProperty("--theme-h", parseInt(event.detail.color.split(",")[0].split("(")[1]));
+});
 
 // Shortcuts
 window.api.receive("Text", () => document.getElementById("addQuill").click())
