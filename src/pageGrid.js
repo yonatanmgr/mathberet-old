@@ -44,10 +44,13 @@ var pageGrid = GridStack.init({
     let items = pageGrid.getGridItems()
     for (var item of items) {
       if (item.gridstackNode.type == "Graph") {
-        item.gridstackNode.blockContent.getAppletObject().setSize(
-          document.getElementById(`ggBox_${item.gridstackNode.id}`).offsetWidth,
-          document.getElementById(`ggBox_${item.gridstackNode.id}`).offsetHeight
-        )
+        let applet = item.gridstackNode.blockContent.getAppletObject()
+        setTimeout(() => {
+          applet.setSize(
+            document.getElementById(`ggBox_${item.gridstackNode.id}`).offsetWidth,
+            document.getElementById(`ggBox_${item.gridstackNode.id}`).offsetHeight
+          )
+        }, 20);
       }
     }
   }
@@ -134,7 +137,7 @@ var pageGrid = GridStack.init({
 
       created.addEventListener('keydown', (ev) => {
       if (ev.altKey === true && ev.code === 'KeyG') {
-        document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(ev.target.getValue())
+        document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(ev.target.getValue().replace("^{\\prime}", "'"))
         ev.preventDefault();
       }});
   };
@@ -253,23 +256,22 @@ var pageGrid = GridStack.init({
           break;
       }
     }
-  
-    renderDirTree()
+    if (sidebarScene == "notebooks") {renderDirTree()}
     let items = pageGrid.save();
     for (var item of items) {
       saveBlockContent(item);
       item.content = ""
     }
     window.api.save(JSON.stringify(items), currentfile, `${document.getElementById("fileName").innerText}.json`);
-    let fileToUpdate = findInSidebar(currentfile)
-    setTimeout(() => {
-      let toUpdate = findInTree(fileToUpdate.gridstackNode)
-      currentfile = currentfile.replace(currentfile.split("\\").pop(), `${document.getElementById("fileName").innerText}.json`)
-      sidebarGrid.update(fileToUpdate, {id: currentfile})
-      fileToUpdate.querySelector(".fileName").innerText = currentfile.split("\\").pop().replace(".json", "")
-      toUpdate.path = currentfile
-      toUpdate.name = currentfile.split("\\").pop()
-    }, 5);
+      let fileToUpdate = findInSidebar(currentfile)
+      setTimeout(() => {
+        let toUpdate = findInTree(fileToUpdate.gridstackNode)
+        currentfile = currentfile.replace(currentfile.split("\\").pop(), `${document.getElementById("fileName").innerText}.json`)
+        sidebarGrid.update(fileToUpdate, {id: currentfile})
+        fileToUpdate.querySelector(".fileName").innerText = currentfile.split("\\").pop().replace(".json", "")
+        toUpdate.path = currentfile
+        toUpdate.name = currentfile.split("\\").pop()
+      }, 5);
     
     popupAnimation("save")
     // createFolderList()
@@ -307,7 +309,7 @@ var pageGrid = GridStack.init({
             }});
           mfBlock.addEventListener('keydown', (ev) => {
             if (ev.altKey === true && ev.code === 'KeyG') {
-              document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(ev.target.getValue())
+              document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(ev.target.getValue().replace("^{\\prime}", "'"))
               ev.preventDefault();
             }});
           break;
