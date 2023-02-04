@@ -102,8 +102,8 @@ var pageGrid = GridStack.init({
   }
   
   document.getElementById("addQuill").addEventListener("click", addQuill);
-  document.getElementById("addGgb"  ).addEventListener("click", addGgb);
-  document.getElementById("addMF"   ).addEventListener("click", addMF);
+  document.getElementById("addGgb").addEventListener("click", addGgb);
+  document.getElementById("addMF").addEventListener("click", addMF);
   
   function addQuill() {
     let id = Date.now();
@@ -123,7 +123,20 @@ var pageGrid = GridStack.init({
     let html = `${drag}</img><div class="actionsArea"><div id="mf_${id}" class="mathBlock"></div></div>`
     let block = blockData(html, id, "Math", 2)
     pageGrid.addWidget(block)
-    createMF(id).focus()
+    let created = createMF(id)
+    created.focus()
+
+    created.addEventListener('keydown', (ev) => {
+      if (ev.altKey === true && ev.code === 'KeyX') {
+        created.setValue(expand(ev.target.getValue()));
+        ev.preventDefault();
+      }});
+
+      created.addEventListener('keydown', (ev) => {
+      if (ev.altKey === true && ev.code === 'KeyG') {
+        document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(ev.target.getValue())
+        ev.preventDefault();
+      }});
   };
   
   function addGgb() {
@@ -285,7 +298,18 @@ var pageGrid = GridStack.init({
           block.blockContent = createQuill(block.id).setContents(block.blockContent)
           break;
         case "Math":
-          block.blockContent = createMF(block.id).setValue(block.blockContent)
+          let mfBlock = createMF(block.id);
+          block.blockContent = mfBlock.setValue(block.blockContent)
+          mfBlock.addEventListener('keydown', (ev) => {
+            if (ev.altKey === true && ev.code === 'KeyX') {
+              mfBlock.setValue(expand(ev.target.getValue()));
+              ev.preventDefault();
+            }});
+          mfBlock.addEventListener('keydown', (ev) => {
+            if (ev.altKey === true && ev.code === 'KeyG') {
+              document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(ev.target.getValue())
+              ev.preventDefault();
+            }});
           break;
         case "Graph":
           let box = document.getElementById(`ggBox_${block.id}`)

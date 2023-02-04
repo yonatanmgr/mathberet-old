@@ -17,6 +17,19 @@ let defShortcuts = {
     'theta': '\\theta',
     'Theta': '\\Theta',
   
+    '0': {after: 'letter', value: '_0'},
+    '1': {after: 'letter', value: '_1'},
+    '2': {after: 'letter', value: '_2'},
+    '3': {after: 'letter', value: '_3'},
+    '4': {after: 'letter', value: '_4'},
+    '5': {after: 'letter', value: '_5'},
+    '6': {after: 'letter', value: '_6'},
+    '7': {after: 'letter', value: '_7'},
+    '8': {after: 'letter', value: '_8'},
+    '9': {after: 'letter', value: '_9'},
+    'x': {after: 'function', value: '(x)'},
+    'an': 'a_n',
+
     // Letter-like
     'ii': {
       after: 'nothing+digit+function+frac+surd+binop+relop+punct+array+openfence+closefence+space+text',
