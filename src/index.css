@@ -302,6 +302,9 @@ shortcut-list summary>span {
   font-size: 20px;
   font-weight: 200;
 }
+shortcut-list details[open]>summary>span{
+  display: none;
+}
 shortcut-list summary:hover, shortcut-list details[open]>summary{
   cursor: pointer;
   font-weight: 600;
