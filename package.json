@@ -33,6 +33,7 @@
     "electron": "^22.0.2",
     "electron-rebuild": "^3.2.9",
     "electron-store": "^8.1.0",
+    "ninja-keys": "^1.2.2",
     "quill-mathlive-blot": "^1.5.0"
   }
 }

@@ -30,6 +30,7 @@ function resetPage() {
   document.getElementById("fileName").innerText = ""
 }
 
+
 // Maximize / Unmaximize window
 function toggleMaximize() {
   if (maximizeStatus == 0) {window.api.maximize(); maximizeStatus = 1} 
@@ -68,6 +69,14 @@ function hasDuplicates(array) {
   return false;
 }
 
+function toggleHelp(){
+  if (document.getElementById("shortcutsHelp").classList.contains("closed")) {
+    document.getElementById("shortcutsHelp").classList.replace("closed", "open")
+  } else {
+    document.getElementById("shortcutsHelp").classList.replace("open", "closed")
+  }
+}
+
 document.getElementById('fileName').addEventListener('keydown', (evt) => {if (evt.key === 'Enter') {evt.preventDefault();}});
 
 // Buttons
@@ -75,6 +84,7 @@ document.getElementById("close").addEventListener("click", () => { setTimeout(()
 document.getElementById("minimize").addEventListener("click", window.api.minimize);
 document.getElementById("maximize").addEventListener("click", toggleMaximize);
 document.getElementById("logo").addEventListener("click", resetPage);
+document.getElementById("help").addEventListener('click', toggleHelp)
 document.getElementById("settings").addEventListener('click', ()=>{toggleSidebar('settings')})
 document.addEventListener('coloris:pick', event => {
   window.api.setUserColor(parseInt(event.detail.color.split(",")[0].split("(")[1]))
@@ -82,6 +92,7 @@ document.addEventListener('coloris:pick', event => {
 });
 
 // Shortcuts
+window.api.receive("Shortcuts", () => document.getElementById("help").click())
 window.api.receive("Text", () => document.getElementById("addQuill").click())
 window.api.receive("Graph", () => document.getElementById("addGgb").click())
 window.api.receive("Math", () => document.getElementById("addMF").click())

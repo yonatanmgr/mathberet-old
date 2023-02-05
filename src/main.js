@@ -96,6 +96,11 @@ async function createWindow() {
       role: 'Refresh',
       accelerator: 'Ctrl+R',
       click: () => {win.webContents.reloadIgnoringCache()}
+    },
+    {
+      role: 'Help',
+      accelerator: 'Ctrl+H',
+      click: () => {win.webContents.send("Shortcuts")}
     }
   ]
   }))

@@ -144,6 +144,8 @@ function openSidebar(scene) {
 
 // Self explainatory
 function closeSidebar() {
+  sidebar.classList.replace("open", "closed")
+  sidebarContent.classList.replace("open", "closed")
   sidebarStatus = 0;
 }
 
@@ -152,18 +154,9 @@ function toggleSidebar(scene) {
   if (sidebarStatus == 0) {
     sidebar.classList.replace("closed", "open")
     sidebarContent.classList.replace("closed", "open")
-  
     openSidebar(scene)
-  } else {
-    if (scene == sidebarScene) {
-      sidebar.classList.replace("open", "closed")
-      sidebarContent.classList.replace("open", "closed")
-    
-      closeSidebar()
-    } else {
-      openSidebar(scene)
-    }
-  }
+  } else {scene == sidebarScene ? closeSidebar() : openSidebar(scene)}
+
   // sidebarStatus == 0 ? openSidebar(scene) : closeSidebar();
   setTimeout(() => {
     resizeAll();

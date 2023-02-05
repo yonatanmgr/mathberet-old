@@ -124,7 +124,7 @@ var pageGrid = GridStack.init({
   function addMF() {
     let id = Date.now();
     let html = `${drag}</img><div class="actionsArea"><div id="mf_${id}" class="mathBlock"></div></div>`
-    let block = blockData(html, id, "Math", 2)
+    let block = blockData(html, id, "Math", 3)
     pageGrid.addWidget(block)
     let created = createMF(id)
     created.focus()
