@@ -73,13 +73,18 @@
   }
 
   .actionsArea{
-    background: #222 !important;
+    background: hsla(0, 0%, 13%, 1) !important;
     color: white;
     --theme-l: 30% !important;
     --theme-s: 20% !important;
   }
-  .actionsArea:has(h1:only-child) {
-    background: #121212 !important;
+
+  .actionsArea:has(.Group){
+    background: hsla(0, 0%, 13%, 0.3) !important;
+  }
+
+  .actionsArea:has(h1:only-child):not(.actionsArea:has(.Group)) {
+    background: transparent !important;
   }
 
   #logo{
@@ -143,6 +148,12 @@
   #sidebar .tool:active { filter: brightness(70%) saturate(240%); }
   
   #sidebar .tool:hover { filter: brightness(81%) saturate(240%); }
+
+  .actionsArea:has(.Group){
+    background: hsla(0, 0%, 50%, 0.13) !important;
+  }
+  .actionsArea:has(h1:only-child) { background: transparent; }
+
 }
 
 [contenteditable]:focus { outline: 0px solid transparent; }
@@ -154,6 +165,13 @@ html, body, .app {
   height: 100%;
   margin: 0;
 }
+
+.Group{
+  width: 100%;
+  height: 100%;
+}
+
+
 
 #shortcutsHelp{
   display: flex;
@@ -272,14 +290,14 @@ custom-shortcut {
 shortcut-text {
   display: flex;
   align-items: center;
-  font-size: 25px;
+  font-size: 23px;
   font-weight: 400;
   overflow: hidden;
   white-space: nowrap;  
 }
 
 shortcut-keys {
-  font-size: 20px;
+  font-size: 18px;
   overflow: hidden;
   white-space: nowrap;  
 }
@@ -292,7 +310,7 @@ shortcut-list summary {
   padding-top: 10px;
   padding-bottom: 10px;
   list-style: none;
-  font-size: 26px;
+  font-size: 23px;
   font-weight: 400;
   overflow: hidden;
   white-space: nowrap;  
@@ -377,7 +395,6 @@ svg {
 
 .actionsArea:has(.ggBox) { padding: 3px; }
 
-.actionsArea:has(h1:only-child) { background: transparent; }
 
 .actionsArea:hover { border: 1px solid #c5c5c5; }
 
@@ -591,6 +608,38 @@ button:focus {outline:0;}
   overflow-y: hidden !important;
   max-height: 100%;
   height: auto;
+}
+
+.grid-stack-item-content:has(.Group){
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden !important;
+  max-height: 100%;
+  height: auto;
+}
+.grid-stack-item-content:has(.Group) .actionsArea{
+  flex-grow: 1;
+  width: unset !important;
+  overflow: auto;
+}
+
+.groupTop{
+  height: 40px;
+  position: static;
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  font-size: 23px;
+  align-items: center;
+}
+.groupTitle{
+  font-weight: 600;
+  padding-bottom: 5px;
+
+}
+.groupType{
+  padding-bottom: 8px;
+  font-weight: 300;
 }
 
 .grid-stack-item-content:has(h1:only-child)>.handle {

@@ -14,9 +14,7 @@ let createMyNotebooks = () => {
 	document.getElementById("sidebarTitle").innerText = "המחברות שלי"
 	setTimeout(() => {
 		renderDirTree();
-		GridStack.getElements('.sidebarGrid, .notebook').forEach(gridEl => {
-			addEvents(gridEl.gridstack)
-		})
+		GridStack.getElements('.sidebarGrid, .notebook').forEach(gridEl => {addEvents(gridEl.gridstack)})
 	}, 50)
 	setTimeout(() => {
 		renderDirTree()
@@ -101,7 +99,7 @@ let createSettings = () => {
 	document.getElementById("sidebarList").innerHTML = `
   <div id='settingsZone'>
     <div class='settingsArea'>
-    <span class='settingsText'>ערכת נושא</span><div class='settingsButton' id='themeSwitcher'>${getTheme() == "light" ? "מצב אור" : "מצב חושך"}</div>
+    <span class='settingsText'>ערכת נושא</span><div class='settingsButton' id='themeSwitcher'>${currentTheme == "light" ? "מצב אור" : "מצב חושך"}</div>
     </div>
     <div class='settingsArea'>
       <span class='settingsText'>צבע נושא</span><input id="colorSwitcher" type="button" data-coloris>
@@ -175,7 +173,7 @@ function toggleSidebar(scene) {
 
 	// sidebarStatus == 0 ? openSidebar(scene) : closeSidebar();
 	setTimeout(() => {
-		resizeAll();
+		resizeAll(pageGrid);
 	}, 400)
 }
 

@@ -65,6 +65,11 @@ async function createWindow() {
       role: 'Add Geogebra Block',
       accelerator: 'Ctrl+G',
       click: () => {win.webContents.send("Graph");}
+    },
+      {
+      role: 'Add Group',
+      accelerator: 'Ctrl+I',
+      click: () => {win.webContents.send("Group");}
     }
   ]
   }))

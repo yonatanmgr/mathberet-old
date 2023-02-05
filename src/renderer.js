@@ -120,6 +120,7 @@ document.addEventListener('coloris:pick', event => {
 
 // Shortcuts
 window.api.receive("Shortcuts", () => document.getElementById("help").click())
+window.api.receive("Group", () => document.getElementById("addGroup").click())
 window.api.receive("Text", () => document.getElementById("addQuill").click())
 window.api.receive("Graph", () => document.getElementById("addGgb").click())
 window.api.receive("Math", () => document.getElementById("addMF").click())

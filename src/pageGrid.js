@@ -6,8 +6,12 @@ var pageGrid = GridStack.init({
 		handles: 's,sw,w'
 	},
 	removable: '#trashCan',
+  itemClass: 'block',
 	margin: 7,
-	cellHeight: 50
+	cellHeight: 50,
+  acceptWidgets: '.block',
+  dragOut: true,
+  dragIn: '.block',
 });
 
 function removeBlock(el) {
@@ -49,11 +53,25 @@ pageGrid.on('resizestop', function(el) {
 			document.getElementById(`ggBox_${resized.id}`).offsetHeight
 		);
 	}
+	if (resized.type == "Group") {
+    resizeAll(resized.el.querySelector(".Group").gridstack)
+  	}
+})
+
+pageGrid.on('dropped', function(event, previousWidget, newWidget) {
+  let resized = previousWidget;
+  if (resized.type == "Graph") {
+    let a = resized.blockContent;
+    a.getAppletObject().setSize(
+      document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+      document.getElementById(`ggBox_${resized.id}`).offsetHeight
+    );
+  }
 })
 
 // Resize all applets on window resize
-function resizeAll() {
-	let items = pageGrid.getGridItems()
+function resizeAll(grid) {
+	let items = grid.getGridItems()
 	for (var item of items) {
 		if (item.gridstackNode.type == "Graph") {
 			let applet = item.gridstackNode.blockContent.getAppletObject()
@@ -64,10 +82,13 @@ function resizeAll() {
 				)
 			}, 20);
 		}
+    else if (item.gridstackNode.type == "Group") {
+      resizeAll(item.gridstackNode.el.querySelector(".Group").gridstack)
+      }
 	}
 }
 
-window.addEventListener("resize", resizeAll);
+window.addEventListener("resize", ()=>{resizeAll(pageGrid)});
 
 // Focus on block
 document.addEventListener("click", e => focus(e))
@@ -119,6 +140,72 @@ function blockData(html, id, type, h, blockContent = {}, x = 12, y = 1000, w = 6
 document.getElementById("addQuill").addEventListener("click", addQuill);
 document.getElementById("addGgb").addEventListener("click", addGgb);
 document.getElementById("addMF").addEventListener("click", addMF);
+document.getElementById("addGroup").addEventListener("click", ()=>{addGroup("proof")});
+
+
+function addGroup(type) {
+  let groupType;
+  let seperator = "&nbsp;-&nbsp;"
+  switch (type) {
+    case "proof": groupType = "הוכחה 📝"; break;
+    case "theorem": groupType = "משפט 💡"; break;
+    case undefined: seperator = ""; groupType = ""; break;
+  }
+  let id = Date.now();
+  let html = `<div class='groupTop'>${drag}</img><span class='groupTitle'>קבוצה</span><span class='groupType'>${seperator+groupType}</span></div><div class="actionsArea"><div id="group_${id}" class="Group"></div></div>`
+  let block = {
+		id: id,
+		content: html,
+		x: 12,
+		y: 1000,
+		h: 8,
+		w: 6,
+		minW: 4,
+		minH: 4,
+    subType: type,
+		type: "Group",
+    subGridDynamic: true,
+		blockContent: []
+	}
+  subgridOptions = {
+    float: false,
+    class: "blockGroup",
+    removable: '#trashCan',
+    acceptWidgets: '.block',
+    dragOut: true,
+    dragIn: ".block",
+    itemClass: "block",
+    children: [],
+    handle: '.groupTop',
+    resizable: {handles: 's,sw,w'},
+    margin: 7,
+    cellHeight: 50
+  }
+
+  pageGrid.addWidget(block);
+  let group = GridStack.init(subgridOptions, `#group_${id}`)
+  group.on('resizestop', function(el) {
+    let resized = el.target.gridstackNode;
+    if (resized.type == "Graph") {
+      let a = resized.blockContent;
+      a.getAppletObject().setSize(
+        document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+        document.getElementById(`ggBox_${resized.id}`).offsetHeight
+      );
+    }
+  })
+
+  group.on('dropped', function(event, previousWidget, newWidget) {
+    let resized = previousWidget;
+    if (resized.type == "Graph") {
+      let a = resized.blockContent;
+      a.getAppletObject().setSize(
+        document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+        document.getElementById(`ggBox_${resized.id}`).offsetHeight
+      );
+    }
+  })
+}
 
 function addQuill() {
 	if (currentfile) {
@@ -277,18 +364,21 @@ function saveGrid() {
 			case "Graph":
 				block.blockContent = block.blockContent.getAppletObject().getBase64()
 				break;
+			case "Group":
+        let foundGroup = document.getElementById(`group_${block.id}`).gridstack
+        let groupItems = foundGroup.save()
+        for(var item of groupItems){saveBlockContent(item); item.content="";}
+        block.blockContent = groupItems
+        delete block.subGrid
+				break;
 			default:
 				break;
 		}
 	}
-	if (sidebarScene == "notebooks") {
-		renderDirTree()
-	}
+	if (sidebarScene == "notebooks") {renderDirTree()}
 	let items = pageGrid.save();
-	for (var item of items) {
-		saveBlockContent(item);
-		item.content = ""
-	}
+  for(var item of items){saveBlockContent(item); item.content="";}
+
 	window.api.save(JSON.stringify(items), currentfile, `${document.getElementById("fileName").innerText}.json`);
 	let fileToUpdate = findInSidebar(currentfile)
 	setTimeout(() => {
@@ -318,6 +408,17 @@ function loadGrid(path, file, folder) {
 			case "Graph":
 				block.content = `${drag}</img><div class="actionsArea"><div id="ggBox_${block.id}" class="ggBox"></div></div>`
 				break;
+			case "Group":
+        let groupType;
+        let seperator = "&nbsp;-&nbsp;"
+        switch (block.subType) {
+          case "proof": groupType = "הוכחה 📝"; break;
+          case "theorem": groupType = "משפט 💡"; break;
+          case undefined: seperator = ""; groupType = ""; break;
+        }
+				block.content = `<div class='groupTop'>${drag}</img><span class='groupTitle'>קבוצה</span><span class='groupType'>${seperator+groupType}</span></div><div class="actionsArea"><div id="group_${block.id}" class="Group"></div></div>`
+
+        break;
 			default:
 				break;
 		}
@@ -331,12 +432,7 @@ function loadGrid(path, file, folder) {
 			case "Math":
 				let mfBlock = createMF(block.id);
 				block.blockContent = mfBlock.setValue(block.blockContent)
-				mfBlock.addEventListener('keydown', (ev) => {
-					if (ev.altKey === true && ev.code === 'KeyX') {
-						mfBlock.setValue(expand(ev.target.getValue()));
-						ev.preventDefault();
-					}
-				});
+				mfBlock.addEventListener('keydown', (ev) => { if (ev.altKey === true && ev.code === 'KeyX') { mfBlock.setValue(expand(ev.target.getValue())); ev.preventDefault(); } });
 				mfBlock.addEventListener('keydown', (ev) => {
 					if (ev.altKey === true && ev.code === 'KeyG') {
 						document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(ev.target.getValue().replace("^{\\prime}", "'"))
@@ -348,6 +444,49 @@ function loadGrid(path, file, folder) {
 				let box = document.getElementById(`ggBox_${block.id}`)
 				box.closest(".grid-stack-item").gridstackNode.blockContent = createGgb(block.id, block.blockContent)
 				break;
+			case "Group":
+
+				let group = document.getElementById(`group_${block.id}`)
+        let items = group.closest(".grid-stack-item").gridstackNode.blockContent
+        let subgridOptions = {
+          float: false,
+          class: "blockGroup",
+          removable: '#trashCan',
+          acceptWidgets: '.block',
+          dragOut: true,
+          dragIn: ".block",
+          itemClass: "block",
+          children: [],
+          handle: '.groupTop',
+          resizable: {handles: 's,sw,w'},
+          margin: 7,
+          cellHeight: 50
+        }
+        group = GridStack.init(subgridOptions, group.id)
+        group.on('resizestop', function(el) {
+          let resized = el.target.gridstackNode;
+          if (resized.type == "Graph") {
+            let a = resized.blockContent;
+            a.getAppletObject().setSize(
+              document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+              document.getElementById(`ggBox_${resized.id}`).offsetHeight
+            );
+          }
+        })
+        group.on('dropped', function(event, previousWidget, newWidget) {
+          let resized = previousWidget;
+          if (resized.type == "Graph") {
+            let a = resized.blockContent;
+            a.getAppletObject().setSize(
+              document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+              document.getElementById(`ggBox_${resized.id}`).offsetHeight
+            );
+          }
+        })
+        items.map(loadBlockContent)
+        group.load(items);
+        items.map(loadBlock)
+        break;
 			default:
 				break;
 		}
