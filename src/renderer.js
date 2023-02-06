@@ -1,6 +1,7 @@
 let dirTree, currentfile, currentBlock, currentTheme;
 let maximizeStatus, sidebarStatus = 0
 
+
 function getColor() {
 	window.api.getUserColor()
 	window.api.receive("gotUserColor", (color) => {

@@ -68,7 +68,7 @@ async function createWindow() {
     },
       {
       role: 'Add Group',
-      accelerator: 'Ctrl+I',
+      accelerator: 'Ctrl+K',
       click: () => {win.webContents.send("Group");}
     }
   ]

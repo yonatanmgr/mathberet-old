@@ -16,7 +16,7 @@ let shortcutDict = [
             {"text": "יצירת בלוק טקסט", "keys": ["Ctrl+t"]},       
             {"text": "יצירת בלוק מתמטי", "keys": ["Ctrl+m"]},       
             {"text": "יצירת בלוק גרפי", "keys": ["Ctrl+g"]},       
-            {"text": "יצירת קבוצה", "keys": ["Ctrl+i"]},       
+            {"text": "יצירת קבוצה", "keys": ["Ctrl+k"]},       
             {"text": "קיצורים לבלוק טקסט", "keys": null, "isSubTitle": true, "shortcuts":[
                 {"text": "כותרת גדולה", "keys": ["#+␣"]},       
                 {"text": "כותרת בינונית", "keys": ["##+␣"]},       
@@ -129,7 +129,10 @@ function shortcutsToHtml(shortcutDict){
         html.push(`</shortcut-list>`)
         html.push(`</div>`)
     }
-    return html.join("")
+    document.getElementById("keysContent").innerHTML = html.join("")
+    return
 }
 
-window.onload(document.getElementById("keysContent").innerHTML = shortcutsToHtml(shortcutDict))
+let shortcuts = shortcutsToHtml(shortcutDict)
+
+window.onload = shortcuts
