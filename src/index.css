@@ -32,7 +32,26 @@
 #keysTitle span{
   color: #eee;
 }
+.context-menu .menu {
+  background: linear-gradient(
+    120deg,
+    rgba(50, 50, 50, .25),
+    rgba(50, 50, 50, .75), 70%, 
+    rgba(50, 50, 50, .25)
+  ) !important;
+  border: 1px solid rgba(140, 140, 140, .3) !important;
+}
 
+.groupTypeSelector:hover{
+  background-color: rgba(230, 230, 230, .1) !important;
+}
+.groupTypeSelector:active{
+  background-color: rgba(230, 230, 230, .2) !important;
+}
+
+.groupTypeSelector span{
+  color: #eee;
+}
 
 .actionsArea:hover {
   border: 1px solid #333 !important;
@@ -157,6 +176,7 @@
 }
 
 [contenteditable]:focus { outline: 0px solid transparent; }
+
 
 html { overflow-y: hidden; }
 
@@ -633,13 +653,35 @@ button:focus {outline:0;}
   align-items: center;
 }
 .groupTitle{
+  height: 40px;
+  -webkit-user-drag: none;
   font-weight: 600;
-  padding-bottom: 5px;
+  padding-top: 8px;
 
 }
 .groupType{
+  -webkit-user-select: none;
+  user-select: none;
+
   padding-bottom: 8px;
   font-weight: 300;
+  transition: font-weight 0.2s;
+}
+.groupType:hover{
+  cursor: pointer;
+  font-weight: 400;
+
+}
+.groupType:active{
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.groupTop .seperator{
+  -webkit-user-select: none;
+  user-select: none;
+  font-weight: 300;
+  padding-bottom: 5px;
 }
 
 .grid-stack-item-content:has(h1:only-child)>.handle {
@@ -648,11 +690,12 @@ button:focus {outline:0;}
 }
 
 .handle {
+  min-width: 22px !important;
   height: 22px;
   padding-left: 5px;
   -webkit-user-select: none;
   user-select: none;
-  transition: 0.3s;
+  transition: 0.2s;
 }
 
 .handle:hover {
@@ -1125,4 +1168,71 @@ button:focus {outline:0;}
 @keyframes slideOut {
   from { height: 70%; }
   to { height: 0%; }
+}
+
+ul {
+  list-style: none;
+}
+.context-menu { 
+  position: absolute; 
+  z-index: 1000;
+  height: 80px;
+
+} 
+.context-menu .menu {
+  width: 100px;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(
+    120deg,
+    rgba(230, 230, 230, .2),
+    rgba(230, 230, 230, .7), 70%, 
+    rgba(230, 230, 230, .2)
+  );
+  border-radius: 20px 20px 0px 0px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 10px 1px rgba(0, 0, 0, .25);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  border-radius: 10px;
+  align-items: center;
+  padding: 10px 0px 10px 0px;
+}
+
+.groupTypeSelector{
+  -webkit-user-drag: none;
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 5px;
+  background: 0;
+  height: 40px;
+}
+.groupTypeSelector:hover{
+  background-color: rgba(30, 30, 30, .1);
+  cursor: default;
+}
+.groupTypeSelector:active{
+  background-color: rgba(30, 30, 30, .2);
+  cursor: default;
+}
+
+.groupTypeSelector span {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+
+  font-size: large !important;
+  font: inherit;
+  border: 0;
+  direction: rtl;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  text-decoration: unset;
+  font-weight: 400;
 }

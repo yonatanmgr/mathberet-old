@@ -140,7 +140,7 @@ function blockData(html, id, type, h, blockContent = {}, x = 12, y = 1000, w = 6
 document.getElementById("addQuill").addEventListener("click", addQuill);
 document.getElementById("addGgb").addEventListener("click", addGgb);
 document.getElementById("addMF").addEventListener("click", addMF);
-document.getElementById("addGroup").addEventListener("click", ()=>{addGroup("proof")});
+document.getElementById("addGroup").addEventListener("click", ()=>{addGroup()});
 
 
 function addGroup(type) {
@@ -149,10 +149,12 @@ function addGroup(type) {
   switch (type) {
     case "proof": groupType = "הוכחה 📝"; break;
     case "theorem": groupType = "משפט 💡"; break;
+    case "assumption": groupType = "הנחה ❓"; break;
+    case "defenition": groupType = "הגדרה ❗"; break;
     case undefined: seperator = ""; groupType = ""; break;
   }
   let id = Date.now();
-  let html = `<div class='groupTop'>${drag}</img><span class='groupTitle'>קבוצה</span><span class='groupType'>${seperator+groupType}</span></div><div class="actionsArea"><div id="group_${id}" class="Group"></div></div>`
+  let html = `<div class='groupTop'>${drag}</img><span class='groupTitle' contenteditable='true'>קבוצה</span><span class='seperator'>${seperator}</span><span class='groupType'>${groupType}</span></div><div class="actionsArea"><div id="group_${id}" class="Group"></div></div>`
   let block = {
 		id: id,
 		content: html,
@@ -163,7 +165,9 @@ function addGroup(type) {
 		minW: 4,
 		minH: 4,
     subType: type,
+    groupTitle: "קבוצה",
 		type: "Group",
+    isOpen: true,
     subGridDynamic: true,
 		blockContent: []
 	}
@@ -171,12 +175,12 @@ function addGroup(type) {
     float: false,
     class: "blockGroup",
     removable: '#trashCan',
-    acceptWidgets: '.block',
+    acceptWidgets: ".block:not(.grid-stack-sub-grid)",
     dragOut: true,
-    dragIn: ".block",
+    dragIn: ".block:not(.grid-stack-sub-grid)",
     itemClass: "block",
     children: [],
-    handle: '.groupTop',
+    handle: '.handle',
     resizable: {handles: 's,sw,w'},
     margin: 7,
     cellHeight: 50
@@ -205,6 +209,20 @@ function addGroup(type) {
       );
     }
   })
+  let currentDims;
+  group.parentGridItem.el.querySelector(".handle").addEventListener("click", ()=>{
+    switch (group.parentGridItem.isOpen) {
+      case true:
+        currentDims = {"h": group.parentGridItem.h, "w": group.parentGridItem.w}
+        pageGrid.update(group.parentGridItem.el, {minH: 1, h: 1, w: currentDims.w, isOpen: false, noResize: true})
+      break;
+      case false:
+        pageGrid.update(group.parentGridItem.el, {minH: 4, h: currentDims.h, w: currentDims.w, isOpen: true, noResize: false})
+      break;
+    default:
+      break;
+}}
+)
 }
 
 function addQuill() {
@@ -365,6 +383,7 @@ function saveGrid() {
 				block.blockContent = block.blockContent.getAppletObject().getBase64()
 				break;
 			case "Group":
+        block.groupTitle = document.getElementById(`group_${block.id}`).closest(".grid-stack-item-content").querySelector(".groupTitle").innerText
         let foundGroup = document.getElementById(`group_${block.id}`).gridstack
         let groupItems = foundGroup.save()
         for(var item of groupItems){saveBlockContent(item); item.content="";}
@@ -414,9 +433,11 @@ function loadGrid(path, file, folder) {
         switch (block.subType) {
           case "proof": groupType = "הוכחה 📝"; break;
           case "theorem": groupType = "משפט 💡"; break;
+          case "assumption": groupType = "הנחה ❓"; break;
+          case "defenition": groupType = "הגדרה ❗"; break;
           case undefined: seperator = ""; groupType = ""; break;
         }
-				block.content = `<div class='groupTop'>${drag}</img><span class='groupTitle'>קבוצה</span><span class='groupType'>${seperator+groupType}</span></div><div class="actionsArea"><div id="group_${block.id}" class="Group"></div></div>`
+				block.content = `<div class='groupTop'>${drag}</img><span class='groupTitle' contenteditable='true'>${block.groupTitle}</span><span class='seperator'>${seperator}</span><span class='groupType'>${groupType}</span></div><div class="actionsArea"><div id="group_${block.id}" class="Group"></div></div>`
 
         break;
 			default:
@@ -452,18 +473,19 @@ function loadGrid(path, file, folder) {
           float: false,
           class: "blockGroup",
           removable: '#trashCan',
-          acceptWidgets: '.block',
+          acceptWidgets: ".block:not(.grid-stack-sub-grid)",
           dragOut: true,
-          dragIn: ".block",
+          dragIn: ".block:not(.grid-stack-sub-grid)",
           itemClass: "block",
           children: [],
-          handle: '.groupTop',
+          handle: '.handle',
           resizable: {handles: 's,sw,w'},
           margin: 7,
           cellHeight: 50
         }
-        group = GridStack.init(subgridOptions, group.id)
-        group.on('resizestop', function(el) {
+        let createdGrid = GridStack.init(subgridOptions, group.id)
+        // group = GridStack.init(subgridOptions, group.id)
+        createdGrid.on('resizestop', function(el) {
           let resized = el.target.gridstackNode;
           if (resized.type == "Graph") {
             let a = resized.blockContent;
@@ -473,7 +495,7 @@ function loadGrid(path, file, folder) {
             );
           }
         })
-        group.on('dropped', function(event, previousWidget, newWidget) {
+        createdGrid.on('dropped', function(event, previousWidget, newWidget) {
           let resized = previousWidget;
           if (resized.type == "Graph") {
             let a = resized.blockContent;
@@ -484,11 +506,22 @@ function loadGrid(path, file, folder) {
           }
         })
         items.map(loadBlockContent)
-        group.load(items);
+        createdGrid.load(items);
         items.map(loadBlock)
-        break;
-			default:
-				break;
+        let currentDims = {"h": 1, "w": 6};
+        group.gridstack.parentGridItem.el.querySelector(".handle").addEventListener("click", ()=>{
+          switch (group.gridstack.parentGridItem.isOpen) {
+            case true:
+              currentDims = {"h": group.gridstack.parentGridItem.h, "w": group.gridstack.parentGridItem.w}
+              pageGrid.update(group.gridstack.parentGridItem.el, {minH: 1, h: 1, w: currentDims.w, isOpen: false, noResize: true})
+            break;
+            case false:
+              pageGrid.update(group.gridstack.parentGridItem.el, {minH: 4, h: currentDims.h, w: currentDims.w, isOpen: true, noResize: false})
+            break;
+			    default:
+				    break;
+      }}
+      )
 		}
 	}
 	// if (currentfile != undefined) {
@@ -516,3 +549,4 @@ if (currentfile) {
 } else {
 	document.getElementById("close").removeEventListener("click", saveGrid);
 }
+

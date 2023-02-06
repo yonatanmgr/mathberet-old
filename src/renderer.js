@@ -18,6 +18,74 @@ function getTheme() {
 getColor()
 getTheme()
 
+document.onclick = hideMenu; 
+document.addEventListener("contextmenu", function(e){ if(e.target.closest(".groupType, .groupTitle")) {rightClick(e)} })
+
+function hideMenu() {
+  document.getElementById("contextMenu").children[0].id = "";
+  document.getElementById("contextMenu").style.display = "none" 
+} 
+
+function rightClick(e) { 
+    e.preventDefault(); 
+    if (document.getElementById("contextMenu").style.display == "block"){
+      hideMenu(); 
+    }
+    else{ 
+        var menu = document.getElementById("contextMenu")  
+        menu.children[0].id = e.target.closest('.block').gridstackNode.id
+        menu.style.display = 'block'; 
+        menu.style.left = e.pageX-50 + "px"; 
+        menu.style.top = e.pageY + "px"; 
+    } 
+} 
+
+function findInGrid(id){
+  let arr = pageGrid.getGridItems()
+	return arr.find(t => t.gridstackNode.id == id)
+}
+
+document.getElementById("contextMenu").children[0].querySelector('.undefined').addEventListener("click", ()=>{
+  let clicked = document.getElementById("contextMenu").children[0].id
+  let block = findInGrid(clicked)
+  block.querySelector(".seperator").innerHTML = ""
+
+  block.querySelector(".groupType").innerText = ""
+  pageGrid.update(block, {subType: undefined})
+})
+document.getElementById("contextMenu").children[0].querySelector('.proof').addEventListener("click", ()=>{
+  let clicked = document.getElementById("contextMenu").children[0].id
+  let block = findInGrid(clicked)
+  block.querySelector(".seperator").innerHTML = "&nbsp;-&nbsp;"
+
+  block.querySelector(".groupType").innerText = "הוכחה 📝"
+  pageGrid.update(block, {subType: "proof"})
+})
+document.getElementById("contextMenu").children[0].querySelector('.assumption').addEventListener("click", ()=>{
+  let clicked = document.getElementById("contextMenu").children[0].id
+  let block = findInGrid(clicked)
+  block.querySelector(".seperator").innerHTML = "&nbsp;-&nbsp;"
+
+  block.querySelector(".groupType").innerText = "הנחה ❓"
+  pageGrid.update(block, {subType: "assumption"})
+})
+document.getElementById("contextMenu").children[0].querySelector('.theorem').addEventListener("click", ()=>{
+  let clicked = document.getElementById("contextMenu").children[0].id
+  let block = findInGrid(clicked)
+  block.querySelector(".seperator").innerHTML = "&nbsp;-&nbsp;"
+
+  block.querySelector(".groupType").innerText = "משפט 💡"
+  pageGrid.update(block, {subType: "theorem"})
+})
+document.getElementById("contextMenu").children[0].querySelector('.defenition').addEventListener("click", ()=>{  
+  let clicked = document.getElementById("contextMenu").children[0].id
+  let block = findInGrid(clicked)
+  block.querySelector(".seperator").innerHTML = "&nbsp;-&nbsp;"
+
+  block.querySelector(".groupType").innerText = "הגדרה ❗"
+  pageGrid.update(block, {subType: "defenition"})
+})
+
 
 // GENERAL
 
