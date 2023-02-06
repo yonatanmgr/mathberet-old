@@ -1,9 +1,12 @@
 let defShortcuts = {
-    'sr': '^2',
-    'cb': '^3',
+    'sr': {after: 'letter+digit', value: '^2'},
+    'cu': {after: 'letter+digit', value: '^3'},
     '&': '\\&',
     '%': '\\%',
     '@': '\\degree',
+    'nCk': '\\binom',
+    'vec': '\\vec{#?}',
+    '^^': '\\hat{#?}',
   
     // Primes
     "''": '^{\\doubleprime}',
@@ -79,6 +82,7 @@ let defShortcuts = {
     '9': {after: 'letter', value: '_9'},
     'x': {after: 'function', value: '(x)'},
     'an': 'a_n',
+    'ann': '\\{ a_n \\} _{n=1}^{\\infty}',
 
     // Letter-like
     'ii': {
@@ -114,10 +118,15 @@ let defShortcuts = {
   
     // Big operators
     '∑': '\\sum',
+    'abs': '||{#?}||',
     'sum': '\\sum_{#?}^{#?}',
+    'intt': '\\int',
     'int': '\\int_{#?}^{#?}',
+    'intfx': '\\int_{#?}^{#?} f(x) \\differentialD x =',
+    'intgx': '\\int_{#?}^{#?} g(x) \\differentialD x =',
+    'inthx': '\\int_{#?}^{#?} h(x) \\differentialD x =',
     'prod': '\\prod_{#?}^{#?}',
-    'sqrt': '\\sqrt{#?}',
+    'nv': '\\sqrt[#?]{#?}',
     // '∫':                    '\\int',             // There's a alt-B command for this
     '∆': '\\differentialD', // @TODO: is \\diffD most common?
     '∂': '\\differentialD',
@@ -161,6 +170,9 @@ let defShortcuts = {
     'ln': '\\ln',
     'exp': '\\exp',
     'lim': '\\lim_{#?}',
+    'limfx': '\\lim_{x \\to a} f(x)=',
+    'limgx': '\\lim_{x \\to a} g(x)=',
+    'limhx': '\\lim_{x \\to a} h(x)=',
   
     // Differentials
     // According to ISO31/XI (ISO 80000-2), differentials should be upright
@@ -182,6 +194,7 @@ let defShortcuts = {
     'EE': '\\exists',
     '!EE': '\\nexists',
     '&&': '\\land',
+    'VV': '\\lor',
     // The shortcut for the greek letter "xi" is interfering with "x in"
     'xin': {
       after: 'nothing+text+relop+punct+openfence+space',
@@ -192,6 +205,8 @@ let defShortcuts = {
       value: '\\in',
     },
     '!in': '\\notin',
+    'sub': '\\subset',
+    'subb': '\\subseteq',
   
     // Sets
     'NN': '\\mathbb{N}', // Natural numbers
@@ -224,6 +239,9 @@ let defShortcuts = {
     ':=': '\\coloneq',
     '::': '\\Colon',
   
+    'TT': '\\perp',
+    'II': '\\parallel',
+
     // Fences
     '(:': '\\langle',
     ':)': '\\rangle',
@@ -299,6 +317,7 @@ let defShortcuts = {
     'exists': '\\exists',
     '!exists': '\\nexists',
     ':.': '\\therefore',
+    '.:': '\\because',
     // MORE FUNCTIONS
     // 'arg': '\\arg',
     'liminf': '\\liminf_{#?}',
@@ -352,12 +371,14 @@ let defShortcuts = {
     '-...': '-\\cdots', // ... - and ...
     '->...': '\\to\\cdots', // ->
   
+    'to': '\\to',
     '->': '\\to',
     '|->': '\\mapsto',
     '-->': '\\longrightarrow',
     //    '<-':                   '\\leftarrow',
     '<--': '\\longleftarrow',
     '=>': '\\Rightarrow',
+    '==': '\\equiv',
     '==>': '\\Longrightarrow',
     // '<=': '\\Leftarrow',     // CONFLICTS WITH LESS THAN OR EQUAL
     '<=>': '\\Leftrightarrow',

@@ -251,15 +251,17 @@ function addMF() {
 		created.focus()
 
 		created.addEventListener('keydown', (ev) => {
-			if (ev.altKey === true && ev.code === 'KeyX') {
-				created.setValue(expand(ev.target.getValue()));
-				ev.preventDefault();
-			}
-		});
-
-		created.addEventListener('keydown', (ev) => {
-			if (ev.altKey === true && ev.code === 'KeyG') {
-				document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(ev.target.getValue().replace("^{\\prime}", "'"))
+			if (ev.altKey === true) {	
+				switch (ev.code) {
+					case "KeyX": created.setValue(expand(ev.target.getValue())); break;
+					case "KeyG": document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(ev.target.getValue().replace("^{\\prime}", "'")); break;
+					case "Equal": mf.insert('\\approx'); break;
+					case "Comma": mf.insert('\\measuredangle'); break;
+					case "Digit0": mf.insert('\\emptyset'); break;
+					case "KeyC": if (ev.shiftKey === true) {mf.insert('\\complement'); break;}
+					case "KeyT": if (ev.shiftKey === true) {mf.insert('\\triangle'); break;}
+					default: break;
+				}
 				ev.preventDefault();
 			}
 		});
@@ -453,10 +455,18 @@ function loadGrid(path, file, folder) {
 			case "Math":
 				let mfBlock = createMF(block.id);
 				block.blockContent = mfBlock.setValue(block.blockContent)
-				mfBlock.addEventListener('keydown', (ev) => { if (ev.altKey === true && ev.code === 'KeyX') { mfBlock.setValue(expand(ev.target.getValue())); ev.preventDefault(); } });
 				mfBlock.addEventListener('keydown', (ev) => {
-					if (ev.altKey === true && ev.code === 'KeyG') {
-						document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(ev.target.getValue().replace("^{\\prime}", "'"))
+					if (ev.altKey === true) {	
+						switch (ev.code) {
+							case "KeyX": mfBlock.setValue(expand(ev.target.getValue())); break;
+							case "KeyG": document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(ev.target.getValue().replace("^{\\prime}", "'")); break;
+							case "Equal": mfBlock.insert('\\approx'); break;
+							case "Comma": mfBlock.insert('\\measuredangle'); break;
+							case "Digit0": mfBlock.insert('\\emptyset'); break;
+							case "KeyC": if (ev.shiftKey === true) {mfBlock.insert('\\complement'); break;}
+							case "KeyT": if (ev.shiftKey === true) {mfBlock.insert('\\triangle'); break;}
+							default: break;
+						}
 						ev.preventDefault();
 					}
 				});

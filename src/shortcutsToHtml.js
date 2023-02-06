@@ -38,35 +38,92 @@ let shortcutDict = [
                 {"text": "סכום", "latex": "\\sum", "keys": ["Alt+w"]},
                 {"text": "מכפלה", "latex": "\\prod", "keys": ["Alt+P"]},
                 {"text": "שורש ריבועי", "latex": "\\sqrt{\\square}", "keys": ["Alt+v"]},
-                {"text": "אינטגרל", "latex": "\\int", "keys": ["Alt+b"]}
+                {"text": "שורש", "latex": "\\sqrt[\\square]{\\square}", "keys": ["nv"]},
+            ]},
+            {"text": "יחסים", "keys": null, "isSubTitle": true, "shortcuts":
+            [
+                {"text": "חוסר שוויון", "latex": "\\ne", "keys": ["!+="]},
+                {"text": "גדול/שווה", "latex": "\\geq", "keys": ["<+="]},
+                {"text": "קטן/שווה", "latex": "\\leq", "keys": [">+="]},
+                {"text": "קירוב", "latex": "\\approx", "keys": ["Alt+="]}
             ]},
             {"text": "חזקות", "keys": null, "isSubTitle": true, "shortcuts":
             [
                 {"text": "העלאה בחזקה", "latex": "\\square^{\\square}", "keys": ["Shift ⇧+6"]},
-                {"text": "העלאה בריבוע", "latex": "\\square^{2}", "keys": ["s+r"]},
-                {"text": "העלאה בשלישית", "latex": "\\square^{3}", "keys": ["c+b"]}
+                {"text": "העלאה בריבוע", "latex": "\\square^{2}", "keys": ["sr"]},
+                {"text": "העלאה בשלישית", "latex": "\\square^{3}", "keys": ["cb"]}
             ]},
             {"text": "קבועים נפוצים", "keys": null, "isSubTitle": true, "shortcuts":
             [
                 {"text": "פאי", "latex": "\\pi", "keys": ["Alt+p"]},
-                {"text": "המספר המדומה", "latex": "\\imaginaryI", "keys": ["i+i"]},
-                {"text": "האקספוננט", "latex": "\\exponentialE", "keys": ["e+e"]}
+                {"text": "המספר המדומה", "latex": "\\imaginaryI", "keys": ["ii"]},
+                {"text": "האקספוננט", "latex": "\\exponentialE", "keys": ["ee"]}
             ]},
-            {"text": "סימונים נפוצים", "keys": null, "isSubTitle": true, "shortcuts":
+            {"text": "גיאומטריה", "keys": null, "isSubTitle": true, "shortcuts":
             [
-                {"text": "סימן המעלות", "latex": "\\degree", "keys": ["Shift ⇧+2"]},
-                {"text": "אינסוף", "latex": "\\infty", "keys": ["o+o"]}
+                {"text": "זווית", "latex": "\\measuredangle", "keys": ["Alt+>"]},
+                {"text": "מעלה", "latex": "\\square\\degree", "keys": ["Shift ⇧+2"]},
+                {"text": "ניצב", "latex": "\\perp", "keys": ["TT"]},
+                {"text": "מקביל", "latex": "\\parallel", "keys": ["II"]},
+                {"text": "משולש", "latex": "\\triangle", "keys": ["Ctrl+Shift ⇧+T"]},
+
             ]},
-            {"text": "קבוצות", "keys": null, "isSubTitle": true, "shortcuts":
+            {"text": "אנליזה", "keys": null, "isSubTitle": true, "shortcuts":
             [
-                {"text": "המספרים הטבעיים", "latex": "\\N", "keys": ["N+N"]},
-                {"text": "המספרים השלמים", "latex": "\\Z", "keys": ["Z+Z"]},
-                {"text": "המספרים הממשיים", "latex": "\\R", "keys": ["R+R"]},
-                {"text": "המספרים הרציונליים", "latex": "\\Q", "keys": ["Q+Q"]},
-                {"text": "המספרים המרוכבים", "latex": "\\C", "keys": ["C+C"]},
-                {"text": "הקבוצה הריקה", "latex": "\\emptyset", "keys": ["Alt+o"]},
+                {"text": "פונקציה", "latex": "f(x)", "keys": ["fx"]},
+                {"text": "סדרה אינסופית", "latex": "\\{ a_n \\} _{n=1}^{\\infty}", "keys": ["ann"]},
+                {"text": "איבר כללי בסדרה", "latex": "a_n", "keys": ["an"]},
+                {"text": "נגזרת חלקית", "latex": "\\differentialD", "keys": ["Alt+d"]},
+                {"text": "אינטגרל מסוים", "latex": "\\int_{a}^{b}", "keys": ["intt"]},
+                {"text": "אינטגרל לא מסוים", "latex": "\\int", "keys": ["int"]},
+                {"text": "אינטגרל של פונקציה", "latex": "\\int_{a}^{b} f(x) \\differentialD x", "keys": ["int+fx"]},
+                {"text": "גבול", "latex": "\\lim", "keys": ["lim"]},
+                {"text": "גבול של פונקציה", "latex": "\\lim_{x \\to a} f(x)", "keys": ["lim+fx"]},
+                {"text": "אינסוף", "latex": "\\infty", "keys": ["oo"]}
+            ]},
+            {"text": "אלגברה", "keys": null, "isSubTitle": true, "shortcuts":
+            [
+                {"text": "ערך מוחלט/נורמה", "latex": "||\\square||", "keys": ["abs"]},
+                {"text": "וקטור", "latex": "\\vec{\\square}", "keys": ["vec"]},
+                {"text": "וקטור היחידה", "latex": "\\hat{\\square}", "keys": ["^^"]},
+            ]},
+            {"text": "קומבינטוריקה", "keys": null, "isSubTitle": true, "shortcuts":
+            [
+                {"text": "מקדם בינומי", "latex": "\\binom{c}{k}", "keys": ["nCk"]},
+            ]},
+            {"text": "לוגיקה", "keys": null, "isSubTitle": true, "shortcuts":
+            [
+                {"text": "שלילה", "latex": "\\neg", "keys": ["-+["]},
+                {"text": "גרירה", "latex": "\\Rightarrow", "keys": ["<="]},
+                {"text": "אם ורק אם", "latex": "\\iff", "keys": ["<=>"]},
+                {"text": "קיים", "latex": "\\exists", "keys": ["EE"]},
+                {"text": "לא קיים", "latex": "\\nexists", "keys": ["!+EE"]},
+                {"text": "לכל", "latex": "\\forall", "keys": ["AA"]},
+                {"text": "וגם...", "latex": "\\land", "keys": ["Alt+6"]},
+                {"text": "או...", "latex": "\\lor", "keys": ["Alt+Shift ⇧+6"]},
+                {"text": "לכן", "latex": "\\therefore", "keys": [":+."]},
+                {"text": "מפני ש...", "latex": "\\because", "keys": [".+:"]},
+                {"text": "הגדרה", "latex": "\\equiv", "keys": ["=="]}
+            ]},
+            {"text": "תורת הקבוצות", "keys": null, "isSubTitle": true, "shortcuts":
+            [
+                {"text": "המספרים הטבעיים", "latex": "\\N", "keys": ["NN"]},
+                {"text": "המספרים השלמים", "latex": "\\Z", "keys": ["ZZ"]},
+                {"text": "המספרים הממשיים", "latex": "\\R", "keys": ["RR"]},
+                {"text": "המספרים הרציונליים", "latex": "\\Q", "keys": ["QQ"]},
+                {"text": "המספרים המרוכבים", "latex": "\\C", "keys": ["CC"]},
+                {"text": "הקבוצה הריקה", "latex": "\\emptyset", "keys": ["Alt+0"]},
+                {"text": "הרכבה", "latex": "\\circ", "keys": ["Alt+o"]},
                 {"text": "איחוד", "latex": "\\cup", "keys": ["Alt+u"]},
-                {"text": "חיתוך", "latex": "\\cap", "keys": ["Alt+n"]}
+                {"text": "חיתוך", "latex": "\\cap", "keys": ["Alt+n"]},
+                {"text": "משלים", "latex": "\\complement", "keys": ["Alt+Shift ⇧+c"]},
+                {"text": "שייכות", "latex": "\\in", "keys": ["in"]},
+                {"text": "חוסר שייכות", "latex": "\\notin", "keys": ["!+in"]},
+                {"text": "מכפלה קרטזית", "latex": "\\times", "keys": ["xx"]},
+                {"text": "הכלה", "latex": "\\subseteq", "keys": ["sub"]},
+                {"text": "הכלה ממש", "latex": "\\subset", "keys": ["subb"]},
+                {"text": "הפרש", "latex": "\\backslash", "keys": ["Alt+\\"]},
+                {"text": "כלל התאמה", "latex": "\\mapsto", "keys": ["<-|"]}
             ]},
             {"text": "אותיות יווניות", "keys": null, "isSubTitle": true, "shortcuts":
             [
