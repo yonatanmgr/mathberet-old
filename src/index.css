@@ -317,6 +317,10 @@ shortcut-text {
 }
 
 shortcut-keys {
+  color: #666;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
   font-size: 18px;
   overflow: hidden;
   white-space: nowrap;  
@@ -420,7 +424,9 @@ svg {
 
 .appContainer {
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
+  direction: rtl;
+
   min-height: 100%;
   min-width: 100%;
 }
@@ -534,8 +540,7 @@ button:focus {outline:0;}
 }
 
 .settingsArea {
-  align-self: flex-end;
-  padding-right: 20px;
+  align-self: center;
   font-size: 18px;
   direction: rtl;
   display: flex;
@@ -575,7 +580,9 @@ button:focus {outline:0;}
   -webkit-user-select: none;
   user-select: none;
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
+  direction: rtl;
+
   align-items: center;
   height: 35px;
   justify-content: flex-start;
@@ -622,9 +629,9 @@ button:focus {outline:0;}
   transition: display 0.2s;
 }
 
-.grid-stack-item-content {
+.block .grid-stack-item-content {
   display: flex;
-  flex-direction: row-reverse;
+  direction: rtl;
   overflow-y: hidden !important;
   max-height: 100%;
   height: auto;
@@ -633,6 +640,7 @@ button:focus {outline:0;}
 .grid-stack-item-content:has(.Group){
   display: flex;
   flex-direction: column;
+  direction: rtl;
   overflow-y: hidden !important;
   max-height: 100%;
   height: auto;
@@ -726,7 +734,7 @@ button:focus {outline:0;}
   overflow-y: hidden;
   transition: filter 0.2s, background-color 0.2s;
   display: flex;
-  flex-direction: row-reverse;
+  direction: rtl;
   justify-content: flex-start;
   align-items: center;
   white-space: nowrap;
@@ -853,7 +861,8 @@ button:focus {outline:0;}
   height: 100%;
   width: 100%;
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
+  direction: rtl;
   align-items: flex-start;
   flex: 1;
   overflow-y: hidden;
@@ -898,7 +907,9 @@ button:focus {outline:0;}
   overflow-y: hidden;
   padding-top: 70px;
   display: none;
-  flex-direction: row-reverse;
+  flex-direction: row;
+  direction: rtl;
+
   align-items: flex-start;
   /* margin-top: auto; */
   margin-bottom: auto;
@@ -926,7 +937,9 @@ button:focus {outline:0;}
 #header {
   -webkit-app-region: drag;
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
+  direction: rtl;
+
   justify-content: space-between;
   width: -webkit-fill-available;
   height: 45px;
@@ -1074,7 +1087,6 @@ button:focus {outline:0;}
   transition: 0.15s ease;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
   flex-grow: 1;
 }
 
@@ -1093,6 +1105,7 @@ button:focus {outline:0;}
   display: flex;
   flex-direction: row;
   align-items: center;
+  direction: ltr;
   gap: 6px;
 }
 

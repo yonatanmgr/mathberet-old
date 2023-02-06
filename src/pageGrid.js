@@ -383,12 +383,12 @@ function saveGrid() {
 				block.blockContent = block.blockContent.getAppletObject().getBase64()
 				break;
 			case "Group":
-        block.groupTitle = document.getElementById(`group_${block.id}`).closest(".grid-stack-item-content").querySelector(".groupTitle").innerText
-        let foundGroup = document.getElementById(`group_${block.id}`).gridstack
-        let groupItems = foundGroup.save()
-        for(var item of groupItems){saveBlockContent(item); item.content="";}
-        block.blockContent = groupItems
-        delete block.subGrid
+				block.groupTitle = document.getElementById(`group_${block.id}`).closest(".grid-stack-item-content").querySelector(".groupTitle").innerText
+				let foundGroup = document.getElementById(`group_${block.id}`).gridstack
+				let groupItems = foundGroup.save()
+				for(var item of groupItems){saveBlockContent(item); item.content="";}
+				block.blockContent = groupItems
+				delete block.subGrid
 				break;
 			default:
 				break;

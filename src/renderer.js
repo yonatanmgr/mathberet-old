@@ -28,21 +28,23 @@ function hideMenu() {
 
 function rightClick(e) { 
     e.preventDefault(); 
-    if (document.getElementById("contextMenu").style.display == "block"){
-      hideMenu(); 
-    }
+    if (document.getElementById("contextMenu").style.display == "block"){hideMenu(); }
     else{ 
         var menu = document.getElementById("contextMenu")
         if (e.target.closest("#addGroup")){
           menu.children[0].id = ""
+		  menu.style.display = 'block'; 
+		  menu.style.left = e.pageX-50 + "px"; 
+		  menu.style.top = e.pageY + "px"; 
+  
         }
-        else{
+        else if (e.target.closest(".groupType") || e.target.closest(".groupTitle") && e.target.closest(".groupTop").querySelector(".groupType").innerText == ""){
           menu.children[0].id = e.target.closest('.block').gridstackNode.id
-
+		  menu.style.display = 'block'; 
+		  menu.style.left = e.pageX-50 + "px"; 
+		  menu.style.top = e.pageY + "px"; 
+  
         }
-        menu.style.display = 'block'; 
-        menu.style.left = e.pageX-50 + "px"; 
-        menu.style.top = e.pageY + "px"; 
     } 
 } 
 
