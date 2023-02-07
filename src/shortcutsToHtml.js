@@ -31,8 +31,12 @@ let shortcutDict = [
     {    
         "part": "מתמטי",
         "shortcuts": [
-            {"text": "פישוט ביטוי", "keys": ["Alt+x"]},       
-            {"text": "העברת ביטוי לגרף", "keys": ["Alt+g"]},       
+            {"text": "פישוט הביטוי המסומן", "keys": ["Alt+x"]},       
+            {"text": "העברת הביטוי המסומן לגרף", "keys": ["Alt+g"]},       
+            {"text": "מעבר לכתיבה בשורות", "keys": ["Alt+Enter ↵"]},
+            {"text": "ירידה בשורה", "keys": ["Ctrl+Enter ↵"]},
+            {"text": "מחיקת שורה", "keys": ["Ctrl+⌫"]},
+            {"text": "חלוקה למקרים", "keys": ["cas"]},
             {"text": "פעולות מתמטיות", "keys": null, "isSubTitle": true, "shortcuts":
             [
                 {"text": "סכום", "latex": "\\sum", "keys": ["Alt+w"]},
@@ -83,13 +87,23 @@ let shortcutDict = [
             ]},
             {"text": "אלגברה", "keys": null, "isSubTitle": true, "shortcuts":
             [
-                {"text": "ערך מוחלט/נורמה", "latex": "||\\square||", "keys": ["abs"]},
                 {"text": "וקטור", "latex": "\\vec{\\square}", "keys": ["vec"]},
                 {"text": "וקטור היחידה", "latex": "\\hat{\\square}", "keys": ["^^"]},
+                {"text": "ערך מוחלט/נורמה", "latex": "||\\square||", "keys": ["abs"]},
+            ]},
+            {"text": "מטריצות", "keys": null, "isSubTitle": true, "shortcuts":
+            [
+                {"text": "מטריצה חדשה", "latex": "\\begin{smallmatrix} \\square & \\square \\\\ \\square & \\square \\end{smallmatrix}", "keys": ["mx"]},
+                {"text": "הוספת עמודה מימין", "keys": ["Ctrl+,"]},
+                {"text": "הוספת עמודה משמאל", "keys": ["Ctrl+Shift ⇧+,"]},
+                {"text": "הוספת שורה מתחת", "keys": ["Ctrl+;"]},
+                {"text": "הוספת שורה מעל", "keys": ["Ctrl+Shift ⇧+;"]},
+                {"text": "מחיקת השורה הנוכחית", "keys": ["Ctrl+⌫"]},
+                {"text": "מחיקת העמודה הנוכחית", "keys": ["Shift ⇧+⌫"]}
             ]},
             {"text": "קומבינטוריקה", "keys": null, "isSubTitle": true, "shortcuts":
             [
-                {"text": "מקדם בינומי", "latex": "\\binom{c}{k}", "keys": ["nCk"]},
+                {"text": "מקדם בינומי", "latex": "\\binom{c}{k}", "keys": ["n+C+k"]},
             ]},
             {"text": "לוגיקה", "keys": null, "isSubTitle": true, "shortcuts":
             [

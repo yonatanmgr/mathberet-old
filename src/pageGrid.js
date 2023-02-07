@@ -240,6 +240,8 @@ function addQuill() {
 	} else return
 };
 
+
+
 function addMF() {
 	if (currentfile) {
 
@@ -249,21 +251,46 @@ function addMF() {
 		pageGrid.addWidget(block)
 		let created = createMF(id)
 		created.focus()
+		async function getSelection(scene){
+			let text = await navigator.clipboard.readText();
+			created.executeCommand(['copyToClipboard', '#0'])
+			let newText = await navigator.clipboard.readText();
+			switch (scene) {
+				case "expand":
+					created.executeCommand(['insert', expand(newText), {'insertionMode': 'replaceSelection'}])
+					break;
+				case "graph":
+					let adapted = newText
+					.replace("^{\\prime}", "'")
+					.replace("\\left", "")
+					.replace("\\right", "")
+					.replace("\\cos", "cos")
+					.replace("\\sin", "sin")
+					.replace("\\tan", "tan")
+					document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(adapted);
+					break;
+				default:
+					break;
+			}
+			navigator.clipboard.writeText(text);
+		}
 
 		created.addEventListener('keydown', (ev) => {
 			if (ev.altKey === true) {	
 				switch (ev.code) {
-					case "KeyX": created.setValue(expand(ev.target.getValue())); break;
-					case "KeyG": document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(ev.target.getValue().replace("^{\\prime}", "'")); break;
-					case "Equal": mf.insert('\\approx'); break;
-					case "Comma": mf.insert('\\measuredangle'); break;
-					case "Digit0": mf.insert('\\emptyset'); break;
-					case "KeyC": if (ev.shiftKey === true) {mf.insert('\\complement'); break;}
-					case "KeyT": if (ev.shiftKey === true) {mf.insert('\\triangle'); break;}
+					case "KeyX": getSelection("expand"); break;
+					case "KeyG": getSelection("graph"); break;
+					case "Equal": created.insert('\\approx'); break;
+					case "Comma": created.insert('\\measuredangle'); break;
+					case "Digit0": created.insert('\\emptyset'); break;
+					case "Enter": created.insert('\\begin{gathered} {#?} \\end{gathered}'); break;
+					case "KeyC": if (ev.shiftKey === true) {created.insert('\\complement'); break;}
+					case "KeyT": if (ev.shiftKey === true) {created.insert('\\triangle'); break;}
 					default: break;
 				}
 				ev.preventDefault();
 			}
+			else if (ev.shiftKey === true && ev.code === 'Enter'){created.executeCommand('addRowAfter'); ev.preventDefault();}
 		});
 	} else return
 };
@@ -337,12 +364,14 @@ function createQuill(id) {
 
 function createMF(id) {
 	let mf = new MathfieldElement();
+
 	mf.setOptions({
 		inlineShortcuts: defShortcuts,
 		plonkSound: null,
 		id: id,
-		onExport: (mf, latex) => `${latex}`
+		onExport: (mf, latex) => `${latex}`,
 	})
+
 	document.getElementById(`mf_${id}`).appendChild(mf)
 	return mf
 }
@@ -455,20 +484,45 @@ function loadGrid(path, file, folder) {
 			case "Math":
 				let mfBlock = createMF(block.id);
 				block.blockContent = mfBlock.setValue(block.blockContent)
+				async function getSelection(scene){
+					let text = await navigator.clipboard.readText();
+					mfBlock.executeCommand(['copyToClipboard', '#0'])
+					let newText = await navigator.clipboard.readText();
+					switch (scene) {
+						case "expand":
+							mfBlock.executeCommand(['insert', expand(newText), {'insertionMode': 'replaceSelection'}])
+							break;
+						case "graph":
+							let adapted = newText
+							.replace("^{\\prime}", "'")
+							.replace("\\left", "")
+							.replace("\\right", "")
+							.replace("\\cos", "cos")
+							.replace("\\sin", "sin")
+							.replace("\\tan", "tan")
+							document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(adapted);
+							break;
+						default:
+							break;
+					}
+					navigator.clipboard.writeText(text);
+				}
 				mfBlock.addEventListener('keydown', (ev) => {
 					if (ev.altKey === true) {	
 						switch (ev.code) {
-							case "KeyX": mfBlock.setValue(expand(ev.target.getValue())); break;
-							case "KeyG": document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(ev.target.getValue().replace("^{\\prime}", "'")); break;
+							case "KeyX": getSelection("expand"); break;
+							case "KeyG": getSelection("graph"); break;
 							case "Equal": mfBlock.insert('\\approx'); break;
 							case "Comma": mfBlock.insert('\\measuredangle'); break;
 							case "Digit0": mfBlock.insert('\\emptyset'); break;
 							case "KeyC": if (ev.shiftKey === true) {mfBlock.insert('\\complement'); break;}
 							case "KeyT": if (ev.shiftKey === true) {mfBlock.insert('\\triangle'); break;}
+							case "Enter": {mfBlock.insert('\\begin{gathered} {#?} \\end{gathered}'); break;}
 							default: break;
 						}
 						ev.preventDefault();
 					}
+					else if (ev.shiftKey === true && ev.code === 'Enter'){mfBlock.executeCommand('addRowAfter'); ev.preventDefault();}
 				});
 				break;
 			case "Graph":

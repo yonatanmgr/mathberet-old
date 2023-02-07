@@ -1222,6 +1222,10 @@ ul {
   background: 0;
   height: 40px;
 }
+
+.actionsArea .ggBox{
+  direction: ltr !important;
+}
 .groupTypeSelector:hover{
   background-color: rgba(30, 30, 30, .1);
   cursor: default;
