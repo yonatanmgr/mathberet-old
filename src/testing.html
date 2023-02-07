@@ -1,0 +1,66 @@
+<head>
+    <style>
+        .app {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+
+        .container {
+            width: 600px;
+            height: 900px;
+            background: #f2f2f2;
+            direction: rtl;
+        }
+
+        li {
+            display: flex;
+            direction: rtl;
+            height: 70px;
+            gap: 15px;
+            flex-direction: row;
+        }
+
+        div.circle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+
+        }
+
+        .line {
+
+            z-index: 0;
+            width: 2px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .title {
+            padding-right: 4px;
+        }
+    </style>
+</head>
+<div class="app">
+    <div class="container">
+        <td align="right">
+            <ul style="list-style: none;">
+                <li class="title">
+                    <div class="line"></div>
+                    <div class="circle"></div><span>Text</span>
+                </li>
+                <li class="title">
+                    <div class="line"></div><span>Text</span>
+                </li>
+                <li class="title">
+                    <div class="line"></div><span>Text</span>
+                </li>
+                <li class="title">
+                    <div class="line"></div><span>Text</span>
+                </li>
+            </ul>
+        </td>
+    </div>
+</div>
