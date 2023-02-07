@@ -122,8 +122,9 @@ let createSettings = () => {
 	document.getElementById("colorSwitcher").addEventListener('click', (a) => {
 		getTheme()
 		Coloris({
-			swatches: [
-				'hsl(192, 100%, 89%)', 'hsl(224, 100%, 89%)', 'hsl(256, 100%, 89%)', 'hsl(288, 100%, 89%)', 'hsl(330, 100%, 89%)', 'hsl(2, 100%, 89%)', 'hsl(32, 100%, 89%)', 'hsl(64, 100%, 89%)', 'hsl(96, 100%, 89%)', 'hsl(128, 100%, 89%)', 'hsl(160, 100%, 89%)'
+			swatches: 
+			[
+				'hsl(192, 100%, 89%)', 'hsl(224, 100%, 89%)', 'hsl(256, 100%, 89%)', 'hsl(288, 100%, 89%)', 'hsl(330, 100%, 89%)', 'hsl(2, 100%, 89%)', 'hsl(32, 100%, 89%)', 'hsl(48, 100%, 89%)', 'hsl(96, 100%, 89%)', 'hsl(128, 100%, 89%)', 'hsl(160, 100%, 89%)'
 			],
 			format: 'hsl',
 			margin: 10,

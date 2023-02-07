@@ -631,6 +631,10 @@ button:focus {outline:0;}
   transition: display 0.2s;
 }
 
+.actionsArea:has(.mathBlock:first-child){
+  overflow-y: scroll;
+}
+
 .block .grid-stack-item-content {
   display: flex;
   direction: rtl;

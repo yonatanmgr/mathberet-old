@@ -164,11 +164,12 @@ function addGroup(type) {
 		w: 6,
 		minW: 4,
 		minH: 4,
-    subType: type,
-    groupTitle: "קבוצה",
+		memoryDims: {},
+		subType: type,
+		groupTitle: "קבוצה",
 		type: "Group",
-    isOpen: true,
-    subGridDynamic: true,
+		isOpen: true,
+		subGridDynamic: true,
 		blockContent: []
 	}
   subgridOptions = {
@@ -214,10 +215,10 @@ function addGroup(type) {
     switch (group.parentGridItem.isOpen) {
       case true:
         currentDims = {"h": group.parentGridItem.h, "w": group.parentGridItem.w}
-        pageGrid.update(group.parentGridItem.el, {minH: 1, h: 1, w: currentDims.w, isOpen: false, noResize: true})
+        pageGrid.update(group.parentGridItem.el, {minH: 1, h: 1, memoryDims: currentDims, isOpen: false, noResize: true})
       break;
       case false:
-        pageGrid.update(group.parentGridItem.el, {minH: 4, h: currentDims.h, w: currentDims.w, isOpen: true, noResize: false})
+        pageGrid.update(group.parentGridItem.el, {minH: 4, h: currentDims.h, isOpen: true, noResize: false})
       break;
     default:
       break;
@@ -276,7 +277,7 @@ function addMF() {
 		}
 
 		created.addEventListener('keydown', (ev) => {
-			if (ev.altKey === true) {	
+			if (ev.altKey === true) {
 				switch (ev.code) {
 					case "KeyX": getSelection("expand"); break;
 					case "KeyG": getSelection("graph"); break;
@@ -418,6 +419,8 @@ function saveGrid() {
 				let foundGroup = document.getElementById(`group_${block.id}`).gridstack
 				let groupItems = foundGroup.save()
 				for(var item of groupItems){saveBlockContent(item); item.content="";}
+				let currentDims = {"h": foundGroup.parentGridItem.h, "w": foundGroup.parentGridItem.w}
+				pageGrid.update(foundGroup.parentGridItem.el, {memoryDims: currentDims})
 				block.blockContent = groupItems
 				delete block.subGrid
 				break;
@@ -508,7 +511,7 @@ function loadGrid(path, file, folder) {
 					navigator.clipboard.writeText(text);
 				}
 				mfBlock.addEventListener('keydown', (ev) => {
-					if (ev.altKey === true) {	
+					if (ev.altKey === true) {
 						switch (ev.code) {
 							case "KeyX": getSelection("expand"); break;
 							case "KeyG": getSelection("graph"); break;
@@ -573,19 +576,24 @@ function loadGrid(path, file, folder) {
         createdGrid.load(items);
         items.map(loadBlock)
 		let currentDims;
+		let memDims = group.gridstack.parentGridItem.memoryDims;
 		group.gridstack.parentGridItem.el.querySelector(".handle").addEventListener("click", ()=>{
 		  switch (group.gridstack.parentGridItem.isOpen) {
 			case true:
 			  currentDims = {"h": group.gridstack.parentGridItem.h, "w": group.gridstack.parentGridItem.w}
-			  pageGrid.update(group.gridstack.parentGridItem.el, {minH: 1, h: 1, w: currentDims.w, isOpen: false, noResize: true})
+			  pageGrid.update(group.gridstack.parentGridItem.el, {minH: 1, h: 1, memoryDims: currentDims, isOpen: false, noResize: true})
 			break;
 			case false:
-			  pageGrid.update(group.gridstack.parentGridItem.el, {minH: 4, h: currentDims.h, w: currentDims.w, isOpen: true, noResize: false})
+			  pageGrid.update(group.gridstack.parentGridItem.el, {minH: 4, h: memDims.h, isOpen: true, noResize: false})
 			break;
 		  default:
 			break;
-	  }}
-      )
+		}}
+		)
+		// group.gridstack.parentGridItem.el.children[0].style.flexDirection = "column-reverse"
+		// setTimeout(() => {
+		// 	group.gridstack.parentGridItem.el.children[0].style.flexDirection = "column"
+		// }, 2);
 		}
 	}
 	// if (currentfile != undefined) {
