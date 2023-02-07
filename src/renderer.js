@@ -1,6 +1,7 @@
 let dirTree, currentfile, currentBlock, currentTheme;
 let maximizeStatus, sidebarStatus = 0
 
+
 function getColor() {
 	window.api.getUserColor()
 	window.api.receive("gotUserColor", (color) => {
@@ -17,6 +18,105 @@ function getTheme() {
 }
 getColor()
 getTheme()
+
+document.onclick = hideMenu; 
+document.addEventListener("contextmenu", function(e){ if(e.target.closest("#addGroup, .groupType, .groupTitle")) {rightClick(e)} })
+
+function hideMenu() {
+  document.getElementById("contextMenu").children[0].id = "";
+  document.getElementById("contextMenu").style.display = "none" 
+} 
+
+function rightClick(e) { 
+    e.preventDefault(); 
+    if (document.getElementById("contextMenu").style.display == "block"){hideMenu(); }
+    else{ 
+        var menu = document.getElementById("contextMenu")
+        if (e.target.closest("#addGroup")){
+          menu.children[0].id = ""
+		  menu.style.display = 'block'; 
+		  menu.style.left = e.pageX-50 + "px"; 
+		  menu.style.top = e.pageY + "px"; 
+  
+        }
+        else if (e.target.closest(".groupType") || e.target.closest(".groupTitle") && e.target.closest(".groupTop").querySelector(".groupType").innerText == ""){
+          menu.children[0].id = e.target.closest('.block').gridstackNode.id
+		  menu.style.display = 'block'; 
+		  menu.style.left = e.pageX-50 + "px"; 
+		  menu.style.top = e.pageY + "px"; 
+  
+        }
+    } 
+} 
+
+function findInGrid(id){
+  let arr = pageGrid.getGridItems()
+	return arr.find(t => t.gridstackNode.id == id)
+}
+
+document.getElementById("contextMenu").children[0].querySelector('.undefined').addEventListener("click", ()=>{
+  let clicked = document.getElementById("contextMenu").children[0].id
+  if (clicked){
+    let block = findInGrid(clicked)
+    block.querySelector(".seperator").innerHTML = ""
+  
+    block.querySelector(".groupType").innerText = ""
+    pageGrid.update(block, {subType: undefined})
+  }
+  else{ addGroup() }
+})
+document.getElementById("contextMenu").children[0].querySelector('.proof').addEventListener("click", ()=>{
+  let clicked = document.getElementById("contextMenu").children[0].id
+  if (clicked){
+
+  let block = findInGrid(clicked)
+  block.querySelector(".seperator").innerHTML = "&nbsp;-&nbsp;"
+
+  block.querySelector(".groupType").innerText = "הוכחה 📝"
+  pageGrid.update(block, {subType: "proof"})
+}
+else{ addGroup("proof") }
+
+})
+document.getElementById("contextMenu").children[0].querySelector('.assumption').addEventListener("click", ()=>{
+  let clicked = document.getElementById("contextMenu").children[0].id
+  if (clicked){
+
+  let block = findInGrid(clicked)
+  block.querySelector(".seperator").innerHTML = "&nbsp;-&nbsp;"
+
+  block.querySelector(".groupType").innerText = "הנחה ❓"
+  pageGrid.update(block, {subType: "assumption"})
+}
+  else{ addGroup("assumption") }
+
+})
+document.getElementById("contextMenu").children[0].querySelector('.theorem').addEventListener("click", ()=>{
+  let clicked = document.getElementById("contextMenu").children[0].id
+  if (clicked){
+
+  let block = findInGrid(clicked)
+  block.querySelector(".seperator").innerHTML = "&nbsp;-&nbsp;"
+
+  block.querySelector(".groupType").innerText = "משפט 💡"
+  pageGrid.update(block, {subType: "theorem"})
+}
+  else{ addGroup("theorem") }
+
+})
+document.getElementById("contextMenu").children[0].querySelector('.defenition').addEventListener("click", ()=>{  
+  let clicked = document.getElementById("contextMenu").children[0].id
+  if (clicked){
+
+  let block = findInGrid(clicked)
+  block.querySelector(".seperator").innerHTML = "&nbsp;-&nbsp;"
+
+  block.querySelector(".groupType").innerText = "הגדרה ❗"
+  pageGrid.update(block, {subType: "defenition"})
+}
+  else{ addGroup("defenition") }
+
+})
 
 
 // GENERAL
@@ -120,6 +220,7 @@ document.addEventListener('coloris:pick', event => {
 
 // Shortcuts
 window.api.receive("Shortcuts", () => document.getElementById("help").click())
+window.api.receive("Group", () => document.getElementById("addGroup").click())
 window.api.receive("Text", () => document.getElementById("addQuill").click())
 window.api.receive("Graph", () => document.getElementById("addGgb").click())
 window.api.receive("Math", () => document.getElementById("addMF").click())

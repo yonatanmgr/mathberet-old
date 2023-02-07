@@ -6,8 +6,12 @@ var pageGrid = GridStack.init({
 		handles: 's,sw,w'
 	},
 	removable: '#trashCan',
+  itemClass: 'block',
 	margin: 7,
-	cellHeight: 50
+	cellHeight: 50,
+  acceptWidgets: '.block',
+  dragOut: true,
+  dragIn: '.block',
 });
 
 function removeBlock(el) {
@@ -49,11 +53,25 @@ pageGrid.on('resizestop', function(el) {
 			document.getElementById(`ggBox_${resized.id}`).offsetHeight
 		);
 	}
+	if (resized.type == "Group") {
+    resizeAll(resized.el.querySelector(".Group").gridstack)
+  	}
+})
+
+pageGrid.on('dropped', function(event, previousWidget, newWidget) {
+  let resized = previousWidget;
+  if (resized.type == "Graph") {
+    let a = resized.blockContent;
+    a.getAppletObject().setSize(
+      document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+      document.getElementById(`ggBox_${resized.id}`).offsetHeight
+    );
+  }
 })
 
 // Resize all applets on window resize
-function resizeAll() {
-	let items = pageGrid.getGridItems()
+function resizeAll(grid) {
+	let items = grid.getGridItems()
 	for (var item of items) {
 		if (item.gridstackNode.type == "Graph") {
 			let applet = item.gridstackNode.blockContent.getAppletObject()
@@ -64,10 +82,13 @@ function resizeAll() {
 				)
 			}, 20);
 		}
+    else if (item.gridstackNode.type == "Group") {
+      resizeAll(item.gridstackNode.el.querySelector(".Group").gridstack)
+      }
 	}
 }
 
-window.addEventListener("resize", resizeAll);
+window.addEventListener("resize", ()=>{resizeAll(pageGrid)});
 
 // Focus on block
 document.addEventListener("click", e => focus(e))
@@ -119,6 +140,90 @@ function blockData(html, id, type, h, blockContent = {}, x = 12, y = 1000, w = 6
 document.getElementById("addQuill").addEventListener("click", addQuill);
 document.getElementById("addGgb").addEventListener("click", addGgb);
 document.getElementById("addMF").addEventListener("click", addMF);
+document.getElementById("addGroup").addEventListener("click", ()=>{addGroup()});
+
+
+function addGroup(type) {
+  let groupType;
+  let seperator = "&nbsp;-&nbsp;"
+  switch (type) {
+    case "proof": groupType = "הוכחה 📝"; break;
+    case "theorem": groupType = "משפט 💡"; break;
+    case "assumption": groupType = "הנחה ❓"; break;
+    case "defenition": groupType = "הגדרה ❗"; break;
+    case undefined: seperator = ""; groupType = ""; break;
+  }
+  let id = Date.now();
+  let html = `<div class='groupTop'>${drag}</img><span class='groupTitle' contenteditable='true'>קבוצה</span><span class='seperator'>${seperator}</span><span class='groupType'>${groupType}</span></div><div class="actionsArea"><div id="group_${id}" class="Group"></div></div>`
+  let block = {
+		id: id,
+		content: html,
+		x: 12,
+		y: 1000,
+		h: 8,
+		w: 6,
+		minW: 4,
+		minH: 4,
+    subType: type,
+    groupTitle: "קבוצה",
+		type: "Group",
+    isOpen: true,
+    subGridDynamic: true,
+		blockContent: []
+	}
+  subgridOptions = {
+    float: false,
+    class: "blockGroup",
+    removable: '#trashCan',
+    acceptWidgets: ".block:not(.grid-stack-sub-grid)",
+    dragOut: true,
+    dragIn: ".block:not(.grid-stack-sub-grid)",
+    itemClass: "block",
+    children: [],
+    handle: '.handle',
+    resizable: {handles: 's,sw,w'},
+    margin: 7,
+    cellHeight: 50
+  }
+
+  pageGrid.addWidget(block);
+  let group = GridStack.init(subgridOptions, `#group_${id}`)
+  group.on('resizestop', function(el) {
+    let resized = el.target.gridstackNode;
+    if (resized.type == "Graph") {
+      let a = resized.blockContent;
+      a.getAppletObject().setSize(
+        document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+        document.getElementById(`ggBox_${resized.id}`).offsetHeight
+      );
+    }
+  })
+
+  group.on('dropped', function(event, previousWidget, newWidget) {
+    let resized = previousWidget;
+    if (resized.type == "Graph") {
+      let a = resized.blockContent;
+      a.getAppletObject().setSize(
+        document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+        document.getElementById(`ggBox_${resized.id}`).offsetHeight
+      );
+    }
+  })
+  let currentDims;
+  group.parentGridItem.el.querySelector(".handle").addEventListener("click", ()=>{
+    switch (group.parentGridItem.isOpen) {
+      case true:
+        currentDims = {"h": group.parentGridItem.h, "w": group.parentGridItem.w}
+        pageGrid.update(group.parentGridItem.el, {minH: 1, h: 1, w: currentDims.w, isOpen: false, noResize: true})
+      break;
+      case false:
+        pageGrid.update(group.parentGridItem.el, {minH: 4, h: currentDims.h, w: currentDims.w, isOpen: true, noResize: false})
+      break;
+    default:
+      break;
+}}
+)
+}
 
 function addQuill() {
 	if (currentfile) {
@@ -135,6 +240,8 @@ function addQuill() {
 	} else return
 };
 
+
+
 function addMF() {
 	if (currentfile) {
 
@@ -144,19 +251,46 @@ function addMF() {
 		pageGrid.addWidget(block)
 		let created = createMF(id)
 		created.focus()
+		async function getSelection(scene){
+			let text = await navigator.clipboard.readText();
+			created.executeCommand(['copyToClipboard', '#0'])
+			let newText = await navigator.clipboard.readText();
+			switch (scene) {
+				case "expand":
+					created.executeCommand(['insert', expand(newText), {'insertionMode': 'replaceSelection'}])
+					break;
+				case "graph":
+					let adapted = newText
+					.replace("^{\\prime}", "'")
+					.replace("\\left", "")
+					.replace("\\right", "")
+					.replace("\\cos", "cos")
+					.replace("\\sin", "sin")
+					.replace("\\tan", "tan")
+					document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(adapted);
+					break;
+				default:
+					break;
+			}
+			navigator.clipboard.writeText(text);
+		}
 
 		created.addEventListener('keydown', (ev) => {
-			if (ev.altKey === true && ev.code === 'KeyX') {
-				created.setValue(expand(ev.target.getValue()));
+			if (ev.altKey === true) {	
+				switch (ev.code) {
+					case "KeyX": getSelection("expand"); break;
+					case "KeyG": getSelection("graph"); break;
+					case "Equal": created.insert('\\approx'); break;
+					case "Comma": created.insert('\\measuredangle'); break;
+					case "Digit0": created.insert('\\emptyset'); break;
+					case "Enter": created.insert('\\begin{gathered} {#?} \\end{gathered}'); break;
+					case "KeyC": if (ev.shiftKey === true) {created.insert('\\complement'); break;}
+					case "KeyT": if (ev.shiftKey === true) {created.insert('\\triangle'); break;}
+					default: break;
+				}
 				ev.preventDefault();
 			}
-		});
-
-		created.addEventListener('keydown', (ev) => {
-			if (ev.altKey === true && ev.code === 'KeyG') {
-				document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(ev.target.getValue().replace("^{\\prime}", "'"))
-				ev.preventDefault();
-			}
+			else if (ev.shiftKey === true && ev.code === 'Enter'){created.executeCommand('addRowAfter'); ev.preventDefault();}
 		});
 	} else return
 };
@@ -230,12 +364,14 @@ function createQuill(id) {
 
 function createMF(id) {
 	let mf = new MathfieldElement();
+
 	mf.setOptions({
 		inlineShortcuts: defShortcuts,
 		plonkSound: null,
 		id: id,
-		onExport: (mf, latex) => `${latex}`
+		onExport: (mf, latex) => `${latex}`,
 	})
+
 	document.getElementById(`mf_${id}`).appendChild(mf)
 	return mf
 }
@@ -277,18 +413,22 @@ function saveGrid() {
 			case "Graph":
 				block.blockContent = block.blockContent.getAppletObject().getBase64()
 				break;
+			case "Group":
+				block.groupTitle = document.getElementById(`group_${block.id}`).closest(".grid-stack-item-content").querySelector(".groupTitle").innerText
+				let foundGroup = document.getElementById(`group_${block.id}`).gridstack
+				let groupItems = foundGroup.save()
+				for(var item of groupItems){saveBlockContent(item); item.content="";}
+				block.blockContent = groupItems
+				delete block.subGrid
+				break;
 			default:
 				break;
 		}
 	}
-	if (sidebarScene == "notebooks") {
-		renderDirTree()
-	}
+	if (sidebarScene == "notebooks") {renderDirTree()}
 	let items = pageGrid.save();
-	for (var item of items) {
-		saveBlockContent(item);
-		item.content = ""
-	}
+  for(var item of items){saveBlockContent(item); item.content="";}
+
 	window.api.save(JSON.stringify(items), currentfile, `${document.getElementById("fileName").innerText}.json`);
 	let fileToUpdate = findInSidebar(currentfile)
 	setTimeout(() => {
@@ -318,6 +458,19 @@ function loadGrid(path, file, folder) {
 			case "Graph":
 				block.content = `${drag}</img><div class="actionsArea"><div id="ggBox_${block.id}" class="ggBox"></div></div>`
 				break;
+			case "Group":
+        let groupType;
+        let seperator = "&nbsp;-&nbsp;"
+        switch (block.subType) {
+          case "proof": groupType = "הוכחה 📝"; break;
+          case "theorem": groupType = "משפט 💡"; break;
+          case "assumption": groupType = "הנחה ❓"; break;
+          case "defenition": groupType = "הגדרה ❗"; break;
+          case undefined: seperator = ""; groupType = ""; break;
+        }
+				block.content = `<div class='groupTop'>${drag}</img><span class='groupTitle' contenteditable='true'>${block.groupTitle}</span><span class='seperator'>${seperator}</span><span class='groupType'>${groupType}</span></div><div class="actionsArea"><div id="group_${block.id}" class="Group"></div></div>`
+
+        break;
 			default:
 				break;
 		}
@@ -331,25 +484,108 @@ function loadGrid(path, file, folder) {
 			case "Math":
 				let mfBlock = createMF(block.id);
 				block.blockContent = mfBlock.setValue(block.blockContent)
+				async function getSelection(scene){
+					let text = await navigator.clipboard.readText();
+					mfBlock.executeCommand(['copyToClipboard', '#0'])
+					let newText = await navigator.clipboard.readText();
+					switch (scene) {
+						case "expand":
+							mfBlock.executeCommand(['insert', expand(newText), {'insertionMode': 'replaceSelection'}])
+							break;
+						case "graph":
+							let adapted = newText
+							.replace("^{\\prime}", "'")
+							.replace("\\left", "")
+							.replace("\\right", "")
+							.replace("\\cos", "cos")
+							.replace("\\sin", "sin")
+							.replace("\\tan", "tan")
+							document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(adapted);
+							break;
+						default:
+							break;
+					}
+					navigator.clipboard.writeText(text);
+				}
 				mfBlock.addEventListener('keydown', (ev) => {
-					if (ev.altKey === true && ev.code === 'KeyX') {
-						mfBlock.setValue(expand(ev.target.getValue()));
+					if (ev.altKey === true) {	
+						switch (ev.code) {
+							case "KeyX": getSelection("expand"); break;
+							case "KeyG": getSelection("graph"); break;
+							case "Equal": mfBlock.insert('\\approx'); break;
+							case "Comma": mfBlock.insert('\\measuredangle'); break;
+							case "Digit0": mfBlock.insert('\\emptyset'); break;
+							case "KeyC": if (ev.shiftKey === true) {mfBlock.insert('\\complement'); break;}
+							case "KeyT": if (ev.shiftKey === true) {mfBlock.insert('\\triangle'); break;}
+							case "Enter": {mfBlock.insert('\\begin{gathered} {#?} \\end{gathered}'); break;}
+							default: break;
+						}
 						ev.preventDefault();
 					}
-				});
-				mfBlock.addEventListener('keydown', (ev) => {
-					if (ev.altKey === true && ev.code === 'KeyG') {
-						document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(ev.target.getValue().replace("^{\\prime}", "'"))
-						ev.preventDefault();
-					}
+					else if (ev.shiftKey === true && ev.code === 'Enter'){mfBlock.executeCommand('addRowAfter'); ev.preventDefault();}
 				});
 				break;
 			case "Graph":
 				let box = document.getElementById(`ggBox_${block.id}`)
 				box.closest(".grid-stack-item").gridstackNode.blockContent = createGgb(block.id, block.blockContent)
 				break;
-			default:
-				break;
+			case "Group":
+
+				let group = document.getElementById(`group_${block.id}`)
+        let items = group.closest(".grid-stack-item").gridstackNode.blockContent
+        let subgridOptions = {
+          float: false,
+          class: "blockGroup",
+          removable: '#trashCan',
+          acceptWidgets: ".block:not(.grid-stack-sub-grid)",
+          dragOut: true,
+          dragIn: ".block:not(.grid-stack-sub-grid)",
+          itemClass: "block",
+          children: [],
+          handle: '.handle',
+          resizable: {handles: 's,sw,w'},
+          margin: 7,
+          cellHeight: 50
+        }
+        let createdGrid = GridStack.init(subgridOptions, group.id)
+        // group = GridStack.init(subgridOptions, group.id)
+        createdGrid.on('resizestop', function(el) {
+          let resized = el.target.gridstackNode;
+          if (resized.type == "Graph") {
+            let a = resized.blockContent;
+            a.getAppletObject().setSize(
+              document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+              document.getElementById(`ggBox_${resized.id}`).offsetHeight
+            );
+          }
+        })
+        createdGrid.on('dropped', function(event, previousWidget, newWidget) {
+          let resized = previousWidget;
+          if (resized.type == "Graph") {
+            let a = resized.blockContent;
+            a.getAppletObject().setSize(
+              document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+              document.getElementById(`ggBox_${resized.id}`).offsetHeight
+            );
+          }
+        })
+        items.map(loadBlockContent)
+        createdGrid.load(items);
+        items.map(loadBlock)
+        let currentDims = {"h": 1, "w": 6};
+        group.gridstack.parentGridItem.el.querySelector(".handle").addEventListener("click", ()=>{
+          switch (group.gridstack.parentGridItem.isOpen) {
+            case true:
+              currentDims = {"h": group.gridstack.parentGridItem.h, "w": group.gridstack.parentGridItem.w}
+              pageGrid.update(group.gridstack.parentGridItem.el, {maxH: 1, h: 1, w: currentDims.w, isOpen: false, noResize: true})
+            break;
+            case false:
+              pageGrid.update(group.gridstack.parentGridItem.el, {minH: 4, h: currentDims.h, w: currentDims.w, isOpen: true, noResize: false})
+            break;
+			    default:
+				    break;
+      }}
+      )
 		}
 	}
 	// if (currentfile != undefined) {
@@ -377,3 +613,4 @@ if (currentfile) {
 } else {
 	document.getElementById("close").removeEventListener("click", saveGrid);
 }
+

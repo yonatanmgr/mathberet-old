@@ -65,6 +65,11 @@ async function createWindow() {
       role: 'Add Geogebra Block',
       accelerator: 'Ctrl+G',
       click: () => {win.webContents.send("Graph");}
+    },
+      {
+      role: 'Add Group',
+      accelerator: 'Ctrl+K',
+      click: () => {win.webContents.send("Group");}
     }
   ]
   }))
@@ -156,7 +161,7 @@ async function createWindow() {
     store.set('color', color);
   })
 
-  ipcMain.on("getUserTheme", (event, args) => {
+  ipcMain.on("UserTheme", (event, args) => {
     win.webContents.send("gotUserTheme", store.get('theme'))
   })
 

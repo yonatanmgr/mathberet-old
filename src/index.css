@@ -32,7 +32,26 @@
 #keysTitle span{
   color: #eee;
 }
+.context-menu .menu {
+  background: linear-gradient(
+    120deg,
+    rgba(50, 50, 50, .25),
+    rgba(50, 50, 50, .75), 70%, 
+    rgba(50, 50, 50, .25)
+  ) !important;
+  border: 1px solid rgba(140, 140, 140, .3) !important;
+}
 
+.groupTypeSelector:hover{
+  background-color: rgba(230, 230, 230, .1) !important;
+}
+.groupTypeSelector:active{
+  background-color: rgba(230, 230, 230, .2) !important;
+}
+
+.groupTypeSelector span{
+  color: #eee;
+}
 
 .actionsArea:hover {
   border: 1px solid #333 !important;
@@ -73,13 +92,18 @@
   }
 
   .actionsArea{
-    background: #222 !important;
+    background: hsla(0, 0%, 13%, 1) !important;
     color: white;
     --theme-l: 30% !important;
     --theme-s: 20% !important;
   }
-  .actionsArea:has(h1:only-child) {
-    background: #121212 !important;
+
+  .actionsArea:has(.Group){
+    background: hsla(0, 0%, 13%, 0.3) !important;
+  }
+
+  .actionsArea:has(h1:only-child):not(.actionsArea:has(.Group)) {
+    background: transparent !important;
   }
 
   #logo{
@@ -143,9 +167,16 @@
   #sidebar .tool:active { filter: brightness(70%) saturate(240%); }
   
   #sidebar .tool:hover { filter: brightness(81%) saturate(240%); }
+
+  .actionsArea:has(.Group){
+    background: hsla(0, 0%, 50%, 0.13) !important;
+  }
+  .actionsArea:has(h1:only-child) { background: transparent; }
+
 }
 
 [contenteditable]:focus { outline: 0px solid transparent; }
+
 
 html { overflow-y: hidden; }
 
@@ -154,6 +185,13 @@ html, body, .app {
   height: 100%;
   margin: 0;
 }
+
+.Group{
+  width: 100%;
+  height: 100%;
+}
+
+
 
 #shortcutsHelp{
   display: flex;
@@ -272,14 +310,18 @@ custom-shortcut {
 shortcut-text {
   display: flex;
   align-items: center;
-  font-size: 25px;
+  font-size: 23px;
   font-weight: 400;
   overflow: hidden;
   white-space: nowrap;  
 }
 
 shortcut-keys {
-  font-size: 20px;
+  color: #666;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  font-size: 18px;
   overflow: hidden;
   white-space: nowrap;  
 }
@@ -292,7 +334,7 @@ shortcut-list summary {
   padding-top: 10px;
   padding-bottom: 10px;
   list-style: none;
-  font-size: 26px;
+  font-size: 23px;
   font-weight: 400;
   overflow: hidden;
   white-space: nowrap;  
@@ -377,13 +419,14 @@ svg {
 
 .actionsArea:has(.ggBox) { padding: 3px; }
 
-.actionsArea:has(h1:only-child) { background: transparent; }
 
 .actionsArea:hover { border: 1px solid #c5c5c5; }
 
 .appContainer {
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
+  direction: rtl;
+
   min-height: 100%;
   min-width: 100%;
 }
@@ -497,8 +540,7 @@ button:focus {outline:0;}
 }
 
 .settingsArea {
-  align-self: flex-end;
-  padding-right: 20px;
+  align-self: center;
   font-size: 18px;
   direction: rtl;
   display: flex;
@@ -538,7 +580,9 @@ button:focus {outline:0;}
   -webkit-user-select: none;
   user-select: none;
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
+  direction: rtl;
+
   align-items: center;
   height: 35px;
   justify-content: flex-start;
@@ -585,12 +629,67 @@ button:focus {outline:0;}
   transition: display 0.2s;
 }
 
-.grid-stack-item-content {
+.block .grid-stack-item-content {
   display: flex;
-  flex-direction: row-reverse;
+  direction: rtl;
   overflow-y: hidden !important;
   max-height: 100%;
   height: auto;
+}
+
+.grid-stack-item-content:has(.Group){
+  display: flex;
+  flex-direction: column;
+  direction: rtl;
+  overflow-y: hidden !important;
+  max-height: 100%;
+  height: auto;
+}
+.grid-stack-item-content:has(.Group) .actionsArea{
+  flex-grow: 1;
+  width: unset !important;
+  overflow: auto;
+}
+
+.groupTop{
+  height: 40px;
+  position: static;
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  font-size: 23px;
+  align-items: center;
+}
+.groupTitle{
+  height: 40px;
+  -webkit-user-drag: none;
+  font-weight: 600;
+  padding-top: 8px;
+
+}
+.groupType{
+  -webkit-user-select: none;
+  user-select: none;
+
+  padding-bottom: 8px;
+  font-weight: 300;
+  transition: font-weight 0.2s;
+}
+.groupType:hover{
+  cursor: pointer;
+  font-weight: 400;
+
+}
+.groupType:active{
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.groupTop .seperator{
+  -webkit-user-select: none;
+  user-select: none;
+  font-weight: 300;
+  padding-bottom: 5px;
 }
 
 .grid-stack-item-content:has(h1:only-child)>.handle {
@@ -599,11 +698,12 @@ button:focus {outline:0;}
 }
 
 .handle {
+  min-width: 22px !important;
   height: 22px;
   padding-left: 5px;
   -webkit-user-select: none;
   user-select: none;
-  transition: 0.3s;
+  transition: 0.2s;
 }
 
 .handle:hover {
@@ -634,7 +734,7 @@ button:focus {outline:0;}
   overflow-y: hidden;
   transition: filter 0.2s, background-color 0.2s;
   display: flex;
-  flex-direction: row-reverse;
+  direction: rtl;
   justify-content: flex-start;
   align-items: center;
   white-space: nowrap;
@@ -761,7 +861,8 @@ button:focus {outline:0;}
   height: 100%;
   width: 100%;
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
+  direction: rtl;
   align-items: flex-start;
   flex: 1;
   overflow-y: hidden;
@@ -806,7 +907,9 @@ button:focus {outline:0;}
   overflow-y: hidden;
   padding-top: 70px;
   display: none;
-  flex-direction: row-reverse;
+  flex-direction: row;
+  direction: rtl;
+
   align-items: flex-start;
   /* margin-top: auto; */
   margin-bottom: auto;
@@ -834,7 +937,9 @@ button:focus {outline:0;}
 #header {
   -webkit-app-region: drag;
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
+  direction: rtl;
+
   justify-content: space-between;
   width: -webkit-fill-available;
   height: 45px;
@@ -982,7 +1087,6 @@ button:focus {outline:0;}
   transition: 0.15s ease;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
   flex-grow: 1;
 }
 
@@ -1001,6 +1105,7 @@ button:focus {outline:0;}
   display: flex;
   flex-direction: row;
   align-items: center;
+  direction: ltr;
   gap: 6px;
 }
 
@@ -1076,4 +1181,75 @@ button:focus {outline:0;}
 @keyframes slideOut {
   from { height: 70%; }
   to { height: 0%; }
+}
+
+ul {
+  list-style: none;
+}
+.context-menu { 
+  position: absolute; 
+  z-index: 1000;
+  height: 80px;
+
+} 
+.context-menu .menu {
+  width: 100px;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(
+    120deg,
+    rgba(230, 230, 230, .2),
+    rgba(230, 230, 230, .7), 70%, 
+    rgba(230, 230, 230, .2)
+  );
+  border-radius: 20px 20px 0px 0px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 10px 1px rgba(0, 0, 0, .25);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  border-radius: 10px;
+  align-items: center;
+  padding: 10px 0px 10px 0px;
+}
+
+.groupTypeSelector{
+  -webkit-user-drag: none;
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 5px;
+  background: 0;
+  height: 40px;
+}
+
+.actionsArea .ggBox{
+  direction: ltr !important;
+}
+.groupTypeSelector:hover{
+  background-color: rgba(30, 30, 30, .1);
+  cursor: default;
+}
+.groupTypeSelector:active{
+  background-color: rgba(30, 30, 30, .2);
+  cursor: default;
+}
+
+.groupTypeSelector span {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+
+  font-size: large !important;
+  font: inherit;
+  border: 0;
+  direction: rtl;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  text-decoration: unset;
+  font-weight: 400;
 }
