@@ -44,10 +44,10 @@ document.addEventListener("dblclick", function(e) {
 });
 
 // Resize applet on applet block resize
-pageGrid.on('resizestop', function(el) {
+pageGrid.on('resizestop', async function(el) {
 	let resized = el.target.gridstackNode;
 	if (resized.type == "Graph") {
-		let a = resized.blockContent;
+		let a = await resized.blockContent;
 		a.getAppletObject().setSize(
 			document.getElementById(`ggBox_${resized.id}`).offsetWidth,
 			document.getElementById(`ggBox_${resized.id}`).offsetHeight
@@ -70,13 +70,14 @@ pageGrid.on('dropped', function(event, previousWidget, newWidget) {
 })
 
 // Resize all applets on window resize
-function resizeAll(grid) {
+async function resizeAll(grid) {
 	let items = grid.getGridItems()
 	for (var item of items) {
 		if (item.gridstackNode.type == "Graph") {
-			let applet = item.gridstackNode.blockContent.getAppletObject()
+			let applet = await item.gridstackNode.blockContent
+			let appletObject = applet.getAppletObject()
 			setTimeout(() => {
-				applet.setSize(
+				appletObject.setSize(
 					document.getElementById(`ggBox_${item.gridstackNode.id}`).offsetWidth,
 					document.getElementById(`ggBox_${item.gridstackNode.id}`).offsetHeight
 				)
@@ -187,7 +188,14 @@ function addGroup(type) {
     cellHeight: 50
   }
 
-  pageGrid.addWidget(block);
+  let groupBlock = pageGrid.addWidget(block);
+
+  groupBlock.classList.remove("theorem")
+  groupBlock.classList.remove("defenition")
+  groupBlock.classList.remove("assumption")
+  groupBlock.classList.remove("proof")
+  groupBlock.classList.add(type)
+  
   let group = GridStack.init(subgridOptions, `#group_${id}`)
   group.on('resizestop', function(el) {
     let resized = el.target.gridstackNode;
@@ -268,7 +276,10 @@ function addMF() {
 					.replace("\\cos", "cos")
 					.replace("\\sin", "sin")
 					.replace("\\tan", "tan")
-					document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(adapted);
+					
+					if (document.querySelector(".ggBox")) {
+						document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(adapted);
+					}
 					break;
 				default:
 					break;
@@ -462,18 +473,27 @@ function loadGrid(path, file, folder) {
 				block.content = `${drag}</img><div class="actionsArea"><div id="ggBox_${block.id}" class="ggBox"></div></div>`
 				break;
 			case "Group":
-        let groupType;
-        let seperator = "&nbsp;-&nbsp;"
-        switch (block.subType) {
-          case "proof": groupType = "הוכחה 📝"; break;
-          case "theorem": groupType = "משפט 💡"; break;
-          case "assumption": groupType = "הנחה ❓"; break;
-          case "defenition": groupType = "הגדרה ❗"; break;
-          case undefined: seperator = ""; groupType = ""; break;
-        }
+				let groupType;
+				let seperator = "&nbsp;-&nbsp;"
+				switch (block.subType) {
+					case "proof": groupType = "הוכחה 📝"; break;
+					case "theorem": groupType = "משפט 💡"; break;
+					case "assumption": groupType = "הנחה ❓"; break;
+					case "defenition": groupType = "הגדרה ❗"; break;
+					case undefined: seperator = ""; groupType = ""; break;
+				}
 				block.content = `<div class='groupTop'>${drag}</img><span class='groupTitle' contenteditable='true'>${block.groupTitle}</span><span class='seperator'>${seperator}</span><span class='groupType'>${groupType}</span></div><div class="actionsArea"><div id="group_${block.id}" class="Group"></div></div>`
-
-        break;
+				async function setClass(){
+					let id = await block.id.toString()
+					let blockParent = findInGrid(id)
+					blockParent.classList.remove("theorem")
+					blockParent.classList.remove("defenition")
+					blockParent.classList.remove("assumption")
+					blockParent.classList.remove("proof")
+					blockParent.classList.add(block.subType)
+				}
+				setClass()
+				break;
 			default:
 				break;
 		}
@@ -503,7 +523,10 @@ function loadGrid(path, file, folder) {
 							.replace("\\cos", "cos")
 							.replace("\\sin", "sin")
 							.replace("\\tan", "tan")
-							document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(adapted);
+
+							if (document.querySelector(".ggBox")) {
+								document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(adapted);
+							}
 							break;
 						default:
 							break;
@@ -590,10 +613,10 @@ function loadGrid(path, file, folder) {
 			break;
 		}}
 		)
-		// group.gridstack.parentGridItem.el.children[0].style.flexDirection = "column-reverse"
-		// setTimeout(() => {
-		// 	group.gridstack.parentGridItem.el.children[0].style.flexDirection = "column"
-		// }, 2);
+		group.gridstack.parentGridItem.el.children[0].style.flexDirection = "column-reverse"
+		setTimeout(() => {
+			group.gridstack.parentGridItem.el.children[0].style.flexDirection = "column"
+		}, 2);
 		}
 	}
 	// if (currentfile != undefined) {

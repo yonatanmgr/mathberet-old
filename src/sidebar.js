@@ -12,6 +12,7 @@ reloadDirTree();
 let createMyNotebooks = () => {
 	sidebarScene = "notebooks";
 	document.getElementById("sidebarTitle").innerText = "המחברות שלי"
+	document.getElementById("sidebarTitle").title = "לחצו פעמיים לפתיחת תיקיית המחברות"
 	setTimeout(() => {
 		renderDirTree();
 		GridStack.getElements('.sidebarGrid, .notebook').forEach(gridEl => {addEvents(gridEl.gridstack)})
@@ -96,6 +97,8 @@ let createSettings = () => {
 	sidebarScene = "settings";
 
 	document.getElementById("sidebarTitle").innerText = "העדפות"
+	document.getElementById("sidebarTitle").title = ""
+	document.getElementById("sidebarTitle").title = ""
 	document.getElementById("sidebarList").innerHTML = `
   <div id='settingsZone'>
     <div class='settingsArea'>

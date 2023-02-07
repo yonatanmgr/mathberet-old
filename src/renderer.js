@@ -61,6 +61,12 @@ document.getElementById("contextMenu").children[0].querySelector('.undefined').a
     block.querySelector(".seperator").innerHTML = ""
   
     block.querySelector(".groupType").innerText = ""
+	  
+	block.classList.remove("theorem")
+	block.classList.remove("defenition")
+	block.classList.remove("assumption")
+	block.classList.remove("proof")
+
     pageGrid.update(block, {subType: undefined})
   }
   else{ addGroup() }
@@ -73,6 +79,12 @@ document.getElementById("contextMenu").children[0].querySelector('.proof').addEv
   block.querySelector(".seperator").innerHTML = "&nbsp;-&nbsp;"
 
   block.querySelector(".groupType").innerText = "הוכחה 📝"
+  
+  block.classList.remove("theorem")
+  block.classList.remove("defenition")
+  block.classList.remove("assumption")
+  block.classList.add("proof")
+
   pageGrid.update(block, {subType: "proof"})
 }
 else{ addGroup("proof") }
@@ -86,6 +98,12 @@ document.getElementById("contextMenu").children[0].querySelector('.assumption').
   block.querySelector(".seperator").innerHTML = "&nbsp;-&nbsp;"
 
   block.querySelector(".groupType").innerText = "הנחה ❓"
+
+  block.classList.remove("theorem")
+  block.classList.remove("defenition")
+  block.classList.add("assumption")
+  block.classList.remove("proof")
+
   pageGrid.update(block, {subType: "assumption"})
 }
   else{ addGroup("assumption") }
@@ -99,6 +117,12 @@ document.getElementById("contextMenu").children[0].querySelector('.theorem').add
   block.querySelector(".seperator").innerHTML = "&nbsp;-&nbsp;"
 
   block.querySelector(".groupType").innerText = "משפט 💡"
+
+  block.classList.add("theorem")
+  block.classList.remove("defenition")
+  block.classList.remove("assumption")
+  block.classList.remove("proof")
+
   pageGrid.update(block, {subType: "theorem"})
 }
   else{ addGroup("theorem") }
@@ -112,6 +136,12 @@ document.getElementById("contextMenu").children[0].querySelector('.defenition').
   block.querySelector(".seperator").innerHTML = "&nbsp;-&nbsp;"
 
   block.querySelector(".groupType").innerText = "הגדרה ❗"
+    
+  block.classList.remove("theorem")
+  block.classList.add("defenition")
+  block.classList.remove("assumption")
+  block.classList.remove("proof")
+
   pageGrid.update(block, {subType: "defenition"})
 }
   else{ addGroup("defenition") }
