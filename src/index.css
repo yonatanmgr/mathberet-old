@@ -75,7 +75,7 @@
   #placeHolder,
   .pageContainer {
     background: #121212 !important;
-    color: white;
+    color: #eee;
     --theme-l: 30% !important;
     --theme-s: 20% !important;
     border-color: rgba(100, 100, 100, 0.2) !important;
@@ -93,7 +93,7 @@
 
   .actionsArea{
     background: hsla(0, 0%, 13%, 1) !important;
-    color: white;
+    color: #eee;
     --theme-l: 30% !important;
     --theme-s: 20% !important;
   }
@@ -111,11 +111,11 @@
   }
 
   .handle{
-    fill: white;
+    fill: #eee;
   }
 
   #myNotebooks{
-    color: white !important;
+    color: #eee !important;
   }
 
   .windowButton{
@@ -157,13 +157,15 @@
 
   .listedFile {
     background: #121212 !important;
-    color: white !important;
+    color: #eee !important;
   }
 
   .icon>svg { filter: brightness(500%) !important }
 }
 
 @media (prefers-color-scheme: light) {
+  body {color: #121212;}
+
   #sidebar .tool:active { filter: brightness(70%) saturate(240%); }
   
   #sidebar .tool:hover { filter: brightness(81%) saturate(240%); }
@@ -645,7 +647,7 @@ button:focus {outline:0;}
   max-height: 100%;
   height: auto;
 }
-.grid-stack-item-content:has(.Group) .actionsArea{
+.grid-stack-item-content:has(.Group)>.actionsArea{
   flex-grow: 1;
   width: unset !important;
   overflow: auto;

@@ -572,19 +572,19 @@ function loadGrid(path, file, folder) {
         items.map(loadBlockContent)
         createdGrid.load(items);
         items.map(loadBlock)
-        let currentDims = {"h": 1, "w": 6};
-        group.gridstack.parentGridItem.el.querySelector(".handle").addEventListener("click", ()=>{
-          switch (group.gridstack.parentGridItem.isOpen) {
-            case true:
-              currentDims = {"h": group.gridstack.parentGridItem.h, "w": group.gridstack.parentGridItem.w}
-              pageGrid.update(group.gridstack.parentGridItem.el, {maxH: 1, h: 1, w: currentDims.w, isOpen: false, noResize: true})
-            break;
-            case false:
-              pageGrid.update(group.gridstack.parentGridItem.el, {minH: 4, h: currentDims.h, w: currentDims.w, isOpen: true, noResize: false})
-            break;
-			    default:
-				    break;
-      }}
+		let currentDims;
+		group.gridstack.parentGridItem.el.querySelector(".handle").addEventListener("click", ()=>{
+		  switch (group.gridstack.parentGridItem.isOpen) {
+			case true:
+			  currentDims = {"h": group.gridstack.parentGridItem.h, "w": group.gridstack.parentGridItem.w}
+			  pageGrid.update(group.gridstack.parentGridItem.el, {minH: 1, h: 1, w: currentDims.w, isOpen: false, noResize: true})
+			break;
+			case false:
+			  pageGrid.update(group.gridstack.parentGridItem.el, {minH: 4, h: currentDims.h, w: currentDims.w, isOpen: true, noResize: false})
+			break;
+		  default:
+			break;
+	  }}
       )
 		}
 	}
