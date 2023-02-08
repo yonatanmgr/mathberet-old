@@ -63,8 +63,8 @@ pageGrid.on('dropped', function(event, previousWidget, newWidget) {
   if (resized.type == "Graph") {
     let a = resized.blockContent;
     a.getAppletObject().setSize(
-      document.getElementById(`ggBox_${resized.id}`).offsetWidth,
-      document.getElementById(`ggBox_${resized.id}`).offsetHeight
+		resized.el.querySelector(".ggBox").offsetWidth,
+		resized.el.querySelector(".ggBox").offsetHeight
     );
   }
 })
@@ -73,19 +73,17 @@ pageGrid.on('dropped', function(event, previousWidget, newWidget) {
 async function resizeAll(grid) {
 	let items = grid.getGridItems()
 	for (var item of items) {
-		if (item.gridstackNode.type == "Graph") {
+		if (item.gridstackNode.type === "Graph") {
 			let applet = await item.gridstackNode.blockContent
 			let appletObject = applet.getAppletObject()
-			setTimeout(() => {
-				appletObject.setSize(
-					document.getElementById(`ggBox_${item.gridstackNode.id}`).offsetWidth,
-					document.getElementById(`ggBox_${item.gridstackNode.id}`).offsetHeight
-				)
-			}, 20);
+			appletObject.setSize(
+				item.gridstackNode.el.querySelector(".ggBox").offsetWidth,
+				item.gridstackNode.el.querySelector(".ggBox").offsetHeight
+			)
 		}
-    else if (item.gridstackNode.type == "Group") {
-      resizeAll(item.gridstackNode.el.querySelector(".Group").gridstack)
-      }
+    	else if (item.gridstackNode.type == "Group") {
+      		resizeAll(item.gridstackNode.el.querySelector(".Group").gridstack)
+      	}
 	}
 }
 
