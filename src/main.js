@@ -194,6 +194,59 @@ async function createWindow() {
     ) 
     win.webContents.send("gotNotebooks", {"filesPath": filesPath, "allFiles": all()});
   })
+
+  ipcMain.on("getArchive", (event, args) => {
+    const filesPath = path.join(__dirname, "..", "files")
+
+    let groupsToFilter = [];
+    function getAllGroups() {
+      let allGroups = [];
+      let allFiles = fs.readdirSync(filesPath, {withFileTypes: true})
+      for (const file of allFiles) {
+        if (file.isDirectory()) {
+          let subFiles = fs.readdirSync(path.join(filesPath, file.name), {withFileTypes: true})
+          for (const subfile of subFiles) {
+            let readFile = fs.readFileSync(path.join(filesPath, file.name, subfile.name), "utf-8")
+            for (const block of JSON.parse(readFile)) {if (block.type == 'Group') {allGroups.push(block)}}
+          }
+        }
+        else {
+          let readFile = fs.readFileSync(path.join(filesPath, file.name), "utf-8")
+          for (const block of JSON.parse(readFile)) {if (block.type == 'Group') {allGroups.push(block)}}
+        }
+      }
+      return allGroups
+    }
+
+    let allGroups = getAllGroups()
+    
+    function removeDups(arr){
+      const uniqueIds = [];
+      const unique = arr.filter(element => {
+        const isDuplicate = uniqueIds.includes(element);
+        if (!isDuplicate) {uniqueIds.push(element); return true;}
+        return false;
+      });
+      return unique.map(groupTitle => groupTitle = {'groupName': groupTitle, 'subGroups': []})
+    }
+
+    for (const group of allGroups) {groupsToFilter.push(group.groupTitle);}
+
+    let finalArr = [];
+    for (const group of removeDups(groupsToFilter)) {
+      if (group.groupName != "קבוצה") {
+        for (const subGroup of allGroups) {
+          if (subGroup.groupTitle == group.groupName){
+            group.subGroups.push(subGroup)
+          }
+        }
+        finalArr.push(group)
+      }
+
+    }
+
+    win.webContents.send("gotArchive", finalArr);
+  })
 }
 
 // This method will be called when Electron has finished

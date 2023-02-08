@@ -9,6 +9,13 @@ function getColor() {
 	})
 }
 
+function getArchive(){
+	window.api.getArchive()
+	window.api.receive("gotArchive", (data) => {
+		console.log(data);
+	})
+}
+
 function getTheme() {
 	window.api.getUserTheme()
 	window.api.receive("gotUserTheme", (theme) => {
