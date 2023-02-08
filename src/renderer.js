@@ -1,4 +1,4 @@
-let dirTree, currentfile, currentBlock, currentTheme;
+let dirTree, currentfile, currentBlock, currentTheme, archiveContent;
 let maximizeStatus, sidebarStatus = 0
 
 
@@ -12,7 +12,7 @@ function getColor() {
 function getArchive(){
 	window.api.getArchive()
 	window.api.receive("gotArchive", (data) => {
-		console.log(data);
+		archiveContent = data;
 	})
 }
 
