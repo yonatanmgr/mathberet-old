@@ -453,7 +453,7 @@ function saveGrid() {
 		toUpdate.path = currentfile
 		toUpdate.name = currentfile.split("\\").pop()
 	}, 5);
-
+	getArchive()
 	popupAnimation("save")
 	// createFolderList()
 }
