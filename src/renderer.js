@@ -16,6 +16,8 @@ function getArchive(){
 	})
 }
 
+getArchive()
+
 function getTheme() {
 	window.api.getUserTheme()
 	window.api.receive("gotUserTheme", (theme) => {
