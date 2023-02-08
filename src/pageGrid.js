@@ -49,8 +49,8 @@ pageGrid.on('resizestop', async function(el) {
 	if (resized.type == "Graph") {
 		let a = await resized.blockContent;
 		a.getAppletObject().setSize(
-			document.getElementById(`ggBox_${resized.id}`).offsetWidth,
-			document.getElementById(`ggBox_${resized.id}`).offsetHeight
+			resized.el.querySelector(".ggBox").offsetWidth,
+			resized.el.querySelector(".ggBox").offsetHeight
 		);
 	}
 	if (resized.type == "Group") {
@@ -58,10 +58,10 @@ pageGrid.on('resizestop', async function(el) {
   	}
 })
 
-pageGrid.on('dropped', function(event, previousWidget, newWidget) {
+pageGrid.on('dropped', async function(event, previousWidget, newWidget) {
   let resized = previousWidget;
   if (resized.type == "Graph") {
-    let a = resized.blockContent;
+    let a = await resized.blockContent;
     a.getAppletObject().setSize(
 		resized.el.querySelector(".ggBox").offsetWidth,
 		resized.el.querySelector(".ggBox").offsetHeight
