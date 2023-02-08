@@ -620,6 +620,11 @@ function loadGrid(path, file, folder) {
 	// if (currentfile != undefined) {
 	//   saveGrid()
 	// }
+	document.getElementById("fileName").style.fontWeight = 700
+	document.getElementById("fileName").contentEditable = true
+	document.getElementById("fileName").style.userSelect = "unset"
+
+	document.getElementById("archivePage").style.display = "none"
 	document.getElementById("placeHolder").style.display = "none"
 	document.getElementById("content").style.display = "flex"
 

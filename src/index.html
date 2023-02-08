@@ -35,6 +35,7 @@
 						<div id="menuItems">
 							<div class="tool" id="notebooks"><svg class="icon" width="18" height="24" viewBox="0 0 18 24" xmlns="http://www.w3.org/2000/svg"></svg></div>
 							<div class="tool" id="newFile"><svg class="icon" width="20" height="24" viewBox="0 0 20 24" xmlns="http://www.w3.org/2000/svg"></svg></div>
+							<div class="tool" id="archive"><svg class="icon" width="20" height="24" viewBox="0 0 20 24" xmlns="http://www.w3.org/2000/svg"></svg></div>
 							<div class="tool" id="search"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"></svg></div>
 						</div>
 						<div id="bottomItems">
@@ -127,6 +128,119 @@
 								<div id="page" class="grid-stack"></div>
 							</div>
 						</div>
+						<div id="archivePage">
+							<div class="archiveApp">
+								<div class="archiveContainer">
+									<div class="sideLine">
+										<div class="sideContainer">
+											<div class="circle"></div>
+											<div class="line"></div>
+										</div>
+							
+									</div>
+									<div class="biglist">
+							
+										<div class="archiveBlockTitle first">
+											<span class="titleText">רעיון ראשון</span>
+										</div>
+										<div class="listContainer">
+											<div class="list">
+							
+												<div class="archiveBlockTitle">
+													<div class="archiveContent">
+														<span class="archiveBlockType">❗ הגדרה</span>
+														<div class="archiveBlock defenition"></div>
+													</div>
+												</div>
+												<div class="archiveBlockTitle">
+													<div class="archiveContent">
+														<span class="archiveBlockType">💡 משפט</span>
+														<div class="archiveBlock theorem"></div>
+													</div>
+							
+												</div>
+												<div class="archiveBlockTitle">
+													<div class="archiveContent">
+							
+														<span class="archiveBlockType">📝 הוכחה</span>
+														<div class="archiveBlock proof"></div>
+													</div>
+							
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="archiveContainer">
+									<div class="sideLine">
+										<div class="sideContainer">
+											<div class="circle"></div>
+											<div class="line"></div>
+										</div>
+							
+									</div>
+									<div class="biglist">
+							
+										<div class="archiveBlockTitle first">
+											<span class="titleText">רעיון אחר</span>
+										</div>
+										<div class="listContainer">
+											<div class="list">
+							
+												<div class="archiveBlockTitle">
+													<div class="archiveContent">
+														<span class="archiveBlockType">❓ הנחה</span>
+														<div class="archiveBlock assumption"></div>
+													</div>
+												</div>
+												<div class="archiveBlockTitle">
+													<div class="archiveContent">
+														<span class="archiveBlockType">📝 הוכחה</span>
+														<div class="archiveBlock proof"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div> 
+								<div class="archiveContainer">
+									<div class="sideLine">
+										<div class="sideContainer">
+											<div class="circle"></div>
+											<div class="line"></div>
+										</div>
+							
+									</div>
+									<div class="biglist">
+							
+										<div class="archiveBlockTitle first">
+											<span class="titleText">דבר נוסף ושונה לחלוטין</span>
+										</div>
+										<div class="listContainer">
+											<div class="list">
+							
+												<div class="archiveBlockTitle">
+													<div class="archiveContent">
+														<span class="archiveBlockType">💡 משפט</span>
+														<div class="archiveBlock theorem"></div>
+													</div>
+							
+												</div>
+												<div class="archiveBlockTitle">
+													<div class="archiveContent">
+							
+														<span class="archiveBlockType">📝 הוכחה</span>
+														<div class="archiveBlock proof"></div>
+													</div>
+							
+												</div>
+											</div>
+										</div>
+									</div>
+								</div> 
+							</div>
+							
+						</div>
 						<div id="placeHolder">
 							<div class="placeHolderText">כדי להתחיל:</div>
 							<div class="placeHolderText space">
@@ -152,11 +266,13 @@
 		<script src="./cortexJS/shortcuts.js"></script>
 		<script src="./svgStrings.js"></script>
 		<script src="./sidebar.js"></script>
+		<script src="./archive.js"></script>
 		<script src="./pageGrid.js"></script>
 		<script src="./shortcutsToHtml.js"></script>
 		<script>
 			document.getElementById("keysTitleIcon").innerHTML = keysTitleIconPath;
 			document.querySelector("#notebooks .icon").innerHTML = notebookIconPath;
+			document.querySelector("#archive .icon").innerHTML = archiveIconPath;
 			document.querySelector("#newFile .icon").innerHTML = newFileIconPath;
 			document.querySelector("#search .icon").innerHTML = searchIconPath;
 			document.querySelector("#help .icon").innerHTML = helpIconPath;

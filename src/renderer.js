@@ -157,10 +157,29 @@ function resetPage() {
 	closeSidebar()
 	document.getElementById("shortcutsHelp").classList.replace("open", "closed")
 	document.getElementById("placeHolder").style.display = "flex"
+	document.getElementById("archivePage").style.display = "none"
 	document.getElementById("content").style.display = "none"
 	document.getElementById("notebookName").innerText = ""
 	document.getElementById("slash").innerText = ""
+	document.getElementById("fileName").style.fontWeight = 700
 	document.getElementById("fileName").innerText = ""
+}
+
+// Return to start page
+function openArchive() {
+	currentfile = undefined;
+	closeSidebar()
+	document.getElementById("shortcutsHelp").classList.replace("open", "closed")
+	document.getElementById("placeHolder").style.display = "none"
+	document.getElementById("archivePage").style.display = "flex"
+	document.getElementById("content").style.display = "none"
+	document.getElementById("notebookName").innerText = ""
+	document.getElementById("slash").innerText = ""
+	document.getElementById("fileName").style.fontWeight = 200
+	document.getElementById("fileName").innerText = "ארכיון"
+	document.getElementById("fileName").contentEditable = false
+	document.getElementById("fileName").style.userSelect = "none"
+
 }
 
 
@@ -239,6 +258,7 @@ document.getElementById("close").addEventListener("click", () => {
 document.getElementById("minimize").addEventListener("click", window.api.minimize);
 document.getElementById("maximize").addEventListener("click", toggleMaximize);
 document.getElementById("logo").addEventListener("click", resetPage);
+document.getElementById("archive").addEventListener("click", openArchive);
 document.getElementById("help").addEventListener('click', toggleHelp)
 document.getElementById("settings").addEventListener('click', () => {
 	toggleSidebar('settings')
