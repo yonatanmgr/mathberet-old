@@ -1,4 +1,4 @@
-let dirTree, currentfile, currentBlock, currentTheme, archiveContent, pageStyle, hebPageStyle;
+let dirTree, currentfile, currentBlock, currentTheme, archiveContent, pageStyle, hebPageStyle, allBlocks;
 let maximizeStatus, sidebarStatus = 0
 
 
@@ -9,6 +9,23 @@ function getColor() {
 	})
 }
 
+function startSearch() {
+	window.api.startSearch()
+	window.api.receive("gotAllBlocks", (result)=> {
+		allBlocks = result;
+	})
+}
+
+function search(text) {
+	let result = [];
+	for (const block of allBlocks) {
+		if (block.type != "Graph" && block.type != "Group" && JSON.stringify(block.blockContent).includes(text) || block.type == "Group" && block.groupTitle.includes(text)) {
+			result.push(block);
+		}
+		else continue
+	}
+	return result
+}
 
 function getPageStyle() {
 	window.api.getPageStyle()

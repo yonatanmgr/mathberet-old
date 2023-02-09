@@ -1151,6 +1151,7 @@ button:focus {outline:0;}
   align-items: center;
   gap: 10px;
   transition: 0.2s;
+  z-index: 10;
 }
 
 #sidebarButtons {
@@ -1426,6 +1427,13 @@ div.circle {
 
 }
 
+#timeTooltip{
+  opacity: 0%;
+  transition: opacity 0.4s;
+  z-index: 1;
+  position: absolute;
+}
+
 .archiveBlockTitle {
   height: 30px;
   padding-right: 4px;
@@ -1512,6 +1520,7 @@ div.circle {
 }
 
 .archiveBlockType {
+  white-space: nowrap;
   width: 130px;
   height: fit-content;
   font-size: 21px;
