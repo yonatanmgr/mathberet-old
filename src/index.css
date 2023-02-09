@@ -1,6 +1,7 @@
 :root {
   --theme-s: 90%;
   --theme-l: 89%;
+  --page-style: transparent;
   font-family: Rubik !important;
 }
 
@@ -667,13 +668,13 @@ button:focus {outline:0;}
 }
 
 .grid-stack .grid-stack-placeholder>.placeholder-content {
-
   background-color: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
   filter: opacity(20%);
   border-radius: 8px;
   margin: 0;
   position: absolute;
-  width: calc(100% - 45px);
+  margin-right: 27px;
+  width: calc(100%-27px);
   z-index: 0 !important;
   text-align: center;
   transition: 0.2s;
@@ -844,7 +845,12 @@ button:focus {outline:0;}
 
 .pageContainer::-webkit-scrollbar { display: none; }
 
-#page { min-height: 10000% !important; margin: 10px; }
+#page {
+  min-height: 10000% !important;
+  width: initial;
+  margin: 10px;
+  background: var(--page-style);
+}
 
 .ql-editor:has(h1:only-child) { overflow-y: hidden !important; }
 
@@ -947,6 +953,18 @@ button:focus {outline:0;}
 }
 
 #placeHolder {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  transition: 0.2s;
+}
+
+#archivePlaceHolder{
   display: flex;
   flex-direction: column;
   width: 100%;

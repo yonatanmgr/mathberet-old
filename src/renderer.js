@@ -1,4 +1,4 @@
-let dirTree, currentfile, currentBlock, currentTheme, archiveContent;
+let dirTree, currentfile, currentBlock, currentTheme, archiveContent, pageStyle, hebPageStyle;
 let maximizeStatus, sidebarStatus = 0
 
 
@@ -8,6 +8,31 @@ function getColor() {
 		document.querySelector(":root").style.setProperty("--theme-h", color);
 	})
 }
+
+
+function getPageStyle() {
+	window.api.getPageStyle()
+	window.api.receive("gotPageStyle", (style) => {
+		pageStyle = style;
+		switch (pageStyle) {
+			case "ruled":
+				hebPageStyle = "משבצות";
+				document.querySelector(":root").style.setProperty("--page-style", "conic-gradient(from 90deg at 1px 1px,#0000 90deg,hsla(var(--theme-h), 80%, 30%, 0.15) 0) 0 0/49.2px 50px");
+				break;
+			case "dots":
+				hebPageStyle = "נקודות";
+				document.querySelector(":root").style.setProperty("--page-style", "radial-gradient(hsla(var(--theme-h), 80%, 30%, 0.25) 1px, transparent 2px) 0 0 / 49.5px 50px");
+				break;
+			case "transparent":
+				hebPageStyle = "חלק";
+				document.querySelector(":root").style.setProperty("--page-style", "transparent");
+				break;
+		}
+	})
+}
+
+getPageStyle()
+
 
 function getArchive(){
 	window.api.getArchive()
@@ -278,6 +303,7 @@ document.addEventListener('coloris:pick', event => {
 });
 
 // Shortcuts
+window.api.receive("openArchive", () => document.getElementById("archive").click())
 window.api.receive("Shortcuts", () => document.getElementById("help").click())
 window.api.receive("Group", () => document.getElementById("addGroup").click())
 window.api.receive("Text", () => document.getElementById("addQuill").click())

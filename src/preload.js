@@ -15,7 +15,7 @@ contextBridge.exposeInMainWorld(
           }
       },
       receive: (channel, func) => {
-          let validChannels = ["Shortcuts", "gotUserTheme", "gotArchive", "gotUserColor", "openFiles", "newFile", "Save", "fromMain", "Text", "Graph", "Math", "Group", "gotNotebooks", "toggleNotebooks", "Search"];
+          let validChannels = ["Shortcuts", "openArchive", "gotPageStyle", "gotUserTheme", "gotArchive", "gotUserColor", "openFiles", "newFile", "Save", "fromMain", "Text", "Graph", "Math", "Group", "gotNotebooks", "toggleNotebooks", "Search"];
           if (validChannels.includes(channel)) {
               // Deliberately strip event as it includes `sender` 
               ipcRenderer.on(channel, (event, ...args) => func(...args));
@@ -33,9 +33,11 @@ contextBridge.exposeInMainWorld(
       minimize: () => {ipcRenderer.send("minimize")},
       close: () => {ipcRenderer.send("close")},
       setUserColor: (color) => {ipcRenderer.send('setUserColor', color)},
-      getUserColor: () => {ipcRenderer.send('getUserColor')},
-      getUserTheme: () => {ipcRenderer.send('getUserTheme')},
+      setPageStyle: (style) => {ipcRenderer.send('setPageStyle', style)},
       toggle: () => {ipcRenderer.send('dark-mode')},
+      getUserColor: () => {ipcRenderer.send('getUserColor')},
+      getPageStyle: () => {ipcRenderer.send('getPageStyle')},
+      getUserTheme: () => {ipcRenderer.send('getUserTheme')},
       getArchive: () => {ipcRenderer.send('getArchive')}
       }
 );

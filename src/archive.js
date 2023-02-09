@@ -2,6 +2,7 @@
 
 function renderArchive(){
     getArchive()
+
     let app = document.getElementById("archiveApp");
     app.innerHTML = "";
     let html = [];
@@ -26,85 +27,108 @@ function renderArchive(){
         }
         html.push(`</div></div></div></div>`)
     }
-    app.innerHTML = html.join("")
     
-    document.querySelectorAll(".archiveBlock").forEach(block => {
-        let search = () => {
-            for (const group of archiveContent) {
-                for (const subGroup of group.subGroups) {
-                    if (subGroup.id == block.id) {return subGroup}
+    if (archiveContent.length != 0) {
+        document.getElementById("archivePlaceHolder").style.display = "none"
+        app.style.display = "flex"
+        app.parentElement.style.height = "unset";
+
+        app.innerHTML = html.join("")
+    
+        document.querySelectorAll(".archiveBlock").forEach(block => {
+            let search = () => {
+                for (const group of archiveContent) {
+                    for (const subGroup of group.subGroups) {
+                        if (subGroup.id == block.id) {return subGroup}
+                    }
                 }
             }
-        }
-        let found = search()
-        let options = {
-            float: false,
-            handle: '.handle',
-            class: 'blockGroup',
-            resizable: {handles: 's,sw,w'},
-            itemClass: 'block',
-            children: [],
-            margin: 10,
-            cellHeight: 50,
-            dragOut: false,
-            dragIn: false,
-        }
-        let grid = GridStack.init(options, document.getElementById(block.id))
-        grid.on('resizestop', function (el) {
-            let resized = el.target.gridstackNode;
-            if (resized.type == "Graph") {
-                let a = resized.blockContent;
-                a.getAppletObject().setSize(
-                    document.getElementById(`ggBox_${resized.id}`).offsetWidth,
-                    document.getElementById(`ggBox_${resized.id}`).offsetHeight
-                );
+            let found = search()
+            let options = {
+                float: false,
+                handle: '.handle',
+                class: 'blockGroup',
+                resizable: {handles: 's,sw,w'},
+                itemClass: 'block',
+                children: [],
+                margin: 10,
+                cellHeight: 50,
+                dragOut: false,
+                dragIn: false,
             }
+            let grid = GridStack.init(options, document.getElementById(block.id))
+            grid.on('resizestop', function (el) {
+                let resized = el.target.gridstackNode;
+                if (resized.type == "Graph") {
+                    let a = resized.blockContent;
+                    a.getAppletObject().setSize(
+                        document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+                        document.getElementById(`ggBox_${resized.id}`).offsetHeight
+                    );
+                }
+            })
+            setTimeout(() => {
+                found.blockContent.map(loadBlockContent)
+                grid.load(found.blockContent);
+                found.blockContent.map(loadBlock)
+        
+            }, 5);
         })
-        setTimeout(() => {
-            found.blockContent.map(loadBlockContent)
-            grid.load(found.blockContent);
-            found.blockContent.map(loadBlock)
     
-        }, 5);
-    })
-
-
-    document.querySelectorAll(".archiveBlockTitle.first span").forEach(title=>title
-        .addEventListener("click", (e) => {
-            let con = e.target.closest(".archiveContainer")
-            if (con.querySelector(".line").classList.contains("open")) {
-                con.classList.remove("open")
-                con.querySelector(".titleText").classList.remove("open")
-                con.querySelector(".listContainer").classList.remove("open")
-                con.querySelector(".line").classList.remove("open")
     
-            } else {
-                con.classList.add("open")
-                con.querySelector(".titleText").classList.add("open")
-                con.querySelector(".listContainer").classList.add("open")
-                con.querySelector(".line").classList.add("open")
-    
-            }
-    }))
-        document.querySelectorAll(".archiveBlockType").forEach(title=>title
-        .addEventListener("click", (e) => {
-            let con = e.target.closest(".archiveBlockTitle")
-            if (con.classList.contains("open")) {
-                con.classList.remove("open")
-                con.style.height = "30px"
-
-                
-            } else {
-                con.classList.add("open")
-                function updateHeight(){
-                    let h = 0;
-                    for (const item of con.querySelector('.archiveBlock').gridstack.getGridItems()) {h += item.gridstackNode.h;}
-                    if (h == 0) {con.style.height = con.querySelector('.archiveBlock').gridstack.getCellHeight()}
-                    else {con.style.height = `${con.querySelector('.archiveBlock').gridstack.getCellHeight() * h}px`}
+        document.querySelectorAll(".archiveBlockTitle.first span").forEach(title=>title
+            .addEventListener("click", (e) => {
+                let con = e.target.closest(".archiveContainer")
+                if (con.querySelector(".line").classList.contains("open")) {
+                    con.classList.remove("open")
+                    con.querySelector(".titleText").classList.remove("open")
+                    con.querySelector(".listContainer").classList.remove("open")
+                    con.querySelector(".line").classList.remove("open")
+        
+                } else {
+                    con.classList.add("open")
+                    con.querySelector(".titleText").classList.add("open")
+                    con.querySelector(".listContainer").classList.add("open")
+                    con.querySelector(".line").classList.add("open")
+        
                 }
-                updateHeight()
-                con.querySelector('.archiveBlock').gridstack.on('resize', updateHeight)
-                resizeAll(con.querySelector('.archiveBlock').gridstack)
-            }
-    }))
+        }))
+            document.querySelectorAll(".archiveBlockType").forEach(title=>title
+            .addEventListener("click", (e) => {
+                let con = e.target.closest(".archiveBlockTitle")
+                if (con.classList.contains("open")) {
+                    con.classList.remove("open")
+                    con.style.height = "30px"
+    
+                    
+                } else {
+                    con.classList.add("open")
+                    function updateHeight(){
+                        let h = 0;
+                        for (const item of con.querySelector('.archiveBlock').gridstack.getGridItems()) {h += item.gridstackNode.h;}
+                        if (h == 0) {con.style.height = con.querySelector('.archiveBlock').gridstack.getCellHeight()}
+                        else {con.style.height = `${con.querySelector('.archiveBlock').gridstack.getCellHeight() * h}px`}
+                    }
+                    updateHeight()
+                    con.querySelector('.archiveBlock').gridstack.on('resize', updateHeight)
+                    resizeAll(con.querySelector('.archiveBlock').gridstack)
+                }
+        }))
+    
+    }
+
+    else {
+        document.getElementById("archivePlaceHolder").style.display = "flex"
+        app.style.display = "none"
+
+        app.parentElement.style.height = "100%";
+        let placeHolderHtml = [];
+        placeHolderHtml.push(`<div class="placeHolderText">הארכיון ריק!</div>`)
+        placeHolderHtml.push(`<br>`)
+        placeHolderHtml.push(`<div class="placeHolderText">כדי למלא את הארכיון, תוכלו ליצור קבוצות בעלות שם זהה מסוגים שונים,</div>`)
+        placeHolderHtml.push(`<div class="placeHolderText">והן יגיעו לכאן באופן אוטומטי</div>`)
+        placeHolderHtml.push(`<br>`)
+        placeHolderHtml.push(`<br>`)
+        document.getElementById('archivePlaceHolder').innerHTML = placeHolderHtml.join("");
+    }
 }

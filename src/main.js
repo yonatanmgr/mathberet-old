@@ -36,7 +36,8 @@ async function createWindow() {
 
   const schema = {
     theme: {type: 'string', default: 'light'},
-    color: {type: 'number', maximum: 360, minimum: 1, default: 203}
+    color: {type: 'number', maximum: 360, minimum: 1, default: 203},
+    pageStyle: {type: 'string', default: 'transparent'}
   };
 
   if (fs.readFileSync(path.join(app.getPath('userData'), "config.json")) == "") {
@@ -119,6 +120,11 @@ async function createWindow() {
       click: () => {win.webContents.send("toggleNotebooks");}
     },
       {
+      role: 'Open Archive',
+      accelerator: 'Ctrl+Alt+A',
+      click: () => {win.webContents.send("openArchive");}
+    },
+      {
       role: 'Search',
       accelerator: 'Ctrl+F',
       click: () => {win.webContents.send("Search");}
@@ -160,7 +166,14 @@ async function createWindow() {
   ipcMain.on("setUserColor", (event, color) => {
     store.set('color', color);
   })
+  
+  ipcMain.on("setPageStyle", (event, style) => {
+    store.set('pageStyle', style);
+  })
 
+  ipcMain.on("getPageStyle", (event, args) => {
+    win.webContents.send("gotPageStyle", store.get('pageStyle'))
+  })
   ipcMain.on("getUserTheme", (event, args) => {
     win.webContents.send("gotUserTheme", store.get('theme'))
   })
