@@ -451,10 +451,17 @@ document.addEventListener("dblclick", function(e) {
 
 // Create a new file
 function newFile() {
+
 	if (dirTree.map(file => file = file.path).includes(`${dirTreeLocation}\\קובץ חדש.json`)) {
 		popupAnimation("cantCreate")
 	} else {
+		
 		window.api.newFile()
+		document.getElementById("fileName").style.fontWeight = 700
+		document.getElementById("fileName").contentEditable = true
+		document.getElementById("fileName").style.userSelect = "unset"
+	
+		document.getElementById("archivePage").style.display = "none"
 		document.getElementById("placeHolder").style.display = "none"
 		document.getElementById("content").style.display = "flex"
 		document.getElementById("slash").innerText = ""

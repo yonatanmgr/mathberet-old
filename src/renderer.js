@@ -188,7 +188,7 @@ function openArchive() {
 	document.getElementById("fileName").innerText = "ארכיון"
 	document.getElementById("fileName").contentEditable = false
 	document.getElementById("fileName").style.userSelect = "none"
-
+	renderArchive()
 }
 
 

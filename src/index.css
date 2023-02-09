@@ -148,7 +148,7 @@
   #sidebar{
     background-color: hsl(var(--theme-h), 40%, 35%) !important;
   }  
-  #sidebar .tool{
+  #sidebar .tool, #sidebar .toolGroup{
     background-color: hsl(var(--theme-h), 52%, 28%) !important;
     filter: none !important;
   }
@@ -179,9 +179,14 @@
 @media (prefers-color-scheme: light) {
   body {color: #121212;}
 
-  #sidebar .tool:active { filter: brightness(70%) saturate(240%); }
+  #sidebar .tool:active { 
+    background-color: hsl(var(--theme-h), 30%, 60%);
+  }
   
-  #sidebar .tool:hover { filter: brightness(81%) saturate(240%); }
+  #sidebar .tool:hover {
+    background-color: hsl(var(--theme-h), 30%, 74%);
+    /* filter: brightness(81%) saturate(240%); */
+  }
 
   /* .actionsArea:has(.Group){
     background: hsla(0, 0%, 50%, 0.13) !important;
@@ -442,7 +447,7 @@ svg {
   background: rgba(255, 196, 0, 0.07) !important;
 }
 
-.theorem>.grid-stack-item-content>.actionsArea .actionsArea {
+.theorem>.grid-stack-item-content>.actionsArea .actionsArea, .archiveBlock.theorem .actionsArea {
   background: rgba(148, 116, 0, 0.07) !important;
 }
 
@@ -450,19 +455,19 @@ svg {
   background: rgba(0, 128, 255, 0.07) !important;
 }
 
-.proof>.grid-stack-item-content>.actionsArea .actionsArea {
+.proof>.grid-stack-item-content>.actionsArea .actionsArea, .archiveBlock.proof .actionsArea {
   background: rgba(0, 74, 147, 0.07) !important;
 }
 .defenition>.grid-stack-item-content>.actionsArea {
   background: rgba(255, 0, 38, 0.07) !important;
 }
-.defenition>.grid-stack-item-content>.actionsArea .actionsArea {
+.defenition>.grid-stack-item-content>.actionsArea .actionsArea, .archiveBlock.defenition .actionsArea {
   background: rgba(147, 0, 22, 0.07) !important;
 }
 .assumption>.grid-stack-item-content>.actionsArea {
   background: rgba(0, 255, 128, 0.07) !important;
 }
-.assumption>.grid-stack-item-content>.actionsArea .actionsArea {
+.assumption>.grid-stack-item-content>.actionsArea .actionsArea, .archiveBlock.assumption .actionsArea {
   background: rgba(0, 147, 73, 0.07) !important;
 }
 
@@ -845,6 +850,16 @@ button:focus {outline:0;}
 
 .ql-formula { direction: ltr; }
 
+.toolGroup {
+  background-color: hsl(var(--theme-h), 66%, 74%);
+  gap: 3px;
+  overflow: hidden;
+  display: flex;
+  transition: 0.2s;
+  flex-direction: column;
+  border-radius: 100px;
+}
+
 .tool {
   display: flex;
   align-items: center;
@@ -1102,7 +1117,7 @@ button:focus {outline:0;}
   width: 40px;
   height: 40px;
   border-radius: 100%;
-  filter: brightness(87%) saturate(200%);
+  background-color: hsl(var(--theme-h), 66%, 74%);
   transition: 0.2s;
   align-content: center;
   justify-content: center;
@@ -1321,7 +1336,7 @@ ul {
   font-weight: 400;
 }
 
-.archiveApp {
+#archiveApp {
   overflow-y: scroll !important;
   min-height: 100% !important;
   scroll-behavior: smooth;
@@ -1402,11 +1417,29 @@ div.circle {
   gap: 15px;
   flex-direction: row;
 }
-
-.archiveBlockTitle.open {
-  height: 150px;
-  transition: 0.3s;
+/* .archiveBlockTitle.open{
+  height: 400px;
+} */
+.archiveBlockTitle.open .archiveBlock{
+  overflow-y: scroll;
 }
+.archiveBlockTitle.open .archiveBlock .block{
+  display: block;
+}
+
+/* .archiveBlockTitle .archiveBlock {
+  height: 100%;
+  transform: scaleY(1);
+  transition: transform 0.3s;
+  transform-origin: top;
+
+}
+
+.archiveBlockTitle.open .archiveBlock{
+  height: 100%;
+
+  transform: scaleY(1);
+} */
 
 .archiveBlockTitle.first span {
   -webkit-user-select: none;
@@ -1441,7 +1474,14 @@ div.circle {
 
 .archiveBlock {
   width: 100%;
+  overflow: hidden;
   border-radius: 10px;
+  padding: 10px;
+  overflow-y: scroll !important;
+  min-height: 12px !important;
+}
+.archiveBlock .block{
+  display: none;
 }
 
 .biglist {
@@ -1454,6 +1494,7 @@ div.circle {
 
 .archiveBlockType {
   width: 130px;
+  height: fit-content;
   font-size: 21px;
   font-weight: 300;
   -webkit-user-select: none;
@@ -1461,7 +1502,7 @@ div.circle {
   transition: 0.2s;
 }
 .archiveBlockType:hover {
-  transform: scale(1.02);
+  font-size: scale(1.02);
   cursor: pointer;
 }
 .archiveBlockType:active {
