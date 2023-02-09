@@ -6,12 +6,12 @@ var pageGrid = GridStack.init({
 		handles: 's,sw,w'
 	},
 	removable: '#trashCan',
-  itemClass: 'block',
+	itemClass: 'block',
 	margin: 7,
 	cellHeight: 50,
-  acceptWidgets: '.block',
-  dragOut: true,
-  dragIn: '.block',
+	acceptWidgets: '.block',
+	dragOut: true,
+	dragIn: '.block',
 });
 
 function removeBlock(el) {
@@ -25,7 +25,7 @@ function removeBlock(el) {
 // pageGrid.on("remove", function (el) {if (el.type == "Graph") {el.blockContent.getAppletObject().remove();}})
 
 // Clear page on trash dblclick
-document.addEventListener("dblclick", function(e) {
+document.addEventListener("dblclick", function (e) {
 	const target = e.target.closest("#trashCan");
 	if (target) {
 		pageGrid.getGridItems().map(removeBlock);
@@ -37,14 +37,14 @@ document.addEventListener("dblclick", function(e) {
 function scrollToTop() {
 	document.querySelector(".pageContainer").scrollTop = 0
 }
-document.addEventListener("dblclick", function(e) {
+document.addEventListener("dblclick", function (e) {
 	if (e.target.closest("#content")) {
 		scrollToTop()
 	}
 });
 
 // Resize applet on applet block resize
-pageGrid.on('resizestop', async function(el) {
+pageGrid.on('resizestop', async function (el) {
 	let resized = el.target.gridstackNode;
 	if (resized.type == "Graph") {
 		let a = await resized.blockContent;
@@ -54,40 +54,49 @@ pageGrid.on('resizestop', async function(el) {
 		);
 	}
 	if (resized.type == "Group") {
-    resizeAll(resized.el.querySelector(".Group").gridstack)
-  	}
+		resizeAll(resized.el.querySelector(".Group").gridstack)
+	}
 })
 
-pageGrid.on('dropped', function(event, previousWidget, newWidget) {
-  let resized = previousWidget;
-  if (resized.type == "Graph") {
-    let a = resized.blockContent;
-    a.getAppletObject().setSize(
-		resized.el.querySelector(".ggBox").offsetWidth,
-		resized.el.querySelector(".ggBox").offsetHeight
-    );
-  }
+pageGrid.on('dropped', function (event, previousWidget, newWidget) {
+	let resized = previousWidget;
+	if (resized.type == "Graph") {
+		let a = resized.blockContent;
+		a.getAppletObject().setSize(
+			resized.el.querySelector(".ggBox").offsetWidth,
+			resized.el.querySelector(".ggBox").offsetHeight
+		);
+	}
+	else if (resized.type == "Math"){
+		resized.el.querySelector("math-field")._mathfield.setOptions({
+			inlineShortcuts: defShortcuts,
+			plonkSound: null,
+			id: block.id,
+			onExport: (mf, latex) => `${latex}`,
+		})
+	}
 })
 
 // Resize all applets on window resize
 async function resizeAll(grid) {
 	let items = grid.getGridItems()
 	for (var item of items) {
-		if (item.gridstackNode.type === "Graph") {
+		if (item.gridstackNode.type == "Graph") {
 			let applet = await item.gridstackNode.blockContent
 			let appletObject = applet.getAppletObject()
 			appletObject.setSize(
 				item.gridstackNode.el.querySelector(".ggBox").offsetWidth,
 				item.gridstackNode.el.querySelector(".ggBox").offsetHeight
 			)
+		} else if (item.gridstackNode.type == "Group") {
+			resizeAll(item.gridstackNode.el.querySelector(".Group").gridstack)
 		}
-    	else if (item.gridstackNode.type == "Group") {
-      		resizeAll(item.gridstackNode.el.querySelector(".Group").gridstack)
-      	}
 	}
 }
 
-window.addEventListener("resize", ()=>{resizeAll(pageGrid)});
+window.addEventListener("resize", () => {
+	resizeAll(pageGrid)
+});
 
 // Focus on block
 document.addEventListener("click", e => focus(e))
@@ -139,22 +148,35 @@ function blockData(html, id, type, h, blockContent = {}, x = 12, y = 1000, w = 6
 document.getElementById("addQuill").addEventListener("click", addQuill);
 document.getElementById("addGgb").addEventListener("click", addGgb);
 document.getElementById("addMF").addEventListener("click", addMF);
-document.getElementById("addGroup").addEventListener("click", ()=>{addGroup()});
+document.getElementById("addGroup").addEventListener("click", () => {
+	addGroup()
+});
 
 
 function addGroup(type) {
-  let groupType;
-  let seperator = "&nbsp;-&nbsp;"
-  switch (type) {
-    case "proof": groupType = "הוכחה 📝"; break;
-    case "theorem": groupType = "משפט 💡"; break;
-    case "assumption": groupType = "הנחה ❓"; break;
-    case "defenition": groupType = "הגדרה ❗"; break;
-    case undefined: seperator = ""; groupType = ""; break;
-  }
-  let id = Date.now();
-  let html = `<div class='groupTop'>${drag}</img><span class='groupTitle' contenteditable='true'>קבוצה</span><span class='seperator'>${seperator}</span><span class='groupType'>${groupType}</span></div><div class="actionsArea"><div id="group_${id}" class="Group"></div></div>`
-  let block = {
+	let groupType;
+	let seperator = "&nbsp;-&nbsp;"
+	switch (type) {
+		case "proof":
+			groupType = "הוכחה 📝";
+			break;
+		case "theorem":
+			groupType = "משפט 💡";
+			break;
+		case "assumption":
+			groupType = "הנחה ❓";
+			break;
+		case "defenition":
+			groupType = "הגדרה ❗";
+			break;
+		case undefined:
+			seperator = "";
+			groupType = "";
+			break;
+	}
+	let id = Date.now();
+	let html = `<div class='groupTop'>${drag}</img><span class='groupTitle' contenteditable='true'>קבוצה</span><span class='seperator'>${seperator}</span><span class='groupType'>${groupType}</span></div><div class="actionsArea"><div id="group_${id}" class="Group"></div></div>`
+	let block = {
 		id: id,
 		content: html,
 		x: 12,
@@ -171,65 +193,89 @@ function addGroup(type) {
 		subGridDynamic: true,
 		blockContent: []
 	}
-  subgridOptions = {
-    float: false,
-    class: "blockGroup",
-    removable: '#trashCan',
-    acceptWidgets: ".block:not(.grid-stack-sub-grid)",
-    dragOut: true,
-    dragIn: ".block:not(.grid-stack-sub-grid)",
-    itemClass: "block",
-    children: [],
-    handle: '.handle',
-    resizable: {handles: 's,sw,w'},
-    margin: 7,
-    cellHeight: 50
-  }
+	subgridOptions = {
+		float: false,
+		class: "blockGroup",
+		removable: '#trashCan',
+		acceptWidgets: ".block:not(.grid-stack-sub-grid)",
+		dragOut: true,
+		dragIn: ".block:not(.grid-stack-sub-grid)",
+		itemClass: "block",
+		children: [],
+		handle: '.handle',
+		resizable: {
+			handles: 's,sw,w'
+		},
+		margin: 7,
+		cellHeight: 50
+	}
 
-  let groupBlock = pageGrid.addWidget(block);
+	let groupBlock = pageGrid.addWidget(block);
 
-  groupBlock.classList.remove("theorem")
-  groupBlock.classList.remove("defenition")
-  groupBlock.classList.remove("assumption")
-  groupBlock.classList.remove("proof")
-  groupBlock.classList.add(type)
-  
-  let group = GridStack.init(subgridOptions, `#group_${id}`)
-  group.on('resizestop', function(el) {
-    let resized = el.target.gridstackNode;
-    if (resized.type == "Graph") {
-      let a = resized.blockContent;
-      a.getAppletObject().setSize(
-        document.getElementById(`ggBox_${resized.id}`).offsetWidth,
-        document.getElementById(`ggBox_${resized.id}`).offsetHeight
-      );
-    }
-  })
+	groupBlock.classList.remove("theorem")
+	groupBlock.classList.remove("defenition")
+	groupBlock.classList.remove("assumption")
+	groupBlock.classList.remove("proof")
+	groupBlock.classList.add(type)
 
-  group.on('dropped', function(event, previousWidget, newWidget) {
-    let resized = previousWidget;
-    if (resized.type == "Graph") {
-      let a = resized.blockContent;
-      a.getAppletObject().setSize(
-        document.getElementById(`ggBox_${resized.id}`).offsetWidth,
-        document.getElementById(`ggBox_${resized.id}`).offsetHeight
-      );
-    }
-  })
-  let currentDims;
-  group.parentGridItem.el.querySelector(".handle").addEventListener("click", ()=>{
-    switch (group.parentGridItem.isOpen) {
-      case true:
-        currentDims = {"h": group.parentGridItem.h, "w": group.parentGridItem.w}
-        pageGrid.update(group.parentGridItem.el, {minH: 1, h: 1, memoryDims: currentDims, isOpen: false, noResize: true})
-      break;
-      case false:
-        pageGrid.update(group.parentGridItem.el, {minH: 4, h: currentDims.h, isOpen: true, noResize: false})
-      break;
-    default:
-      break;
-}}
-)
+	let group = GridStack.init(subgridOptions, `#group_${id}`)
+	group.on('resizestop', function (el) {
+		let resized = el.target.gridstackNode;
+		if (resized.type == "Graph") {
+			let a = resized.blockContent;
+			a.getAppletObject().setSize(
+				document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+				document.getElementById(`ggBox_${resized.id}`).offsetHeight
+			);
+		}
+	})
+
+	group.on('dropped', function (event, previousWidget, newWidget) {
+		let resized = previousWidget;
+		if (resized.type == "Graph") {
+			let a = resized.blockContent;
+			a.getAppletObject().setSize(
+				document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+				document.getElementById(`ggBox_${resized.id}`).offsetHeight
+			);
+		}
+		else if (resized.type == "Math"){
+			resized.el.querySelector("math-field")._mathfield.setOptions({
+				inlineShortcuts: defShortcuts,
+				plonkSound: null,
+				id: block.id,
+				onExport: (mf, latex) => `${latex}`,
+			})
+		}
+	})
+	let currentDims;
+	group.parentGridItem.el.querySelector(".handle").addEventListener("click", () => {
+		switch (group.parentGridItem.isOpen) {
+			case true:
+				currentDims = {
+					"h": group.parentGridItem.h,
+					"w": group.parentGridItem.w
+				}
+				pageGrid.update(group.parentGridItem.el, {
+					minH: 1,
+					h: 1,
+					memoryDims: currentDims,
+					isOpen: false,
+					noResize: true
+				})
+				break;
+			case false:
+				pageGrid.update(group.parentGridItem.el, {
+					minH: 4,
+					h: currentDims.h,
+					isOpen: true,
+					noResize: false
+				})
+				break;
+			default:
+				break;
+		}
+	})
 }
 
 function addQuill() {
@@ -258,23 +304,31 @@ function addMF() {
 		pageGrid.addWidget(block)
 		let created = createMF(id)
 		created.focus()
-		async function getSelection(scene){
+		created.setOptions({
+			inlineShortcuts: defShortcuts,
+			plonkSound: null,
+			id: id,
+			onExport: (mf, latex) => `${latex}`,
+		})
+		async function getSelection(scene) {
 			let text = await navigator.clipboard.readText();
 			created.executeCommand(['copyToClipboard', '#0'])
 			let newText = await navigator.clipboard.readText();
 			switch (scene) {
 				case "expand":
-					created.executeCommand(['insert', expand(newText), {'insertionMode': 'replaceSelection'}])
+					created.executeCommand(['insert', expand(newText), {
+						'insertionMode': 'replaceSelection'
+					}])
 					break;
 				case "graph":
 					let adapted = newText
-					.replace("^{\\prime}", "'")
-					.replace("\\left", "")
-					.replace("\\right", "")
-					.replace("\\cos", "cos")
-					.replace("\\sin", "sin")
-					.replace("\\tan", "tan")
-					
+						.replace("^{\\prime}", "'")
+						.replace("\\left", "")
+						.replace("\\right", "")
+						.replace("\\cos", "cos")
+						.replace("\\sin", "sin")
+						.replace("\\tan", "tan")
+
 					if (document.querySelector(".ggBox")) {
 						document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(adapted);
 					}
@@ -288,19 +342,42 @@ function addMF() {
 		created.addEventListener('keydown', (ev) => {
 			if (ev.altKey === true) {
 				switch (ev.code) {
-					case "KeyX": getSelection("expand"); break;
-					case "KeyG": getSelection("graph"); break;
-					case "Equal": created.insert('\\approx'); break;
-					case "Comma": created.insert('\\measuredangle'); break;
-					case "Digit0": created.insert('\\emptyset'); break;
-					case "Enter": created.insert('\\begin{gathered} {#?} \\end{gathered}'); break;
-					case "KeyC": if (ev.shiftKey === true) {created.insert('\\complement'); break;}
-					case "KeyT": if (ev.shiftKey === true) {created.insert('\\triangle'); break;}
-					default: break;
+					case "KeyX":
+						getSelection("expand");
+						break;
+					case "KeyG":
+						getSelection("graph");
+						break;
+					case "Equal":
+						created.insert('\\approx');
+						break;
+					case "Comma":
+						created.insert('\\measuredangle');
+						break;
+					case "Digit0":
+						created.insert('\\emptyset');
+						break;
+					case "Enter":
+						created.insert('\\begin{gathered} {#?} \\end{gathered}');
+						break;
+					case "KeyC":
+						if (ev.shiftKey === true) {
+							created.insert('\\complement');
+							break;
+						}
+						case "KeyT":
+							if (ev.shiftKey === true) {
+								created.insert('\\triangle');
+								break;
+							}
+							default:
+								break;
 				}
 				ev.preventDefault();
+			} else if (ev.shiftKey === true && ev.code === 'Enter') {
+				created.executeCommand('addRowAfter');
+				ev.preventDefault();
 			}
-			else if (ev.shiftKey === true && ev.code === 'Enter'){created.executeCommand('addRowAfter'); ev.preventDefault();}
 		});
 	} else return
 };
@@ -321,7 +398,7 @@ function createQuill(id) {
 		ltr: {
 			key: 219,
 			shortKey: true,
-			handler: function(range) {
+			handler: function (range) {
 				this.quill.formatLine(range, 'direction', '');
 				this.quill.formatLine(range, 'align', '')
 				this.quill.typingDirection = ''
@@ -331,7 +408,7 @@ function createQuill(id) {
 		rtl: {
 			key: 221,
 			shortKey: true,
-			handler: function(range) {
+			handler: function (range) {
 				this.quill.formatLine(range, 'direction', 'rtl');
 				this.quill.formatLine(range, 'align', 'right')
 				this.quill.typingDirection = 'rtl'
@@ -341,7 +418,7 @@ function createQuill(id) {
 		math: {
 			key: 52,
 			shiftKey: true,
-			handler: async function(range) {
+			handler: async function (range) {
 				const text = await navigator.clipboard.readText();
 				let selection = this.quill.getSelection();
 				this.quill.insertEmbed(selection.index, 'formula', text);
@@ -374,14 +451,6 @@ function createQuill(id) {
 
 function createMF(id) {
 	let mf = new MathfieldElement();
-
-	mf.setOptions({
-		inlineShortcuts: defShortcuts,
-		plonkSound: null,
-		id: id,
-		onExport: (mf, latex) => `${latex}`,
-	})
-
 	document.getElementById(`mf_${id}`).appendChild(mf)
 	return mf
 }
@@ -427,9 +496,17 @@ function saveGrid() {
 				block.groupTitle = document.getElementById(`group_${block.id}`).closest(".grid-stack-item-content").querySelector(".groupTitle").innerText
 				let foundGroup = document.getElementById(`group_${block.id}`).gridstack
 				let groupItems = foundGroup.save()
-				for(var item of groupItems){saveBlockContent(item); item.content="";}
-				let currentDims = {"h": foundGroup.parentGridItem.h, "w": foundGroup.parentGridItem.w}
-				pageGrid.update(foundGroup.parentGridItem.el, {memoryDims: currentDims})
+				for (var item of groupItems) {
+					saveBlockContent(item);
+					item.content = "";
+				}
+				let currentDims = {
+					"h": foundGroup.parentGridItem.h,
+					"w": foundGroup.parentGridItem.w
+				}
+				pageGrid.update(foundGroup.parentGridItem.el, {
+					memoryDims: currentDims
+				})
 				block.blockContent = groupItems
 				delete block.subGrid
 				break;
@@ -437,9 +514,14 @@ function saveGrid() {
 				break;
 		}
 	}
-	if (sidebarScene == "notebooks") {renderDirTree()}
+	if (sidebarScene == "notebooks") {
+		renderDirTree()
+	}
 	let items = pageGrid.save();
-  for(var item of items){saveBlockContent(item); item.content="";}
+	for (var item of items) {
+		saveBlockContent(item);
+		item.content = "";
+	}
 
 	window.api.save(JSON.stringify(items), currentfile, `${document.getElementById("fileName").innerText}.json`);
 	let fileToUpdate = findInSidebar(currentfile)
@@ -453,68 +535,87 @@ function saveGrid() {
 		toUpdate.path = currentfile
 		toUpdate.name = currentfile.split("\\").pop()
 	}, 5);
-
+	getArchive()
 	popupAnimation("save")
 	// createFolderList()
 }
 
-function loadGrid(path, file, folder) {
-	function loadBlockContent(block) {
-		switch (block.type) {
-			case "Text":
-				block.content = `${drag}</img><div class="actionsArea"><div id="textEdit_${block.id}" class="textBlock"></div></div>`
-				break;
-			case "Math":
-				block.content = `${drag}</img><div class="actionsArea"><div id="mf_${block.id}" class="mathBlock"></div></div>`
-				break;
-			case "Graph":
-				block.content = `${drag}</img><div class="actionsArea"><div id="ggBox_${block.id}" class="ggBox"></div></div>`
-				break;
-			case "Group":
-				let groupType;
-				let seperator = "&nbsp;-&nbsp;"
-				switch (block.subType) {
-					case "proof": groupType = "הוכחה 📝"; break;
-					case "theorem": groupType = "משפט 💡"; break;
-					case "assumption": groupType = "הנחה ❓"; break;
-					case "defenition": groupType = "הגדרה ❗"; break;
-					case undefined: seperator = ""; groupType = ""; break;
-				}
-				block.content = `<div class='groupTop'>${drag}</img><span class='groupTitle' contenteditable='true'>${block.groupTitle}</span><span class='seperator'>${seperator}</span><span class='groupType'>${groupType}</span></div><div class="actionsArea"><div id="group_${block.id}" class="Group"></div></div>`
-				async function setClass(){
-					let id = await block.id.toString()
-					let blockParent = findInGrid(id)
-					blockParent.classList.remove("theorem")
-					blockParent.classList.remove("defenition")
-					blockParent.classList.remove("assumption")
-					blockParent.classList.remove("proof")
-					blockParent.classList.add(block.subType)
-				}
-				setClass()
-				break;
-			default:
-				break;
-		}
+function loadBlockContent(block) {
+	switch (block.type) {
+		case "Text":
+			block.content = `${drag}</img><div class="actionsArea"><div id="textEdit_${block.id}" class="textBlock"></div></div>`
+			break;
+		case "Math":
+			block.content = `${drag}</img><div class="actionsArea"><div id="mf_${block.id}" class="mathBlock"></div></div>`
+			break;
+		case "Graph":
+			block.content = `${drag}</img><div class="actionsArea"><div id="ggBox_${block.id}" class="ggBox"></div></div>`
+			break;
+		case "Group":
+			let groupType;
+			let seperator = "&nbsp;-&nbsp;"
+			switch (block.subType) {
+				case "proof":
+					groupType = "הוכחה 📝";
+					break;
+				case "theorem":
+					groupType = "משפט 💡";
+					break;
+				case "assumption":
+					groupType = "הנחה ❓";
+					break;
+				case "defenition":
+					groupType = "הגדרה ❗";
+					break;
+				case undefined:
+					seperator = "";
+					groupType = "";
+					break;
+			}
+			block.content = `<div class='groupTop'>${drag}</img><span class='groupTitle' contenteditable='true'>${block.groupTitle}</span><span class='seperator'>${seperator}</span><span class='groupType'>${groupType}</span></div><div class="actionsArea"><div id="group_${block.id}" class="Group"></div></div>`
+			async function setClass() {
+				let id = await block.id.toString()
+				let blockParent = findInGrid(id)
+				blockParent.classList.remove("theorem")
+				blockParent.classList.remove("defenition")
+				blockParent.classList.remove("assumption")
+				blockParent.classList.remove("proof")
+				blockParent.classList.add(block.subType)
+			}
+			setClass()
+			break;
+		default:
+			break;
 	}
 
-	function loadBlock(block) {
-		switch (block.type) {
-			case "Text":
-				block.blockContent = createQuill(block.id).setContents(block.blockContent)
-				break;
-			case "Math":
-				let mfBlock = createMF(block.id);
-				block.blockContent = mfBlock.setValue(block.blockContent)
-				async function getSelection(scene){
-					let text = await navigator.clipboard.readText();
-					mfBlock.executeCommand(['copyToClipboard', '#0'])
-					let newText = await navigator.clipboard.readText();
-					switch (scene) {
-						case "expand":
-							mfBlock.executeCommand(['insert', expand(newText), {'insertionMode': 'replaceSelection'}])
-							break;
-						case "graph":
-							let adapted = newText
+}
+
+function loadBlock(block) {
+	switch (block.type) {
+		case "Text":
+			block.blockContent = createQuill(block.id).setContents(block.blockContent)
+			break;
+		case "Math":
+			let mfBlock = createMF(block.id);
+			mfBlock.setOptions({
+				inlineShortcuts: defShortcuts,
+				plonkSound: null,
+				id: block.id,
+				onExport: (mf, latex) => `${latex}`,
+			})
+			block.blockContent = mfBlock.setValue(block.blockContent)
+			async function getSelection(scene) {
+				let text = await navigator.clipboard.readText();
+				mfBlock.executeCommand(['copyToClipboard', '#0'])
+				let newText = await navigator.clipboard.readText();
+				switch (scene) {
+					case "expand":
+						mfBlock.executeCommand(['insert', expand(newText), {
+							'insertionMode': 'replaceSelection'
+						}])
+						break;
+					case "graph":
+						let adapted = newText
 							.replace("^{\\prime}", "'")
 							.replace("\\left", "")
 							.replace("\\right", "")
@@ -522,104 +623,162 @@ function loadGrid(path, file, folder) {
 							.replace("\\sin", "sin")
 							.replace("\\tan", "tan")
 
-							if (document.querySelector(".ggBox")) {
-								document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(adapted);
-							}
-							break;
-						default:
-							break;
-					}
-					navigator.clipboard.writeText(text);
-				}
-				mfBlock.addEventListener('keydown', (ev) => {
-					if (ev.altKey === true) {
-						switch (ev.code) {
-							case "KeyX": getSelection("expand"); break;
-							case "KeyG": getSelection("graph"); break;
-							case "Equal": mfBlock.insert('\\approx'); break;
-							case "Comma": mfBlock.insert('\\measuredangle'); break;
-							case "Digit0": mfBlock.insert('\\emptyset'); break;
-							case "KeyC": if (ev.shiftKey === true) {mfBlock.insert('\\complement'); break;}
-							case "KeyT": if (ev.shiftKey === true) {mfBlock.insert('\\triangle'); break;}
-							case "Enter": {mfBlock.insert('\\begin{gathered} {#?} \\end{gathered}'); break;}
-							default: break;
+						if (document.querySelector(".ggBox")) {
+							document.querySelector(".ggBox").closest('.grid-stack-item').gridstackNode.blockContent.getAppletObject().evalCommand(adapted);
 						}
-						ev.preventDefault();
+						break;
+					default:
+						break;
+				}
+				navigator.clipboard.writeText(text);
+			}
+			mfBlock.addEventListener('keydown', (ev) => {
+				if (ev.altKey === true) {
+					switch (ev.code) {
+						case "KeyX":
+							getSelection("expand");
+							break;
+						case "KeyG":
+							getSelection("graph");
+							break;
+						case "Equal":
+							mfBlock.insert('\\approx');
+							break;
+						case "Comma":
+							mfBlock.insert('\\measuredangle');
+							break;
+						case "Digit0":
+							mfBlock.insert('\\emptyset');
+							break;
+						case "KeyC":
+							if (ev.shiftKey === true) {
+								mfBlock.insert('\\complement');
+								break;
+							}
+							case "KeyT":
+								if (ev.shiftKey === true) {
+									mfBlock.insert('\\triangle');
+									break;
+								}
+								case "Enter": {
+									mfBlock.insert('\\begin{gathered} {#?} \\end{gathered}');
+									break;
+								}
+								default:
+									break;
 					}
-					else if (ev.shiftKey === true && ev.code === 'Enter'){mfBlock.executeCommand('addRowAfter'); ev.preventDefault();}
-				});
-				break;
-			case "Graph":
-				let box = document.getElementById(`ggBox_${block.id}`)
-				box.closest(".grid-stack-item").gridstackNode.blockContent = createGgb(block.id, block.blockContent)
-				break;
-			case "Group":
+					ev.preventDefault();
+				} else if (ev.shiftKey === true && ev.code === 'Enter') {
+					mfBlock.executeCommand('addRowAfter');
+					ev.preventDefault();
+				}
+			});
+			break;
+		case "Graph":
+			let box = document.getElementById(`ggBox_${block.id}`)
+			box.closest(".grid-stack-item").gridstackNode.blockContent = createGgb(block.id, block.blockContent)
+			break;
+		case "Group":
 
-				let group = document.getElementById(`group_${block.id}`)
-        let items = group.closest(".grid-stack-item").gridstackNode.blockContent
-        let subgridOptions = {
-          float: false,
-          class: "blockGroup",
-          removable: '#trashCan',
-          acceptWidgets: ".block:not(.grid-stack-sub-grid)",
-          dragOut: true,
-          dragIn: ".block:not(.grid-stack-sub-grid)",
-          itemClass: "block",
-          children: [],
-          handle: '.handle',
-          resizable: {handles: 's,sw,w'},
-          margin: 7,
-          cellHeight: 50
-        }
-        let createdGrid = GridStack.init(subgridOptions, group.id)
-        // group = GridStack.init(subgridOptions, group.id)
-        createdGrid.on('resizestop', function(el) {
-          let resized = el.target.gridstackNode;
-          if (resized.type == "Graph") {
-            let a = resized.blockContent;
-            a.getAppletObject().setSize(
-              document.getElementById(`ggBox_${resized.id}`).offsetWidth,
-              document.getElementById(`ggBox_${resized.id}`).offsetHeight
-            );
-          }
-        })
-        createdGrid.on('dropped', function(event, previousWidget, newWidget) {
-          let resized = previousWidget;
-          if (resized.type == "Graph") {
-            let a = resized.blockContent;
-            a.getAppletObject().setSize(
-              document.getElementById(`ggBox_${resized.id}`).offsetWidth,
-              document.getElementById(`ggBox_${resized.id}`).offsetHeight
-            );
-          }
-        })
-        items.map(loadBlockContent)
-        createdGrid.load(items);
-        items.map(loadBlock)
-		let currentDims;
-		let memDims = group.gridstack.parentGridItem.memoryDims;
-		group.gridstack.parentGridItem.el.querySelector(".handle").addEventListener("click", ()=>{
-		  switch (group.gridstack.parentGridItem.isOpen) {
-			case true:
-			  currentDims = {"h": group.gridstack.parentGridItem.h, "w": group.gridstack.parentGridItem.w}
-			  pageGrid.update(group.gridstack.parentGridItem.el, {minH: 1, h: 1, memoryDims: currentDims, isOpen: false, noResize: true})
-			break;
-			case false:
-			  pageGrid.update(group.gridstack.parentGridItem.el, {minH: 4, h: memDims.h, isOpen: true, noResize: false})
-			break;
-		  default:
-			break;
-		}}
-		)
-		group.gridstack.parentGridItem.el.children[0].style.flexDirection = "column-reverse"
-		setTimeout(() => {
-			group.gridstack.parentGridItem.el.children[0].style.flexDirection = "column"
-		}, 2);
-		}
+			let group = document.getElementById(`group_${block.id}`)
+			let items = group.closest(".grid-stack-item").gridstackNode.blockContent
+			let subgridOptions = {
+				float: false,
+				class: "blockGroup",
+				removable: '#trashCan',
+				acceptWidgets: ".block:not(.grid-stack-sub-grid)",
+				dragOut: true,
+				dragIn: ".block:not(.grid-stack-sub-grid)",
+				itemClass: "block",
+				children: [],
+				handle: '.handle',
+				resizable: {
+					handles: 's,sw,w'
+				},
+				margin: 7,
+				cellHeight: 50
+			}
+			let createdGrid = GridStack.init(subgridOptions, group.id)
+			// group = GridStack.init(subgridOptions, group.id)
+			createdGrid.on('resizestop', function (el) {
+				let resized = el.target.gridstackNode;
+				if (resized.type == "Graph") {
+					let a = resized.blockContent;
+					a.getAppletObject().setSize(
+						document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+						document.getElementById(`ggBox_${resized.id}`).offsetHeight
+					);
+				}
+			})
+			createdGrid.on('dropped', function (event, previousWidget, newWidget) {
+				let resized = previousWidget;
+				if (resized.type == "Graph") {
+					let a = resized.blockContent;
+					a.getAppletObject().setSize(
+						document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+						document.getElementById(`ggBox_${resized.id}`).offsetHeight
+					);
+				}
+				else if (resized.type == "Math"){
+					resized.el.querySelector("math-field")._mathfield.setOptions({
+						inlineShortcuts: defShortcuts,
+						plonkSound: null,
+						id: block.id,
+						onExport: (mf, latex) => `${latex}`,
+					})
+				}
+			})
+			items.map(loadBlockContent)
+			createdGrid.load(items);
+			items.map(loadBlock)
+			let currentDims;
+			let memDims = group.gridstack.parentGridItem.memoryDims;
+			group.gridstack.parentGridItem.el.querySelector(".handle").addEventListener("click", () => {
+				switch (group.gridstack.parentGridItem.isOpen) {
+					case true:
+						currentDims = {
+							"h": group.gridstack.parentGridItem.h,
+							"w": group.gridstack.parentGridItem.w
+						}
+						pageGrid.update(group.gridstack.parentGridItem.el, {
+							minH: 1,
+							h: 1,
+							memoryDims: currentDims,
+							isOpen: false,
+							noResize: true
+						})
+						break;
+					case false:
+						pageGrid.update(group.gridstack.parentGridItem.el, {
+							minH: 4,
+							h: memDims.h,
+							isOpen: true,
+							noResize: false
+						})
+						break;
+					default:
+						break;
+				}
+			})
+			group.gridstack.parentGridItem.el.children[0].style.flexDirection = "column-reverse"
+			setTimeout(() => {
+				group.gridstack.parentGridItem.el.children[0].style.flexDirection = "column"
+			}, 2);
 	}
+}
+
+function loadGrid(path, file, folder) {
+
+
+
 	// if (currentfile != undefined) {
 	//   saveGrid()
 	// }
+	document.getElementById("fileName").style.fontWeight = 700
+	document.getElementById("fileName").contentEditable = true
+	document.getElementById("fileName").style.userSelect = "unset"
+
+	document.getElementById("archivePage").style.display = "none"
 	document.getElementById("placeHolder").style.display = "none"
 	document.getElementById("content").style.display = "flex"
 
@@ -642,4 +801,3 @@ if (currentfile) {
 } else {
 	document.getElementById("close").removeEventListener("click", saveGrid);
 }
-

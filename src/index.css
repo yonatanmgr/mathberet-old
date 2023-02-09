@@ -1,11 +1,17 @@
 :root {
   --theme-s: 90%;
   --theme-l: 89%;
+  --page-style: transparent;
   font-family: Rubik !important;
 }
 
 @media (prefers-color-scheme: dark) {
-
+  div.circle {
+    background: rgb(80, 80, 80) !important;
+  }
+  .line {
+    background: rgb(80, 80, 80) !important;
+  }
 #filepath{
   color: #eee !important;
 }
@@ -77,6 +83,7 @@
   #header,
   #sidebarContent,
   #placeHolder,
+  #con,
   .pageContainer {
     background: #121212 !important;
     color: #eee;
@@ -142,7 +149,7 @@
   #sidebar{
     background-color: hsl(var(--theme-h), 40%, 35%) !important;
   }  
-  #sidebar .tool{
+  #sidebar .tool, #sidebar .toolGroup{
     background-color: hsl(var(--theme-h), 52%, 28%) !important;
     filter: none !important;
   }
@@ -173,9 +180,14 @@
 @media (prefers-color-scheme: light) {
   body {color: #121212;}
 
-  #sidebar .tool:active { filter: brightness(70%) saturate(240%); }
+  #sidebar .tool:active { 
+    background-color: hsl(var(--theme-h), 30%, 60%);
+  }
   
-  #sidebar .tool:hover { filter: brightness(81%) saturate(240%); }
+  #sidebar .tool:hover {
+    background-color: hsl(var(--theme-h), 30%, 74%);
+    /* filter: brightness(81%) saturate(240%); */
+  }
 
   /* .actionsArea:has(.Group){
     background: hsla(0, 0%, 50%, 0.13) !important;
@@ -194,7 +206,7 @@
 [contenteditable]:focus { outline: 0px solid transparent; }
 
 
-html { overflow-y: hidden; }
+.app, body { overflow-y: hidden; }
 
 html, body, .app {
   width: 100%;
@@ -378,6 +390,17 @@ shortcut-list summary:active {
   -webkit-user-select: none;
   user-select: none;
 }
+
+#archivePage{
+  display: none;
+  width: 100%;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: scroll;
+  margin-bottom: auto;
+  max-height: 100%;
+}
+
 #keysTitleIcon{
   fill: hsl(var(--theme-h), 60%, 40%);
   height: 100%;
@@ -424,14 +447,29 @@ svg {
 .theorem>.grid-stack-item-content>.actionsArea {
   background: rgba(255, 196, 0, 0.07) !important;
 }
+
+.theorem>.grid-stack-item-content>.actionsArea .actionsArea, .archiveBlock.theorem .actionsArea {
+  background: rgba(148, 116, 0, 0.07) !important;
+}
+
 .proof>.grid-stack-item-content>.actionsArea {
   background: rgba(0, 128, 255, 0.07) !important;
+}
+
+.proof>.grid-stack-item-content>.actionsArea .actionsArea, .archiveBlock.proof .actionsArea {
+  background: rgba(0, 74, 147, 0.07) !important;
 }
 .defenition>.grid-stack-item-content>.actionsArea {
   background: rgba(255, 0, 38, 0.07) !important;
 }
+.defenition>.grid-stack-item-content>.actionsArea .actionsArea, .archiveBlock.defenition .actionsArea {
+  background: rgba(147, 0, 22, 0.07) !important;
+}
 .assumption>.grid-stack-item-content>.actionsArea {
   background: rgba(0, 255, 128, 0.07) !important;
+}
+.assumption>.grid-stack-item-content>.actionsArea .actionsArea, .archiveBlock.assumption .actionsArea {
+  background: rgba(0, 147, 73, 0.07) !important;
 }
 
 
@@ -457,7 +495,8 @@ svg {
   flex-direction: row;
   direction: rtl;
 
-  min-height: 100%;
+  height: inherit;
+  max-height: 100%;
   min-width: 100%;
 }
 
@@ -629,13 +668,13 @@ button:focus {outline:0;}
 }
 
 .grid-stack .grid-stack-placeholder>.placeholder-content {
-
   background-color: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
   filter: opacity(20%);
   border-radius: 8px;
   margin: 0;
   position: absolute;
-  width: calc(100% - 45px);
+  margin-right: 27px;
+  width: calc(100%-27px);
   z-index: 0 !important;
   text-align: center;
   transition: 0.2s;
@@ -806,11 +845,26 @@ button:focus {outline:0;}
 
 .pageContainer::-webkit-scrollbar { display: none; }
 
-#page { min-height: 10000% !important; margin: 10px; }
+#page {
+  min-height: 10000% !important;
+  width: initial;
+  margin: 10px;
+  background: var(--page-style);
+}
 
 .ql-editor:has(h1:only-child) { overflow-y: hidden !important; }
 
 .ql-formula { direction: ltr; }
+
+.toolGroup {
+  background-color: hsl(var(--theme-h), 66%, 74%);
+  gap: 3px;
+  overflow: hidden;
+  display: flex;
+  transition: 0.2s;
+  flex-direction: column;
+  border-radius: 100px;
+}
 
 .tool {
   display: flex;
@@ -910,6 +964,18 @@ button:focus {outline:0;}
   transition: 0.2s;
 }
 
+#archivePlaceHolder{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  transition: 0.2s;
+}
+
 .kbc-button {
   color: #777 !important;
   font-family: Rubik;
@@ -949,7 +1015,7 @@ button:focus {outline:0;}
 
 #fileName {
   direction: rtl;
-  font-weight: bold;
+  font-weight: 700;
   -webkit-app-region: none
 }
 
@@ -1069,7 +1135,7 @@ button:focus {outline:0;}
   width: 40px;
   height: 40px;
   border-radius: 100%;
-  filter: brightness(87%) saturate(200%);
+  background-color: hsl(var(--theme-h), 66%, 74%);
   transition: 0.2s;
   align-content: center;
   justify-content: center;
@@ -1286,4 +1352,205 @@ ul {
   position: relative;
   text-decoration: unset;
   font-weight: 400;
+}
+
+#archiveApp {
+  overflow-y: scroll !important;
+  min-height: 100% !important;
+  scroll-behavior: smooth;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: height 0.3s;
+  width: 55%;
+  align-self: center;
+}
+.archiveContainer:first-child{
+  padding-top: 70px;
+}
+
+.archiveContainer {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  direction: rtl;
+  gap: 20px;
+  height: 100%;
+  transition: height 0.3s, padding-bottom 0.5s;
+}
+
+
+.list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 30px;
+}
+
+
+.line.open {
+  height: 100%;
+}
+.archiveContainer.open{
+  padding-bottom: 30px;
+}
+div.circle {
+  width: 10px;
+  height: 10px;
+  background: rgb(210, 210, 210);
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+.line {
+  height: 0;
+  z-index: 0;
+  width: 2px;
+  background: rgb(210, 210, 210);
+  transition: height 0.5s, background 0.2s;
+}
+
+.sideContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  display: flex;
+  width: 10px;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.archiveBlockTitle.first {
+  height: 70px;
+
+}
+
+.archiveBlockTitle {
+  height: 30px;
+  padding-right: 4px;
+  font-family: 'Rubik';
+  transition: 0.3s;
+  display: flex;
+  direction: rtl;
+  gap: 15px;
+  flex-direction: row;
+}
+/* .archiveBlockTitle.open{
+  height: 400px;
+} */
+.archiveBlockTitle.open .archiveBlock{
+  overflow-y: scroll;
+}
+.archiveBlockTitle.open .archiveBlock .block{
+  display: block;
+}
+
+/* .archiveBlockTitle .archiveBlock {
+  height: 100%;
+  transform: scaleY(1);
+  transition: transform 0.3s;
+  transform-origin: top;
+
+}
+
+.archiveBlockTitle.open .archiveBlock{
+  height: 100%;
+
+  transform: scaleY(1);
+} */
+
+.archiveBlockTitle.first span {
+  -webkit-user-select: none;
+  user-select: none;
+  align-self: center;
+  font-size: 38px;
+  transition: 0.2s;
+}
+.archiveBlockTitle.first span:hover {
+  transform: scale(1.03);
+  cursor: pointer;
+}
+.archiveBlockTitle.first span:active {
+  transform: scale(1.01);
+  cursor: pointer;
+}
+
+.titleText{
+  font-weight: 200;
+  transition: font-weight 0.3s, color 0.2s;
+}
+.titleText.open{
+  font-weight: 700;
+}
+.archiveContent {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  width: 100%;
+}
+
+.archiveBlock {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+  padding: 10px;
+  overflow-y: scroll !important;
+  min-height: 12px !important;
+}
+.archiveBlock .block{
+  display: none;
+}
+
+.biglist {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow-y: hidden;
+  gap: 10px;
+}
+
+.archiveBlockType {
+  width: 130px;
+  height: fit-content;
+  font-size: 21px;
+  font-weight: 300;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: 0.2s;
+}
+.archiveBlockType:hover {
+  font-size: scale(1.02);
+  cursor: pointer;
+}
+.archiveBlockType:active {
+  transform: scale(0.99);
+  cursor: pointer;
+}
+
+.listContainer.open{
+  max-height: 100vh;
+  transition: max-height 2s;
+}
+.listContainer{
+  transition: max-height 0.4s;
+  overflow-y: hidden;
+
+  max-height: 0vh;
+}
+.sideLine {
+  display: flex;
+  flex-direction: column;
+}
+.archiveBlock.theorem {
+background: rgba(255, 196, 0, 0.1) !important;
+}
+.archiveBlock.proof {
+background: rgba(0, 128, 255, 0.07) !important;
+}
+.archiveBlock.defenition {
+background: rgba(255, 0, 38, 0.07) !important;
+}
+.archiveBlock.assumption {
+background: rgba(0, 164, 27, 0.07) !important;
 }

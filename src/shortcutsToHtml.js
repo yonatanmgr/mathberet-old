@@ -5,8 +5,10 @@ let shortcutDict = [
             {"text": "קובץ חדש", "keys": ["Ctrl+n"]},       
             {"text": "שמירת הקובץ הנוכחי", "keys": ["Ctrl+s"]},       
             {"text": "המחברות שלי", "keys": ["Ctrl+o"]},       
+            {"text": "פתיחת הארכיון", "keys": ["Ctrl+Alt+a"]},       
             {"text": "חיפוש", "keys": ["Ctrl+f"]},       
             {"text": "קיצורי מקלדת", "keys": ["Ctrl+h"]},
+            {"text": "רענון", "keys": ["Ctrl+r"]},       
             {"text": "יציאה", "keys": ["Ctrl+w"]}  
         ]
     },
@@ -145,7 +147,7 @@ let shortcutDict = [
                 {"text": "בטא", "latex": "\\Beta \\backslash \\beta", "keys": ["&+B \\ b"]},
                 {"text": "גמא", "latex": "\\Gamma \\backslash \\gamma", "keys": ["&+G \\ g"]},
                 {"text": "דלתא", "latex": "\\Delta \\backslash \\delta", "keys": ["&+D \\ d"]},
-                {"text": "אפסילון", "latex": "\\Epsilon \\backslash \\epsilon", "keys": ["&+E \\ e"]},
+                {"text": "אפסילון", "latex": "\\Epsilon \\backslash \\varepsilon", "keys": ["&+E \\ e"]},
                 {"text": "זטא", "latex": "\\Zeta \\backslash \\zeta", "keys": ["&+Z \\ z"]},
                 {"text": "אטא", "latex": "\\Eta \\backslash \\eta", "keys": ["&+Et \\ et"]},
                 {"text": "תטא", "latex": "\\Theta \\backslash \\theta", "keys": ["&+T \\ t"]},

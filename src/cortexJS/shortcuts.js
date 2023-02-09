@@ -27,7 +27,7 @@ let defShortcuts = {
     '&b': '\\beta',
     '&g': '\\gamma',
     '&d': '\\delta',
-    '&e': '\\epsilon',
+    '&e': '\\varepsilon',
     '&z': '\\zeta',
     '&et': '\\eta',
     '&t': '\\theta',
