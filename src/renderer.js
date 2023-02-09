@@ -147,18 +147,18 @@ document.getElementById("contextMenu").children[0].querySelector('.theorem').add
   let clicked = document.getElementById("contextMenu").children[0].id
   if (clicked){
 
-  let block = findInGrid(clicked)
-  block.querySelector(".seperator").innerHTML = "&nbsp;-&nbsp;"
+	let block = findInGrid(clicked)
+	block.querySelector(".seperator").innerHTML = "&nbsp;-&nbsp;"
 
-  block.querySelector(".groupType").innerText = "משפט 💡"
+	block.querySelector(".groupType").innerText = "משפט 💡"
 
-  block.classList.add("theorem")
-  block.classList.remove("defenition")
-  block.classList.remove("assumption")
-  block.classList.remove("proof")
+	block.classList.add("theorem")
+	block.classList.remove("defenition")
+	block.classList.remove("assumption")
+	block.classList.remove("proof")
 
-  pageGrid.update(block, {subType: "theorem"})
-}
+	pageGrid.update(block, {subType: "theorem"})
+	}
   else{ addGroup("theorem") }
 
 })
@@ -166,17 +166,17 @@ document.getElementById("contextMenu").children[0].querySelector('.defenition').
   let clicked = document.getElementById("contextMenu").children[0].id
   if (clicked){
 
-  let block = findInGrid(clicked)
-  block.querySelector(".seperator").innerHTML = "&nbsp;-&nbsp;"
+	let block = findInGrid(clicked)
+	block.querySelector(".seperator").innerHTML = "&nbsp;-&nbsp;"
 
-  block.querySelector(".groupType").innerText = "הגדרה ❗"
-    
-  block.classList.remove("theorem")
-  block.classList.add("defenition")
-  block.classList.remove("assumption")
-  block.classList.remove("proof")
+	block.querySelector(".groupType").innerText = "הגדרה ❗"
+		
+	block.classList.remove("theorem")
+	block.classList.add("defenition")
+	block.classList.remove("assumption")
+	block.classList.remove("proof")
 
-  pageGrid.update(block, {subType: "defenition"})
+	pageGrid.update(block, {subType: "defenition"})
 }
   else{ addGroup("defenition") }
 
@@ -213,6 +213,7 @@ function openArchive() {
 	document.getElementById("fileName").innerText = "ארכיון"
 	document.getElementById("fileName").contentEditable = false
 	document.getElementById("fileName").style.userSelect = "none"
+	if (pageGrid != undefined) {pageGrid.removeAll()}
 	renderArchive()
 }
 

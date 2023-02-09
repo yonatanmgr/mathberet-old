@@ -6,7 +6,8 @@ let defShortcuts = {
     '@': '\\degree',
     'nCk': '\\binom',
     'vec': '\\vec{#?}',
-    '^^': '\\hat{#?}',
+    'gg': '\\hat{#?}',
+    '^^': '\\land',
     'mx': '\\begin{matrix} {#?} & {#?} \\\\ {#?} & {#?} \\end{matrix}',
     'mx22': '\\begin{matrix} {#?} & {#?} \\\\ {#?} & {#?} \\end{matrix}',
     'mx32': '\\begin{matrix} {#?} & {#?} \\\\ {#?} & {#?} \\\\ {#?} & {#?} \\end{matrix}',
@@ -248,6 +249,7 @@ let defShortcuts = {
     '?=': '\\questeq',
     '÷': '\\div',
     '¬': '\\neg',
+    'not': '\\neg',
     ':=': '\\coloneq',
     '::': '\\Colon',
   

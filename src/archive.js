@@ -68,10 +68,10 @@ function renderArchive(){
                 }
             })
             setTimeout(() => {
-                found.blockContent.map(loadBlockContent)
+                found.blockContent.forEach(loadBlockContent)
                 grid.load(found.blockContent);
-                found.blockContent.map(loadBlock)
-        
+                found.blockContent.forEach(loadBlock)
+                // found.blockContent.map(loadBlock)
             }, 5);
         })
     
@@ -96,13 +96,15 @@ function renderArchive(){
             document.querySelectorAll(".archiveBlockType").forEach(title=>title
             .addEventListener("click", (e) => {
                 let con = e.target.closest(".archiveBlockTitle")
+                let type = e.target.closest(".archiveBlockType")
                 if (con.classList.contains("open")) {
                     con.classList.remove("open")
                     con.style.height = "30px"
-    
+                    type.classList.remove("open")
                     
                 } else {
                     con.classList.add("open")
+                    type.classList.add("open")
                     function updateHeight(){
                         let h = 0;
                         for (const item of con.querySelector('.archiveBlock').gridstack.getGridItems()) {h += item.gridstackNode.h;}

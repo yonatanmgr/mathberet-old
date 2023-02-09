@@ -486,6 +486,9 @@ function newFile() {
 		document.getElementById("fileName").contentEditable = true
 		document.getElementById("fileName").style.userSelect = "unset"
 	
+		document.querySelectorAll(".archiveBlock").forEach(block => {
+			document.getElementById(block.id).gridstack.destroy();
+		})
 		document.getElementById("archivePage").style.display = "none"
 		document.getElementById("placeHolder").style.display = "none"
 		document.getElementById("content").style.display = "flex"

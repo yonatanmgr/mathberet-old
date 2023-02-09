@@ -38,7 +38,7 @@ function scrollToTop() {
 	document.querySelector(".pageContainer").scrollTop = 0
 }
 document.addEventListener("dblclick", function (e) {
-	if (e.target.closest("#content")) {
+	if (e.target.id == "content") {
 		scrollToTop()
 	}
 });
@@ -71,7 +71,7 @@ pageGrid.on('dropped', function (event, previousWidget, newWidget) {
 		resized.el.querySelector("math-field")._mathfield.setOptions({
 			inlineShortcuts: defShortcuts,
 			plonkSound: null,
-			id: block.id,
+			id: resized.id,
 			onExport: (mf, latex) => `${latex}`,
 		})
 	}
@@ -344,30 +344,38 @@ function addMF() {
 				switch (ev.code) {
 					case "KeyX":
 						getSelection("expand");
+						ev.preventDefault();
 						break;
 					case "KeyG":
 						getSelection("graph");
+						ev.preventDefault();
 						break;
 					case "Equal":
 						created.insert('\\approx');
+						ev.preventDefault();
 						break;
 					case "Comma":
 						created.insert('\\measuredangle');
+						ev.preventDefault();
 						break;
 					case "Digit0":
 						created.insert('\\emptyset');
+						ev.preventDefault();
 						break;
 					case "Enter":
 						created.insert('\\begin{gathered} {#?} \\end{gathered}');
+						ev.preventDefault();
 						break;
 					case "KeyC":
 						if (ev.shiftKey === true) {
 							created.insert('\\complement');
+							ev.preventDefault();
 							break;
 						}
 						case "KeyT":
 							if (ev.shiftKey === true) {
 								created.insert('\\triangle');
+								ev.preventDefault();
 								break;
 							}
 							default:
@@ -637,31 +645,39 @@ function loadBlock(block) {
 					switch (ev.code) {
 						case "KeyX":
 							getSelection("expand");
+							ev.preventDefault();
 							break;
 						case "KeyG":
 							getSelection("graph");
+							ev.preventDefault();
 							break;
 						case "Equal":
 							mfBlock.insert('\\approx');
+							ev.preventDefault();
 							break;
 						case "Comma":
 							mfBlock.insert('\\measuredangle');
+							ev.preventDefault();
 							break;
 						case "Digit0":
 							mfBlock.insert('\\emptyset');
+							ev.preventDefault();
 							break;
 						case "KeyC":
 							if (ev.shiftKey === true) {
 								mfBlock.insert('\\complement');
+								ev.preventDefault();
 								break;
 							}
 							case "KeyT":
 								if (ev.shiftKey === true) {
 									mfBlock.insert('\\triangle');
+									ev.preventDefault();
 									break;
 								}
 								case "Enter": {
 									mfBlock.insert('\\begin{gathered} {#?} \\end{gathered}');
+									ev.preventDefault();
 									break;
 								}
 								default:
@@ -779,6 +795,9 @@ function loadGrid(path, file, folder) {
 	document.getElementById("fileName").style.userSelect = "unset"
 
 	document.getElementById("archivePage").style.display = "none"
+	document.querySelectorAll(".archiveBlock").forEach(block => {
+		document.getElementById(block.id).gridstack.destroy();
+	})
 	document.getElementById("placeHolder").style.display = "none"
 	document.getElementById("content").style.display = "flex"
 

@@ -186,7 +186,7 @@
   }
   
   #sidebar .tool:hover {
-    background-color: hsl(var(--theme-h), 30%, 74%);
+    background-color: hsl(var(--theme-h), 30%, 67%);
     /* filter: brightness(81%) saturate(240%); */
   }
 
@@ -1520,12 +1520,15 @@ div.circle {
   user-select: none;
   transition: 0.2s;
 }
+.archiveBlockType.open {
+  font-weight: 500;
+}
 .archiveBlockType:hover {
-  font-size: scale(1.02);
+  transform: scale(1.02);
   cursor: pointer;
 }
 .archiveBlockType:active {
-  transform: scale(0.99);
+  transform: scale(0.98);
   cursor: pointer;
 }
 
