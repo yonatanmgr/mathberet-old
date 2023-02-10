@@ -83,6 +83,11 @@ async function createWindow() {
       accelerator: 'Ctrl+Shift+I',
       click: () => {win.webContents.openDevTools();}
     },
+      {
+      role: 'Home',
+      accelerator: 'Ctrl+H',
+      click: () => {win.webContents.send("Home");}
+    },
     {
       role: 'Create a new File...',
       accelerator: 'Ctrl+N',
@@ -105,7 +110,7 @@ async function createWindow() {
     },
     {
       role: 'Help',
-      accelerator: 'Ctrl+H',
+      accelerator: 'Ctrl+Alt+H',
       click: () => {win.webContents.send("Shortcuts")}
     }
   ]
@@ -259,6 +264,30 @@ async function createWindow() {
     }
 
     win.webContents.send("gotArchive", finalArr);
+  })
+  
+  ipcMain.on("startSearch", (event, args) =>{
+    const filesPath = path.join(__dirname, "..", "files")
+    function getAllBlocks() {
+      let allGroups = [];
+      let allFiles = fs.readdirSync(filesPath, {withFileTypes: true})
+      for (const file of allFiles) {
+        if (file.isDirectory()) {
+          let subFiles = fs.readdirSync(path.join(filesPath, file.name), {withFileTypes: true})
+          for (const subfile of subFiles) {
+            let readFile = fs.readFileSync(path.join(filesPath, file.name, subfile.name), "utf-8")
+            allGroups.push({"filePath": path.join(filesPath, file.name, subfile.name), "fileName": subfile.name.replace(".json", ""), "blocks": JSON.parse(readFile)})
+          }
+        }
+        else {
+          let readFile = fs.readFileSync(path.join(filesPath, file.name), "utf-8")
+          allGroups.push({"filePath": path.join(filesPath, file.name), "fileName": file.name.replace(".json", ""), "blocks": JSON.parse(readFile)})
+        }
+      }
+      return allGroups
+    }
+    let allGroups = getAllBlocks()
+    win.webContents.send("gotAllBlocks", allGroups);
   })
 }
 

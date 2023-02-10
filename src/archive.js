@@ -45,12 +45,15 @@ function renderArchive(){
             }
             let found = search()
             let options = {
+                disableResize: true,
+                disableDrag: true,
                 float: false,
                 handle: '.handle',
                 class: 'blockGroup',
                 resizable: {handles: 's,sw,w'},
                 itemClass: 'block',
                 children: [],
+                column: 1,
                 margin: 10,
                 cellHeight: 50,
                 dragOut: false,
@@ -93,7 +96,7 @@ function renderArchive(){
         
                 }
         }))
-            document.querySelectorAll(".archiveBlockType").forEach(title=>title
+            document.querySelectorAll(".archiveBlockType").forEach(title=>{title
             .addEventListener("click", (e) => {
                 let con = e.target.closest(".archiveBlockTitle")
                 let type = e.target.closest(".archiveBlockType")
@@ -115,7 +118,22 @@ function renderArchive(){
                     con.querySelector('.archiveBlock').gridstack.on('resize', updateHeight)
                     resizeAll(con.querySelector('.archiveBlock').gridstack)
                 }
-        }))
+        })
+        title.addEventListener("mouseover", (e)=>{
+            let date = new Date(parseInt(e.target.closest(".archiveBlockTitle").querySelector(".archiveBlock").id))
+            let newDate = `${date.toLocaleDateString('he-IL')}, ${date.toLocaleTimeString('he-IL', { hour: "2-digit", minute: "2-digit" })}`
+
+            let ttp = document.getElementById("timeTooltip")
+            ttp.style.top = `${e.target.offsetTop + 8}px`;
+            ttp.style.left = `${e.target.offsetLeft + 180}px`;
+            ttp.innerText = newDate
+            ttp.style.opacity = "50%";
+        })
+        title.addEventListener("mouseleave", (e)=>{
+            let ttp = document.getElementById("timeTooltip")
+            ttp.style.opacity = "0%";
+        })
+    })
     
     }
 

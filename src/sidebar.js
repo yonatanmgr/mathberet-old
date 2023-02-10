@@ -418,7 +418,7 @@ document.addEventListener('contextmenu', function(e) {
 			file.firstChild.innerHTML = fileIconPath;
 		} else {
 			file.firstChild.classList.add("toDelete");
-			file.firstChild.innerHTML = trashIcon;
+			file.firstChild.innerHTML = trashCanIconPath;
 		}
 	}
 }, false);
@@ -491,6 +491,7 @@ function newFile() {
 		})
 		document.getElementById("archivePage").style.display = "none"
 		document.getElementById("placeHolder").style.display = "none"
+		document.getElementById("searchPage").style.display = "none";
 		document.getElementById("content").style.display = "flex"
 		document.getElementById("slash").innerText = ""
 		document.getElementById("notebookName").innerText = ""
