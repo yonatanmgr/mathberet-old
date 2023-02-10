@@ -19,10 +19,34 @@ function startSearch() {
 function search(text) {
 	let result = [];
 	for (const block of allBlocks) {
-		if (block.type != "Graph" && block.type != "Group" && JSON.stringify(block.blockContent).includes(text) || block.type == "Group" && block.groupTitle.includes(text)) {
-			result.push(block);
+		let match;
+		switch (block.type) {
+			case "Graph": continue;
+			case "Group":
+				let groupRes = [];
+				block.blockContent.forEach(block=>{
+					let match;
+					switch (block.type) {
+						case "Graph": break;
+						case "Math": match = block.blockContent; break;
+						case "Text":
+							tempRes = [];
+							block.blockContent.ops.forEach(i=>tempRes.push(i.insert));
+							match = tempRes.join(" ");
+							break;
+					}
+					groupRes.push(match)
+				})
+				match = block.groupTitle + groupRes.join(" ");
+				break;
+			case "Math": match = block.blockContent; break;
+			case "Text":
+				tempRes = [];
+				block.blockContent.ops.forEach(i=>tempRes.push(i.insert));
+				match = tempRes.join(" ");
+				break;
 		}
-		else continue
+		if (match.toLowerCase().includes(text.toLowerCase())) { result.push(block) } else continue;
 	}
 	return result
 }
@@ -215,6 +239,23 @@ function resetPage() {
 	document.getElementById("fileName").style.fontWeight = 700
 	document.getElementById("fileName").innerText = ""
 }
+function searchMode() {
+	startSearch();
+	currentfile = undefined;
+	document.getElementById("shortcutsHelp").classList.replace("open", "closed")
+	document.getElementById("placeHolder").style.display = "none"
+	document.getElementById("archivePage").style.display = "none"
+	document.getElementById("content").style.display = "none"
+	document.getElementById("notebookName").innerText = ""
+	document.getElementById("slash").innerText = ""
+	document.getElementById("fileName").innerHTML = `<input id="searchBar" type="text" placeholder="מה תרצו לחפש?">`
+	document.getElementById("searchBar").focus();
+	document.getElementById("searchBar").addEventListener("input", ()=>{
+		let res = search(document.getElementById("searchBar").value);
+		console.clear();
+		console.log(res);
+	})
+}
 
 // Return to start page
 function openArchive() {
@@ -312,6 +353,7 @@ document.getElementById("maximize").addEventListener("click", toggleMaximize);
 document.getElementById("logo").addEventListener("click", resetPage);
 document.getElementById("archive").addEventListener("click", openArchive);
 document.getElementById("help").addEventListener('click', toggleHelp)
+document.getElementById("search").addEventListener('click', searchMode)
 document.getElementById("settings").addEventListener('click', () => {
 	toggleSidebar('settings')
 })
