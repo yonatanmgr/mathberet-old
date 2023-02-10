@@ -272,7 +272,7 @@ function searchMode() {
 			app.innerHTML = res.forEach(file => {
 				let fileName = file.fileName;
 				let filePath = file.filePath;
-				let container = `<div class="searchContainer"><div class="sideLine"><div class="sideContainer"><div class="circle"></div><div class="line"></div></div></div><div class="biglist"><div class="searchBlockTitle first"><span class="titleText">${fileName}</span></div><div class="listContainer"><div class="list" id="file_${filePath}"></div></div></div></div>`
+				let container = `<div class="searchContainer"><div class="sideLine"><div class="sideContainer"><div class="circle"></div><div class="line"></div></div></div><div class="biglist"><div class="searchBlockTitle first" id="title_${filePath}"><span class="titleText">${fileName}</span></div><div class="listContainer"><div class="list" id="file_${filePath}"></div></div></div></div>`
 				html.push(container)
 				});
 			
@@ -292,22 +292,27 @@ function searchMode() {
 					cellHeight: 50,
 				}
 				let resGrid = GridStack.init(options, document.getElementById(`file_${file.filePath}`))
-				file.blocks.forEach(loadBlockContent)
-				resGrid.load(file.blocks);
-				file.blocks.forEach(loadBlock)
 				
 			})
+			
 
 			document.querySelectorAll(".searchBlockTitle.first span").forEach(title=>title
 				.addEventListener("click", (e) => {
+					let titleGrid = document.getElementById(title.parentElement.id.replace("title_", "file_")).gridstack
 					let con = e.target.closest(".searchContainer")
 					if (con.querySelector(".line").classList.contains("open")) {
+						titleGrid.removeAll()
 						con.classList.remove("open")
 						con.querySelector(".titleText").classList.remove("open")
 						con.querySelector(".listContainer").classList.remove("open")
 						con.querySelector(".line").classList.remove("open")
 			
 					} else {
+						let blocks = res.find(file => file.filePath == title.parentElement.id.replace("title_", "")).blocks
+						blocks.forEach(loadBlockContent)
+						titleGrid.load(blocks);
+						blocks.forEach(loadBlock)
+
 						con.classList.add("open")
 						con.querySelector(".titleText").classList.add("open")
 						con.querySelector(".listContainer").classList.add("open")

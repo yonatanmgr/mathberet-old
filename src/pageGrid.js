@@ -800,7 +800,7 @@ function loadGrid(path, file, folder) {
 	document.getElementById("fileName").style.fontWeight = 700
 	document.getElementById("fileName").contentEditable = true
 	document.getElementById("fileName").style.userSelect = "unset"
-
+	document.getElementById("searchPage").style.display = "none";
 	document.getElementById("archivePage").style.display = "none"
 	document.querySelectorAll(".archiveBlock").forEach(block => {
 		document.getElementById(block.id).gridstack.destroy();
