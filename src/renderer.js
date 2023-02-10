@@ -61,40 +61,44 @@ function search(text) {
 		for (const block of file.blocks) {
 			let match;
 			switch (block.type) {
-				case "Graph": continue;
+				case "Graph": match = ""; continue;
 				case "Group":
 					let groupRes = [];
+					block.h = block.memoryDims.h
+					block.w = block.memoryDims.w
 					block.blockContent.forEach(block=>{
 						let match;
 						switch (block.type) {
-							case "Graph": break;
+							case "Graph": match = ""; break;
 							case "Math": match = block.blockContent; break;
 							case "Text":
 								tempRes = [];
 								block.blockContent.ops.forEach(i=>tempRes.push(i.insert));
-								match = tempRes.join(" ");
+								match = tempRes.join("");
 								break;
 						}
 						groupRes.push(match)
 					})
-					match = block.groupTitle + groupRes.join(" ");
+					match = groupRes.join(" ");
 					break;
 				case "Math": match = block.blockContent; break;
 				case "Text":
 					tempRes = [];
 					block.blockContent.ops.forEach(i=>tempRes.push(i.insert));
-					match = tempRes.join(" ");
+					match = tempRes.join("");
 					break;
 			}
-			if (match.toLowerCase().includes(text.toLowerCase())) { result.push(block) } else continue;
+			if (match){
+				if (match.toLowerCase().includes(text.toLowerCase())) { result.push(block) } else continue;
+			}
 		}
-		finalResult.push({"fileName": file.fileName, "blocks": result})
+		finalResult.push({"filePath": file.filePath, "fileName": file.fileName, "blocks": result})
 	}
 	return finalResult
 }
 
 document.onclick = hideMenu; 
-document.addEventListener("contextmenu", function(e){ if(e.target.closest("#addGroup, .groupType, .groupTitle")) {rightClick(e)} })
+document.addEventListener("contextmenu", function(e){ if(e.target.closest("#addGroup, .groupType, .groupTitle") && document.getElementById("searchPage").style == "none") {rightClick(e)} })
 
 function hideMenu() {
   document.getElementById("contextMenu").children[0].id = "";
@@ -256,23 +260,43 @@ function searchMode() {
 			document.getElementById("archivePage").style.display = "none";
 			document.getElementById("content").style.display = "none";
 			document.getElementById("searchPage").style.display = "flex";
-		} else {app.style.display = "none"}
+		} else {
+			document.getElementById("searchPage").style.display = "none";
+			app.style.display = "none"
+		}
 		let res = search(document.getElementById("searchBar").value).filter(file => file.blocks.length > 0);
 		if (res.every(noResults)) {app.innerHTML = ""}
 		else {		
 			let html = [];
 			app.innerHTML = "";
-			res.forEach(element => {
-				let fileName = element.fileName;
-				let container = `<div class="searchContainer"><div class="sideLine"><div class="sideContainer"><div class="circle"></div><div class="line"></div></div></div><div class="biglist"><div class="searchBlockTitle first"><span class="titleText">${fileName}</span></div><div class="listContainer"><div class="list">`
+			app.innerHTML = res.forEach(file => {
+				let fileName = file.fileName;
+				let filePath = file.filePath;
+				let container = `<div class="searchContainer"><div class="sideLine"><div class="sideContainer"><div class="circle"></div><div class="line"></div></div></div><div class="biglist"><div class="searchBlockTitle first"><span class="titleText">${fileName}</span></div><div class="listContainer"><div class="list" id="file_${filePath}"></div></div></div></div>`
 				html.push(container)
-				for (const block of element.blocks) {
-					let listed = `<div class="searchBlockTitle"><div class="searchContent"><div class="searchBlock" id="${block.id}"></div></div></div>`
-					html.push(listed)
-				}
-				html.push(`</div></div></div></div>`)
 				});
+			
 			app.innerHTML = html.join("");
+			
+			res.forEach(file => {
+				let options = {
+					disableResize: true,
+					disableDrag: true,
+					float: false,
+					handle: '.handle',
+					class: 'blockGroup',
+					column: 1,
+					itemClass: 'block',
+					children: [],
+					margin: 10,
+					cellHeight: 50,
+				}
+				let resGrid = GridStack.init(options, document.getElementById(`file_${file.filePath}`))
+				file.blocks.forEach(loadBlockContent)
+				resGrid.load(file.blocks);
+				file.blocks.forEach(loadBlock)
+				
+			})
 
 			document.querySelectorAll(".searchBlockTitle.first span").forEach(title=>title
 				.addEventListener("click", (e) => {

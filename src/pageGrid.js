@@ -590,7 +590,7 @@ function loadBlockContent(block) {
 				blockParent.classList.remove("proof")
 				blockParent.classList.add(block.subType)
 			}
-			setClass()
+			if (document.getElementById("searchPage").style.display == "none") {setClass()}
 			break;
 		default:
 			break;
@@ -691,9 +691,16 @@ function loadBlock(block) {
 			});
 			break;
 		case "Graph":
-			let box = document.getElementById(`ggBox_${block.id}`)
-			box.closest(".grid-stack-item").gridstackNode.blockContent = createGgb(block.id, block.blockContent)
+			if (document.getElementById("searchPage").style.display != "none"){
+				let box = document.getElementById(`ggBox_${block.id}`)
+				box.closest(".grid-stack-item").gridstackNode.blockContent = {};
+			}
+			else{
+				let box = document.getElementById(`ggBox_${block.id}`)
+				box.closest(".grid-stack-item").gridstackNode.blockContent = createGgb(block.id, block.blockContent)
+			}
 			break;
+
 		case "Group":
 
 			let group = document.getElementById(`group_${block.id}`)

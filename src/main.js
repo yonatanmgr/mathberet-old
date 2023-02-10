@@ -271,13 +271,12 @@ async function createWindow() {
           let subFiles = fs.readdirSync(path.join(filesPath, file.name), {withFileTypes: true})
           for (const subfile of subFiles) {
             let readFile = fs.readFileSync(path.join(filesPath, file.name, subfile.name), "utf-8")
-            allGroups.push({"fileName": subfile.name.replace(".json", ""), "blocks": JSON.parse(readFile)})
+            allGroups.push({"filePath": path.join(filesPath, file.name, subfile.name), "fileName": subfile.name.replace(".json", ""), "blocks": JSON.parse(readFile)})
           }
         }
         else {
           let readFile = fs.readFileSync(path.join(filesPath, file.name), "utf-8")
-          allGroups.push({"fileName": file.name.replace(".json", ""), "blocks": JSON.parse(readFile)})
-          // for (const block of JSON.parse(readFile)) {allGroups.push(block)}
+          allGroups.push({"filePath": path.join(filesPath, file.name), "fileName": file.name.replace(".json", ""), "blocks": JSON.parse(readFile)})
         }
       }
       return allGroups
