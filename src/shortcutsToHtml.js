@@ -2,12 +2,13 @@ let shortcutDict = [
     {    
         "part": "כללי",
         "shortcuts": [
+            {"text": "מסך הבית", "keys": ["Ctrl+h"]},
             {"text": "קובץ חדש", "keys": ["Ctrl+n"]},       
             {"text": "שמירת הקובץ הנוכחי", "keys": ["Ctrl+s"]},       
             {"text": "המחברות שלי", "keys": ["Ctrl+o"]},       
             {"text": "פתיחת הארכיון", "keys": ["Ctrl+Alt+a"]},       
             {"text": "חיפוש", "keys": ["Ctrl+f"]},       
-            {"text": "קיצורי מקלדת", "keys": ["Ctrl+h"]},
+            {"text": "קיצורי מקלדת", "keys": ["Ctrl+Alt+h"]},
             {"text": "רענון", "keys": ["Ctrl+r"]},       
             {"text": "יציאה", "keys": ["Ctrl+w"]}  
         ]

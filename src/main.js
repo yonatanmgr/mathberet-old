@@ -83,6 +83,11 @@ async function createWindow() {
       accelerator: 'Ctrl+Shift+I',
       click: () => {win.webContents.openDevTools();}
     },
+      {
+      role: 'Home',
+      accelerator: 'Ctrl+H',
+      click: () => {win.webContents.send("Home");}
+    },
     {
       role: 'Create a new File...',
       accelerator: 'Ctrl+N',
@@ -105,7 +110,7 @@ async function createWindow() {
     },
     {
       role: 'Help',
-      accelerator: 'Ctrl+H',
+      accelerator: 'Ctrl+Alt+H',
       click: () => {win.webContents.send("Shortcuts")}
     }
   ]
