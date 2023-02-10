@@ -45,12 +45,15 @@ function renderArchive(){
             }
             let found = search()
             let options = {
+                disableResize: true,
+                disableDrag: true,
                 float: false,
                 handle: '.handle',
                 class: 'blockGroup',
                 resizable: {handles: 's,sw,w'},
                 itemClass: 'block',
                 children: [],
+                column: 1,
                 margin: 10,
                 cellHeight: 50,
                 dragOut: false,

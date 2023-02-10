@@ -392,7 +392,7 @@ shortcut-list summary:active {
   user-select: none;
 }
 
-#archivePage{
+#archivePage, #searchPage{
   display: none;
   width: 100%;
   flex-direction: column;
@@ -1356,7 +1356,7 @@ ul {
   font-weight: 400;
 }
 
-#archiveApp {
+#archiveApp, #searchApp {
   overflow-y: scroll !important;
   min-height: 100% !important;
   scroll-behavior: smooth;
@@ -1368,11 +1368,11 @@ ul {
   width: 55%;
   align-self: center;
 }
-.archiveContainer:first-child{
+.archiveContainer:first-child, .searchContainer:first-child{
   padding-top: 70px;
 }
 
-.archiveContainer {
+.archiveContainer, .searchContainer{
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -1394,7 +1394,7 @@ ul {
 .line.open {
   height: 100%;
 }
-.archiveContainer.open{
+.archiveContainer.open, .searchContainer.open{
   padding-bottom: 30px;
 }
 div.circle {
@@ -1422,7 +1422,7 @@ div.circle {
   margin-top: 30px;
 }
 
-.archiveBlockTitle.first {
+.archiveBlockTitle.first, .searchBlockTitle.first{
   height: 70px;
 
 }
@@ -1454,7 +1454,7 @@ div.circle {
   position: absolute;
 }
 
-.archiveBlockTitle {
+.archiveBlockTitle, .searchBlockTitle{
   height: 30px;
   padding-right: 4px;
   font-family: 'Rubik';
@@ -1488,18 +1488,18 @@ div.circle {
   transform: scaleY(1);
 } */
 
-.archiveBlockTitle.first span {
+.archiveBlockTitle.first span, .searchBlockTitle.first span {
   -webkit-user-select: none;
   user-select: none;
   align-self: center;
   font-size: 38px;
   transition: 0.2s;
 }
-.archiveBlockTitle.first span:hover {
+.archiveBlockTitle.first span:hover, .searchBlockTitle.first span:hover{
   transform: scale(1.03);
   cursor: pointer;
 }
-.archiveBlockTitle.first span:active {
+.archiveBlockTitle.first span:active, .searchBlockTitle.first span:active{
   transform: scale(1.01);
   cursor: pointer;
 }
@@ -1511,7 +1511,7 @@ div.circle {
 .titleText.open{
   font-weight: 700;
 }
-.archiveContent {
+.archiveContent, .searchContent {
   height: 100%;
   display: flex;
   flex-direction: row;
@@ -1519,7 +1519,7 @@ div.circle {
   width: 100%;
 }
 
-.archiveBlock {
+.archiveBlock, .searchBlock {
   width: 100%;
   overflow: hidden;
   border-radius: 10px;
@@ -1527,7 +1527,7 @@ div.circle {
   overflow-y: scroll !important;
   min-height: 12px !important;
 }
-.archiveBlock .block{
+.archiveBlock .block, .searchBlock .block{
   display: none;
 }
 

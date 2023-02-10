@@ -1,55 +1,20 @@
-let dirTree, currentfile, currentBlock, currentTheme, archiveContent, pageStyle, hebPageStyle, allBlocks;
-let maximizeStatus, sidebarStatus = 0
+let dirTree, currentfile, currentBlock, currentTheme, archiveContent, pageStyle, hebPageStyle, allBlocks, currentSearchRes;
+let maximizeStatus, sidebarStatus = 0;
 
 
 function getColor() {
 	window.api.getUserColor()
-	window.api.receive("gotUserColor", (color) => {
-		document.querySelector(":root").style.setProperty("--theme-h", color);
-	})
+	window.api.receive("gotUserColor", (color) => {document.querySelector(":root").style.setProperty("--theme-h", color);})
 }
 
-function startSearch() {
-	window.api.startSearch()
-	window.api.receive("gotAllBlocks", (result)=> {
-		allBlocks = result;
-	})
+getColor()
+
+function getTheme() {
+	window.api.getUserTheme()
+	window.api.receive("gotUserTheme", (theme) => {currentTheme = theme})
 }
 
-function search(text) {
-	let result = [];
-	for (const block of allBlocks) {
-		let match;
-		switch (block.type) {
-			case "Graph": continue;
-			case "Group":
-				let groupRes = [];
-				block.blockContent.forEach(block=>{
-					let match;
-					switch (block.type) {
-						case "Graph": break;
-						case "Math": match = block.blockContent; break;
-						case "Text":
-							tempRes = [];
-							block.blockContent.ops.forEach(i=>tempRes.push(i.insert));
-							match = tempRes.join(" ");
-							break;
-					}
-					groupRes.push(match)
-				})
-				match = block.groupTitle + groupRes.join(" ");
-				break;
-			case "Math": match = block.blockContent; break;
-			case "Text":
-				tempRes = [];
-				block.blockContent.ops.forEach(i=>tempRes.push(i.insert));
-				match = tempRes.join(" ");
-				break;
-		}
-		if (match.toLowerCase().includes(text.toLowerCase())) { result.push(block) } else continue;
-	}
-	return result
-}
+getTheme()
 
 function getPageStyle() {
 	window.api.getPageStyle()
@@ -74,25 +39,59 @@ function getPageStyle() {
 
 getPageStyle()
 
-
 function getArchive(){
 	window.api.getArchive()
-	window.api.receive("gotArchive", (data) => {
-		archiveContent = data;
-	})
+	window.api.receive("gotArchive", (data) => {archiveContent = data})
 }
 
 getArchive()
 
-function getTheme() {
-	window.api.getUserTheme()
-	window.api.receive("gotUserTheme", (theme) => {
-		currentTheme = theme;
+
+function startSearch() {
+	window.api.startSearch()
+	window.api.receive("gotAllBlocks", (result)=> {
+		allBlocks = result;
 	})
-	return currentTheme
 }
-getColor()
-getTheme()
+
+function search(text) {
+	let finalResult = [];
+	for (const file of allBlocks) {
+		let result = [];
+		for (const block of file.blocks) {
+			let match;
+			switch (block.type) {
+				case "Graph": continue;
+				case "Group":
+					let groupRes = [];
+					block.blockContent.forEach(block=>{
+						let match;
+						switch (block.type) {
+							case "Graph": break;
+							case "Math": match = block.blockContent; break;
+							case "Text":
+								tempRes = [];
+								block.blockContent.ops.forEach(i=>tempRes.push(i.insert));
+								match = tempRes.join(" ");
+								break;
+						}
+						groupRes.push(match)
+					})
+					match = block.groupTitle + groupRes.join(" ");
+					break;
+				case "Math": match = block.blockContent; break;
+				case "Text":
+					tempRes = [];
+					block.blockContent.ops.forEach(i=>tempRes.push(i.insert));
+					match = tempRes.join(" ");
+					break;
+			}
+			if (match.toLowerCase().includes(text.toLowerCase())) { result.push(block) } else continue;
+		}
+		finalResult.push({"fileName": file.fileName, "blocks": result})
+	}
+	return finalResult
+}
 
 document.onclick = hideMenu; 
 document.addEventListener("contextmenu", function(e){ if(e.target.closest("#addGroup, .groupType, .groupTitle")) {rightClick(e)} })
@@ -123,11 +122,6 @@ function rightClick(e) {
         }
     } 
 } 
-
-function findInGrid(id){
-  let arr = pageGrid.getGridItems()
-	return arr.find(t => t.gridstackNode.id == id)
-}
 
 document.getElementById("contextMenu").children[0].querySelector('.undefined').addEventListener("click", ()=>{
   let clicked = document.getElementById("contextMenu").children[0].id
@@ -223,68 +217,108 @@ document.getElementById("contextMenu").children[0].querySelector('.defenition').
 
 })
 
+function findInGrid(id){return pageGrid.getGridItems().find(t => t.gridstackNode.id == id)}
 
 // GENERAL
 
 // Return to start page
 function resetPage() {
 	currentfile = undefined;
-	closeSidebar()
-	document.getElementById("shortcutsHelp").classList.replace("open", "closed")
-	document.getElementById("placeHolder").style.display = "flex"
-	document.getElementById("archivePage").style.display = "none"
-	document.getElementById("content").style.display = "none"
-	document.getElementById("notebookName").innerText = ""
-	document.getElementById("slash").innerText = ""
-	document.getElementById("fileName").style.fontWeight = 700
-	document.getElementById("fileName").innerText = ""
+	closeSidebar();
+	document.getElementById("shortcutsHelp").classList.replace("open", "closed");
+	document.getElementById("placeHolder").style.display = "flex";
+	document.getElementById("archivePage").style.display = "none";
+	document.getElementById("searchPage").style.display = "none";
+	document.getElementById("content").style.display = "none";
+	document.getElementById("notebookName").innerText = "";
+	document.getElementById("slash").innerText = "";
+	document.getElementById("fileName").style.fontWeight = 700;
+	document.getElementById("fileName").innerText = "";
 }
+
+const noResults = (a) => a.blocks.length == 0;
+
 function searchMode() {
-	startSearch();
 	currentfile = undefined;
-	document.getElementById("shortcutsHelp").classList.replace("open", "closed")
-	document.getElementById("placeHolder").style.display = "none"
-	document.getElementById("archivePage").style.display = "none"
-	document.getElementById("content").style.display = "none"
-	document.getElementById("notebookName").innerText = ""
-	document.getElementById("slash").innerText = ""
-	document.getElementById("fileName").innerHTML = `<input id="searchBar" type="text" placeholder="מה תרצו לחפש?">`
+	startSearch();
+    let app = document.getElementById("searchApp");
+	document.getElementById("shortcutsHelp").classList.replace("open", "closed");
+	document.getElementById("notebookName").innerText = "";
+	document.getElementById("slash").innerText = "";
+	document.getElementById("fileName").contentEditable = false;
+	document.getElementById("fileName").innerHTML = `<input id="searchBar" type="text" placeholder="מה תרצו לחפש?">`;
 	document.getElementById("searchBar").focus();
+	if (!document.getElementById("searchBar").value){app.innerHTML = ""}
 	document.getElementById("searchBar").addEventListener("input", ()=>{
-		let res = search(document.getElementById("searchBar").value);
-		console.clear();
-		console.log(res);
+		if (document.getElementById("searchBar").value){
+			app.style.display = "flex"
+			document.getElementById("placeHolder").style.display = "none";
+			document.getElementById("archivePage").style.display = "none";
+			document.getElementById("content").style.display = "none";
+			document.getElementById("searchPage").style.display = "flex";
+		} else {app.style.display = "none"}
+		let res = search(document.getElementById("searchBar").value).filter(file => file.blocks.length > 0);
+		if (res.every(noResults)) {app.innerHTML = ""}
+		else {		
+			let html = [];
+			app.innerHTML = "";
+			res.forEach(element => {
+				let fileName = element.fileName;
+				let container = `<div class="searchContainer"><div class="sideLine"><div class="sideContainer"><div class="circle"></div><div class="line"></div></div></div><div class="biglist"><div class="searchBlockTitle first"><span class="titleText">${fileName}</span></div><div class="listContainer"><div class="list">`
+				html.push(container)
+				for (const block of element.blocks) {
+					let listed = `<div class="searchBlockTitle"><div class="searchContent"><div class="searchBlock" id="${block.id}"></div></div></div>`
+					html.push(listed)
+				}
+				html.push(`</div></div></div></div>`)
+				});
+			app.innerHTML = html.join("");
+
+			document.querySelectorAll(".searchBlockTitle.first span").forEach(title=>title
+				.addEventListener("click", (e) => {
+					let con = e.target.closest(".searchContainer")
+					if (con.querySelector(".line").classList.contains("open")) {
+						con.classList.remove("open")
+						con.querySelector(".titleText").classList.remove("open")
+						con.querySelector(".listContainer").classList.remove("open")
+						con.querySelector(".line").classList.remove("open")
+			
+					} else {
+						con.classList.add("open")
+						con.querySelector(".titleText").classList.add("open")
+						con.querySelector(".listContainer").classList.add("open")
+						con.querySelector(".line").classList.add("open")
+			
+					}
+			}))
+		}
 	})
 }
 
 // Return to start page
 function openArchive() {
 	currentfile = undefined;
-	closeSidebar()
-	document.getElementById("shortcutsHelp").classList.replace("open", "closed")
-	document.getElementById("placeHolder").style.display = "none"
-	document.getElementById("archivePage").style.display = "flex"
-	document.getElementById("content").style.display = "none"
-	document.getElementById("notebookName").innerText = ""
-	document.getElementById("slash").innerText = ""
-	document.getElementById("fileName").style.fontWeight = 200
-	document.getElementById("fileName").innerText = "ארכיון"
-	document.getElementById("fileName").contentEditable = false
-	document.getElementById("fileName").style.userSelect = "none"
+	closeSidebar();
+	document.getElementById("shortcutsHelp").classList.replace("open", "closed");
+	document.getElementById("placeHolder").style.display = "none";
+	document.getElementById("archivePage").style.display = "flex";
+	document.getElementById("searchPage").style.display = "none";
+	document.getElementById("content").style.display = "none";
+	document.getElementById("notebookName").innerText = "";
+	document.getElementById("slash").innerText = "";
+	document.getElementById("fileName").style.fontWeight = 200;
+	document.getElementById("fileName").innerText = "ארכיון";
+	document.getElementById("fileName").contentEditable = false;
+	document.getElementById("fileName").style.userSelect = "none";
 	if (pageGrid != undefined) {pageGrid.removeAll()}
-	renderArchive()
+	renderArchive();
 }
 
 
 // Maximize / Unmaximize window
 function toggleMaximize() {
-	if (maximizeStatus == 0) {
-		window.api.maximize();
-		maximizeStatus = 1
-	} else {
-		window.api.unmaximize();
-		maximizeStatus = 0
-	}
+	if (maximizeStatus == 0) {window.api.maximize(); maximizeStatus = 1}
+	else {window.api.unmaximize(); maximizeStatus = 0}
 }
 
 // Create a snackbar popup; Specify scenario in "scene" 
@@ -320,9 +354,7 @@ function hasDuplicates(array) {
 	var valuesSoFar = Object.create(null);
 	for (var i = 0; i < array.length; ++i) {
 		var value = array[i];
-		if (value in valuesSoFar) {
-			return true;
-		}
+		if (value in valuesSoFar) {return true;}
 		valuesSoFar[value] = true;
 	}
 	return false;
@@ -336,27 +368,19 @@ function toggleHelp() {
 	}
 }
 
-document.getElementById('fileName').addEventListener('keydown', (evt) => {
-	if (evt.key === 'Enter') {
-		evt.preventDefault();
-	}
+document.getElementById('fileName').addEventListener('keydown', (e) => {
+	if (e.key === 'Enter') {e.preventDefault();}
 });
 
 // Buttons
-document.getElementById("close").addEventListener("click", () => {
-	setTimeout(() => {
-		window.api.close()
-	}, 2);
-});
+document.getElementById("close").addEventListener("click", () => {setTimeout(() => {window.api.close()}, 2)});
 document.getElementById("minimize").addEventListener("click", window.api.minimize);
 document.getElementById("maximize").addEventListener("click", toggleMaximize);
 document.getElementById("logo").addEventListener("click", resetPage);
 document.getElementById("archive").addEventListener("click", openArchive);
 document.getElementById("help").addEventListener('click', toggleHelp)
 document.getElementById("search").addEventListener('click', searchMode)
-document.getElementById("settings").addEventListener('click', () => {
-	toggleSidebar('settings')
-})
+document.getElementById("settings").addEventListener('click', () => {toggleSidebar('settings')})
 document.addEventListener('coloris:pick', event => {
 	window.api.setUserColor(parseInt(event.detail.color.split(",")[0].split("(")[1]))
 	document.querySelector(":root").style.setProperty("--theme-h", parseInt(event.detail.color.split(",")[0].split("(")[1]));
@@ -371,11 +395,5 @@ window.api.receive("Graph", () => document.getElementById("addGgb").click())
 window.api.receive("Math", () => document.getElementById("addMF").click())
 window.api.receive("newFile", () => document.getElementById("newFile").click())
 window.api.receive("toggleNotebooks", () => document.getElementById("notebooks").click())
-window.api.receive("Save", () => {
-	if (currentfile == null) {
-		return
-	} else {
-		saveGrid()
-	}
-})
+window.api.receive("Save", () => {if (currentfile == null) {return} else {saveGrid()}})
 window.api.receive("Search", () => {})
