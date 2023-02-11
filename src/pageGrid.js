@@ -76,7 +76,7 @@ pageGrid.on('dropped', function (event, previousWidget, newWidget) {
 			inlineShortcuts: defShortcuts,
 			plonkSound: null,
 			id: resized.id,
-			onExport: (mf, latex) => `${latex}`,
+			onExport: (mf, latex) => `${latex}`
 		})
 	}
 })
@@ -249,7 +249,7 @@ function addGroup(type) {
 				inlineShortcuts: defShortcuts,
 				plonkSound: null,
 				id: block.id,
-				onExport: (mf, latex) => `${latex}`,
+				onExport: (mf, latex) => `${latex}`
 			})
 		}
 	})
@@ -304,29 +304,42 @@ function addPicture() {
 		let html = `${drag}</img><div class="actionsArea"></label><input type="file" class="picturePicker" id="picker_${id}"></div>`
 		let block = blockData(html, id, "Picture", 6)
 		pageGrid.addWidget(block);
-		createPicture(id)
+		createPicture(id, "")
 	} else return
 };
 
-function createPicture(id){
+async function createPicture(id, base64){
 	let picBlock = document.getElementById(`picker_${id}`)
-	picBlock.addEventListener('drop', (e)=>{
-		e.preventDefault();
-		const reader = new FileReader();
-		reader.readAsDataURL(e.dataTransfer.files[0]);
-		reader.onload = () => {
-			const image = new Image();
-			image.src = reader.result;
-			image.onload = () => {
-				picBlock.parentElement.innerHTML = `<canvas width="${image.width}" height="${image.height}" id="picture_${id}" class="pictureBlock"></canvas>`
-				picBlock = document.getElementById(`picture_${id}`)
-			  const context = picBlock.getContext('2d');
-			  context.drawImage(image, 0, 0, image.width, image.height, 0, 0, picBlock.width, picBlock.height);
-			  picBlock.style.setProperty("aspect-ratio", `${image.width} / ${image.height}`)
-			//   picBlock.style.setProperty("height", `${image.height}px`)
+	let actions = picBlock.closest(".actionsArea")
+	if (base64 == "") {
+		picBlock.addEventListener('drop', (e)=>{
+			e.preventDefault();
+			const reader = new FileReader();
+			reader.readAsDataURL(e.dataTransfer.files[0]);
+			reader.onload = () => {
+				const image = new Image();
+				image.src = reader.result;
+				image.onload = () => {
+					picBlock.parentElement.innerHTML = `<canvas width="${image.width}" height="${image.height}" id="picture_${id}" class="pictureBlock"></canvas>`
+					picBlock = document.getElementById(`picture_${id}`)
+					const context = picBlock.getContext('2d');
+					context.drawImage(image, 0, 0, image.width, image.height, 0, 0, picBlock.width, picBlock.height);
+					picBlock.style.setProperty("aspect-ratio", `${image.width} / ${image.height}`)
+				}
 			}
-		}
-	})
+		})
+	} else {
+		(async () => {
+			const image = new Image();
+			image.src = base64;
+			await image.decode();
+			actions.innerHTML = `<canvas width="${image.width}" height="${image.height}" id="picture_${id}" class="pictureBlock"></canvas>`
+			let newPicBlock = actions.querySelector(`.pictureBlock`)
+			const context = newPicBlock.getContext('2d');
+			context.drawImage(image, 0, 0, image.width, image.height, 0, 0, newPicBlock.width, newPicBlock.height);
+			newPicBlock.style.setProperty("aspect-ratio", `${image.width} / ${image.height}`)
+		})();
+	}
 	return
 }
 
@@ -343,7 +356,7 @@ function addMF() {
 			inlineShortcuts: defShortcuts,
 			plonkSound: null,
 			id: id,
-			onExport: (mf, latex) => `${latex}`,
+			onExport: (mf, latex) => `${latex}`
 		})
 		async function getSelection(scene) {
 			let text = await navigator.clipboard.readText();
@@ -527,7 +540,12 @@ function saveGrid() {
 	function saveBlockContent(block) {
 		switch (block.type) {
 			case "Picture":
-				block.blockContent = document.getElementById(`picture_${block.id}`).toDataURL();
+				if (document.getElementById(`picture_${block.id}`)) {
+					block.blockContent = document.getElementById(`picture_${block.id}`).toDataURL();
+				}
+				else {
+					block.blockContent = ""
+				}
 				break;
 			case "Text":
 				block.blockContent = document.getElementById(`textEdit_${block.id}`).__quill.getContents()
@@ -589,6 +607,7 @@ function saveGrid() {
 function loadBlockContent(block) {
 	switch (block.type) {
 		case "Picture":
+			block.content = `${drag}</img><div class="actionsArea"><input type="file" class="picturePicker" id="picker_${block.id}"></div>`
 			break;
 		case "Text":
 			block.content = `${drag}</img><div class="actionsArea"><div id="textEdit_${block.id}" class="textBlock"></div></div>`
@@ -641,6 +660,10 @@ function loadBlockContent(block) {
 function loadBlock(block) {
 	switch (block.type) {
 		case "Picture":
+			window.api.getPicture(block.id)
+			window.api.receive("gotPicture", b64=>{
+				createPicture(block.id, b64)
+			})
 			break;
 		case "Text":
 			block.blockContent = createQuill(block.id).setContents(block.blockContent)
@@ -651,7 +674,7 @@ function loadBlock(block) {
 				inlineShortcuts: defShortcuts,
 				plonkSound: null,
 				id: block.id,
-				onExport: (mf, latex) => `${latex}`,
+				onExport: (mf, latex) => `${latex}`
 			})
 			block.blockContent = mfBlock.setValue(block.blockContent)
 			async function getSelection(scene) {
@@ -789,7 +812,7 @@ function loadBlock(block) {
 						inlineShortcuts: defShortcuts,
 						plonkSound: null,
 						id: block.id,
-						onExport: (mf, latex) => `${latex}`,
+						onExport: (mf, latex) => `${latex}`
 					})
 				}
 			})

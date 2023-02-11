@@ -155,11 +155,28 @@ async function createWindow() {
   })
 
   ipcMain.on("save", (event, data, file, newName) => {
-    let nonPicturesData = JSON.parse(data).filter(block => block.type != "Picture")
-    let picturesData = JSON.parse(data).filter(block => block.type == "Picture")
-    for (const pic of picturesData) {
-      fs.writeFileSync(path.join(__dirname, "..", "attachments", `${pic.id}.png`), pic.blockContent.split(';base64,').pop(), {encoding: 'base64'})
+    let nonPicturesData = [];
+    let allPictureIds = [];
+    let tempData = JSON.parse(data)
+    for (const block of tempData) {
+      let tempBlock = block;
+      if (block.type == "Picture") {
+        allPictureIds.push(block.id);
+        fs.writeFileSync(path.join(__dirname, "..", "attachments", `${block.id}.png`), block.blockContent.split(';base64,').pop(), 'base64')
+        tempBlock.blockContent = "";
+      }
+      nonPicturesData.push(tempBlock);
     }
+
+    let allPics = fs.readdirSync(path.join(__dirname, "..", "attachments"), {withFileTypes: true});
+    for (const picture of allPics) {
+      if (!allPictureIds.find(pic => {return pic == picture.name.split(".")[0]})){
+        foundPath = path.join(__dirname, "..", "attachments", picture.name);
+        shell.trashItem(path.resolve(foundPath)).then((res) => {}).catch((err) => {})
+        break;
+      }
+    }
+
     fs.writeFileSync(file, JSON.stringify(nonPicturesData), "utf-8");
     let name = file.split("\\").pop()
     fs.rename(file, file.replace(name, newName), ()=>{})
@@ -216,6 +233,23 @@ async function createWindow() {
       }
     ) 
     win.webContents.send("gotNotebooks", {"filesPath": filesPath, "allFiles": all()});
+  })
+
+  ipcMain.on("getPicture", (event, id) => {
+    let allPics = fs.readdirSync(path.join(__dirname, "..", "attachments"), {withFileTypes: true});
+    let foundPath;
+    for (const picture of allPics) {
+      if (picture.name.split(".")[0] == id.toString()){
+        foundPath = path.join(__dirname, "..", "attachments", picture.name);
+        break;
+      }
+    }
+    let b64 = fs.readFileSync(foundPath, "base64")
+    win.webContents.send("gotPicture", `data:image/png;base64,${b64}`);
+  })
+
+  ipcMain.on("deletePicture", (event, id) => {
+
   })
 
   ipcMain.on("getArchive", (event, args) => {
