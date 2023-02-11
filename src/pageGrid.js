@@ -659,12 +659,11 @@ function loadBlockContent(block) {
 
 function loadBlock(block) {
 	
+	
 	switch (block.type) {
 		case "Picture":
-			window.api.getPicture(block.id)
-			window.api.receive("gotPicture", (b64)=>{
-				createPicture(block.id, b64)
-			})
+			let found = currentAllPics.find(pic=>{return pic.Path.split("\\").pop().split(".")[0] == block.id})
+			createPicture(block.id, found.Base64)
 			break;
 		case "Text":
 			block.blockContent = createQuill(block.id).setContents(block.blockContent)
@@ -858,7 +857,7 @@ function loadBlock(block) {
 
 function loadGrid(path, file, folder) {
 
-
+	getAllPictures()
 
 	// if (currentfile != undefined) {
 	//   saveGrid()

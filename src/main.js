@@ -178,6 +178,17 @@ async function createWindow() {
     }
 
     fs.writeFileSync(file, JSON.stringify(nonPicturesData), "utf-8");
+
+    let newAllPics = fs.readdirSync(path.join(__dirname, "..", "attachments"), {withFileTypes: true});
+    let allPicsArr = []
+    let foundPath;
+    for (const picture of newAllPics) {
+      foundPath = path.join(__dirname, "..", "attachments", picture.name);
+      let b64 = fs.readFileSync(foundPath, "base64")
+      allPicsArr.push({"Path": foundPath, "Base64": `data:image/png;base64,${b64}`})
+    }
+
+    fs.writeFileSync(path.join(__dirname, "..", "allAttachments.json"), JSON.stringify(allPicsArr), "utf-8");
     let name = file.split("\\").pop()
     fs.rename(file, file.replace(name, newName), ()=>{})
   })
@@ -250,15 +261,15 @@ async function createWindow() {
   })
 
   ipcMain.on("getAllPictures", (event) => {
-    let allPics = fs.readdirSync(path.join(__dirname, "..", "attachments"), {withFileTypes: true});
-    let allPicsArr = []
-    let foundPath;
-    for (const picture of allPics) {
-      foundPath = path.join(__dirname, "..", "attachments", picture.name);
-      let b64 = fs.readFileSync(foundPath, "base64")
-      allPicsArr.push({"Path": foundPath, "Base64": `data:image/png;base64,${b64}`})
-    }
-    win.webContents.send("gotAllPictures", allPicsArr);
+    // let allPics = fs.readdirSync(path.join(__dirname, "..", "attachments"), {withFileTypes: true});
+    // let allPicsArr = []
+    // let foundPath;
+    // for (const picture of allPics) {
+    //   foundPath = path.join(__dirname, "..", "attachments", picture.name);
+    //   let b64 = fs.readFileSync(foundPath, "base64")
+    //   allPicsArr.push({"Path": foundPath, "Base64": `data:image/png;base64,${b64}`})
+    // }
+    win.webContents.send("gotAllPictures", JSON.parse(fs.readFileSync(path.join(__dirname, "..", "allAttachments.json"),"utf-8")));
   })
 
   ipcMain.on("getArchive", (event, args) => {

@@ -1,4 +1,4 @@
-let dirTree, currentfile, currentBlock, currentTheme, archiveContent, pageStyle, hebPageStyle, allBlocks, currentSearchRes;
+let dirTree, currentfile, currentBlock, currentTheme, archiveContent, pageStyle, hebPageStyle, allBlocks, currentSearchRes, currentAllPics;
 let maximizeStatus, sidebarStatus = 0;
 
 
@@ -50,6 +50,13 @@ function startSearch() {
 	window.api.startSearch()
 	window.api.receive("gotAllBlocks", (result)=> {
 		allBlocks = result;
+	})
+}
+
+function getAllPictures(){
+	window.api.getAllPictures()
+	window.api.receive("gotAllPictures", (result)=>{
+		currentAllPics = result;
 	})
 }
 

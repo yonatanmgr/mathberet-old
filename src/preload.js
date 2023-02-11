@@ -38,8 +38,8 @@ contextBridge.exposeInMainWorld(
       getUserColor: () => {ipcRenderer.send('getUserColor')},
       getPageStyle: () => {ipcRenderer.send('getPageStyle')},
       getUserTheme: () => {ipcRenderer.send('getUserTheme')},
-      getPicture: (id) => {ipcRenderer.sendS('getPicture', id)},
-      getAllPictures: () => {ipcRenderer.sendS('getAllPictures')},
+      getPicture: (id) => {ipcRenderer.send('getPicture', id)},
+      getAllPictures: () => {ipcRenderer.send('getAllPictures')},
       getArchive: () => {ipcRenderer.send('getArchive')},
       startSearch: () => {ipcRenderer.send('startSearch')}
       }
