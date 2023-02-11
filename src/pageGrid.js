@@ -658,9 +658,13 @@ function loadBlockContent(block) {
 }
 
 function loadBlock(block) {
+	
 	switch (block.type) {
 		case "Picture":
-			getPicture(block.id)
+			window.api.getPicture(block.id)
+			window.api.receive("gotPicture", (b64)=>{
+				createPicture(block.id, b64)
+			})
 			break;
 		case "Text":
 			block.blockContent = createQuill(block.id).setContents(block.blockContent)

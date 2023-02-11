@@ -249,6 +249,18 @@ async function createWindow() {
     return
   })
 
+  ipcMain.on("getAllPictures", (event) => {
+    let allPics = fs.readdirSync(path.join(__dirname, "..", "attachments"), {withFileTypes: true});
+    let allPicsArr = []
+    let foundPath;
+    for (const picture of allPics) {
+      foundPath = path.join(__dirname, "..", "attachments", picture.name);
+      let b64 = fs.readFileSync(foundPath, "base64")
+      allPicsArr.push({"Path": foundPath, "Base64": `data:image/png;base64,${b64}`})
+    }
+    win.webContents.send("gotAllPictures", allPicsArr);
+  })
+
   ipcMain.on("getArchive", (event, args) => {
     const filesPath = path.join(__dirname, "..", "files")
 

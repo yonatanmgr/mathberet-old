@@ -46,13 +46,6 @@ function getArchive(){
 
 getArchive()
 
-function getPicture(id){
-	window.api.getPicture(id)
-	window.api.receive("gotPicture", (b64)=>{
-		createPicture(id, b64)
-	})
-}
-
 function startSearch() {
 	window.api.startSearch()
 	window.api.receive("gotAllBlocks", (result)=> {
