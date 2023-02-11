@@ -4,63 +4,320 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 100%;
+            transition: height 0.3s;
         }
 
         .container {
-            width: 600px;
-            height: 900px;
-            background: #f2f2f2;
+            display: flex;
+            flex-direction: row;
+            width: 50%;
             direction: rtl;
+            gap: 20px;
+            height: 100%;
+            transition: height 0.3s, padding-bottom 0.5s;
         }
 
-        li {
+
+        .list {
             display: flex;
-            direction: rtl;
-            height: 70px;
-            gap: 15px;
-            flex-direction: row;
+            flex-direction: column;
+            width: 100%;
+            gap: 30px;
         }
 
         div.circle {
             position: absolute;
             width: 10px;
             height: 10px;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgb(210, 210, 210);
             border-radius: 50%;
+        }
+
+        .circle2 {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(0, 0, 0, 0);
+            border-radius: 50%;
+        }
+
+        .line.open {
+            height: 100%;
+        }
+        .container.open{
+            padding-bottom: 30px;
 
         }
 
         .line {
-
+            height: 0;
             z-index: 0;
             width: 2px;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgb(210, 210, 210);
+            transition: height 0.5s;
+
+        }
+
+        .sideContainer {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            display: flex;
+            width: 10px;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .title.first {
+            height: 70px;
+
         }
 
         .title {
+            height: 30px;
             padding-right: 4px;
+            font-family: 'Rubik';
+            transition: 0.3s;
+            display: flex;
+            direction: rtl;
+            gap: 15px;
+            flex-direction: row;
+        }
+
+        .title.open {
+            height: 150px;
+            transition: 0.3s;
+        }
+
+        .title.first span {
+            -webkit-user-select: none;
+            user-select: none;
+            align-self: center;
+            font-size: 38px;
+            transition: 0.3s;
+        }
+        .title.first span:hover {
+            transform: scale(1.03);
+            cursor: pointer;
+        }
+        .title.first span:active {
+            transform: scale(1.01);
+            cursor: pointer;
+        }
+
+        .titleText{
+            font-weight: 200;
+            transition: font-weight 0.3s;
+        }
+        .titleText.open{
+            font-weight: 700;
+        }
+        .content {
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            direction: rtl;
+            width: 100%;
+        }
+
+        .block {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .biglist {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            overflow-y: hidden;
+            gap: 10px;
+        }
+
+        .type {
+            width: 130px;
+            font-size: 21px;
+            font-weight: 300;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        .type:hover {
+            cursor: pointer;
+            font-weight: 400;
+        }
+        .type:active {
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .listContainer.open{
+            max-height: 100vh;
+            transition: max-height 2s;
+        }
+        .listContainer{
+            transition: max-height 0.4s;
+            overflow-y: hidden;
+
+            max-height: 0vh;
+        }
+        .sideLine {
+            display: flex;
+            flex-direction: column;
+        }
+        .theorem {
+        background: rgba(255, 196, 0, 0.1) !important;
+        }
+        .proof {
+        background: rgba(0, 128, 255, 0.07) !important;
+        }
+        .defenition {
+        background: rgba(255, 0, 38, 0.07) !important;
+        }
+        .assumption {
+        background: rgba(0, 164, 27, 0.07) !important;
         }
     </style>
 </head>
 <div class="app">
     <div class="container">
-        <td align="right">
-            <ul style="list-style: none;">
-                <li class="title">
-                    <div class="line"></div>
-                    <div class="circle"></div><span>Text</span>
-                </li>
-                <li class="title">
-                    <div class="line"></div><span>Text</span>
-                </li>
-                <li class="title">
-                    <div class="line"></div><span>Text</span>
-                </li>
-                <li class="title">
-                    <div class="line"></div><span>Text</span>
-                </li>
-            </ul>
-        </td>
+        <div class="sideLine">
+            <div class="sideContainer">
+                <div class="line"></div>
+                <div class="circle"></div>
+            </div>
+
+        </div>
+        <div class="biglist">
+
+            <div class="title first">
+                <span class="titleText">רעיון ראשון</span>
+            </div>
+            <div class="listContainer">
+                <div class="list">
+
+                    <div class="title">
+                        <div class="content">
+                            <span class="type">❗ הגדרה</span>
+                            <div class="block defenition"></div>
+                        </div>
+                    </div>
+                    <div class="title">
+                        <div class="content">
+                            <span class="type">💡 משפט</span>
+                            <div class="block theorem"></div>
+                        </div>
+
+                    </div>
+                    <div class="title">
+                        <div class="content">
+
+                            <span class="type">📝 הוכחה</span>
+                            <div class="block proof"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <div class="container">
+        <div class="sideLine">
+            <div class="sideContainer">
+                <div class="line"></div>
+                <div class="circle"></div>
+            </div>
+
+        </div>
+        <div class="biglist">
+
+            <div class="title first">
+                <span class="titleText">רעיון אחר</span>
+            </div>
+            <div class="listContainer">
+                <div class="list">
+
+                    <div class="title">
+                        <div class="content">
+                            <span class="type">❓ הנחה</span>
+                            <div class="block assumption"></div>
+                        </div>
+                    </div>
+                    <div class="title">
+                        <div class="content">
+                            <span class="type">📝 הוכחה</span>
+                            <div class="block proof"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <div class="container">
+        <div class="sideLine">
+            <div class="sideContainer">
+                <div class="line"></div>
+                <div class="circle"></div>
+            </div>
+
+        </div>
+        <div class="biglist">
+
+            <div class="title first">
+                <span class="titleText">דבר נוסף ושונה לחלוטין</span>
+            </div>
+            <div class="listContainer">
+                <div class="list">
+
+                    <div class="title">
+                        <div class="content">
+                            <span class="type">💡 משפט</span>
+                            <div class="block theorem"></div>
+                        </div>
+
+                    </div>
+                    <div class="title">
+                        <div class="content">
+
+                            <span class="type">📝 הוכחה</span>
+                            <div class="block proof"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
 </div>
+
+<script>
+    document.querySelectorAll(".title.first span").forEach(title=>title
+    .addEventListener("click", (e) => {
+        console.log(e.target.closest(".container"));
+        let con = e.target.closest(".container")
+        if (con.querySelector(".line").classList.contains("open")) {
+            con.classList.remove("open")
+            con.querySelector(".titleText").classList.remove("open")
+            con.querySelector(".listContainer").classList.remove("open")
+            con.querySelector(".line").classList.remove("open")
+            con.querySelector(".bigList").classList.remove("open")
+
+        } else {
+            con.classList.add("open")
+            con.querySelector(".titleText").classList.add("open")
+            con.querySelector(".listContainer").classList.add("open")
+            con.querySelector(".line").classList.add("open")
+            con.querySelector(".bigList").classList.add("open")
+
+        }
+    }))
+    document.querySelectorAll(".type").forEach(title=>title
+    .addEventListener("click", (e) => {
+        console.log(e.target.closest(".container"));
+        let con = e.target.closest(".title")
+        if (con.classList.contains("open")) {
+            con.classList.remove("open")
+
+        } else {
+            con.classList.add("open")
+
+        }
+    }))
+</script>

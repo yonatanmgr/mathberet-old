@@ -12,6 +12,8 @@
     "not firefox <= 109"
   ],
   "hints": {
-    "no-inline-styles": "off"
+    "no-inline-styles": "off",
+    "compat-api/css": "off",
+    "meta-viewport": "off"
   }
 }

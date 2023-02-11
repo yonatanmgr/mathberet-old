@@ -23,7 +23,7 @@ async function createWindow() {
     width: 1500,
     height: 900,
     titleBarStyle: 'hidden',
-    icon: "src\icons\iconizer-mathberet.ico",
+    icon: path.join(__dirname, "icons", "mathberet2.ico"),
     webPreferences: {
       contextIsolation: true, // protect against prototype pollution
       enableRemoteModule: false, // turn off remote
@@ -36,7 +36,8 @@ async function createWindow() {
 
   const schema = {
     theme: {type: 'string', default: 'light'},
-    color: {type: 'number', maximum: 360, minimum: 1, default: 203}
+    color: {type: 'number', maximum: 360, minimum: 1, default: 203},
+    pageStyle: {type: 'string', default: 'transparent'}
   };
 
   if (fs.readFileSync(path.join(app.getPath('userData'), "config.json")) == "") {
@@ -82,6 +83,11 @@ async function createWindow() {
       accelerator: 'Ctrl+Shift+I',
       click: () => {win.webContents.openDevTools();}
     },
+      {
+      role: 'Home',
+      accelerator: 'Ctrl+H',
+      click: () => {win.webContents.send("Home");}
+    },
     {
       role: 'Create a new File...',
       accelerator: 'Ctrl+N',
@@ -104,7 +110,7 @@ async function createWindow() {
     },
     {
       role: 'Help',
-      accelerator: 'Ctrl+H',
+      accelerator: 'Ctrl+Alt+H',
       click: () => {win.webContents.send("Shortcuts")}
     }
   ]
@@ -117,6 +123,11 @@ async function createWindow() {
       role: 'Toggle Notebooks',
       accelerator: 'Ctrl+O',
       click: () => {win.webContents.send("toggleNotebooks");}
+    },
+      {
+      role: 'Open Archive',
+      accelerator: 'Ctrl+Alt+A',
+      click: () => {win.webContents.send("openArchive");}
     },
       {
       role: 'Search',
@@ -160,8 +171,15 @@ async function createWindow() {
   ipcMain.on("setUserColor", (event, color) => {
     store.set('color', color);
   })
+  
+  ipcMain.on("setPageStyle", (event, style) => {
+    store.set('pageStyle', style);
+  })
 
-  ipcMain.on("UserTheme", (event, args) => {
+  ipcMain.on("getPageStyle", (event, args) => {
+    win.webContents.send("gotPageStyle", store.get('pageStyle'))
+  })
+  ipcMain.on("getUserTheme", (event, args) => {
     win.webContents.send("gotUserTheme", store.get('theme'))
   })
 
@@ -193,6 +211,83 @@ async function createWindow() {
       }
     ) 
     win.webContents.send("gotNotebooks", {"filesPath": filesPath, "allFiles": all()});
+  })
+
+  ipcMain.on("getArchive", (event, args) => {
+    const filesPath = path.join(__dirname, "..", "files")
+
+    let groupsToFilter = [];
+    function getAllGroups() {
+      let allGroups = [];
+      let allFiles = fs.readdirSync(filesPath, {withFileTypes: true})
+      for (const file of allFiles) {
+        if (file.isDirectory()) {
+          let subFiles = fs.readdirSync(path.join(filesPath, file.name), {withFileTypes: true})
+          for (const subfile of subFiles) {
+            let readFile = fs.readFileSync(path.join(filesPath, file.name, subfile.name), "utf-8")
+            for (const block of JSON.parse(readFile)) {if (block.type == 'Group') {allGroups.push(block)}}
+          }
+        }
+        else {
+          let readFile = fs.readFileSync(path.join(filesPath, file.name), "utf-8")
+          for (const block of JSON.parse(readFile)) {if (block.type == 'Group') {allGroups.push(block)}}
+        }
+      }
+      return allGroups
+    }
+
+    let allGroups = getAllGroups()
+    
+    function removeDups(arr){
+      const uniqueIds = [];
+      const unique = arr.filter(element => {
+        const isDuplicate = uniqueIds.includes(element);
+        if (!isDuplicate) {uniqueIds.push(element); return true;}
+        return false;
+      });
+      return unique.map(groupTitle => groupTitle = {'groupName': groupTitle, 'subGroups': []})
+    }
+
+    for (const group of allGroups) {groupsToFilter.push(group.groupTitle);}
+
+    let finalArr = [];
+    for (const group of removeDups(groupsToFilter)) {
+      if (group.groupName != "קבוצה") {
+        for (const subGroup of allGroups) {
+          if (subGroup.groupTitle == group.groupName){
+            group.subGroups.push(subGroup)
+          }
+        }
+        finalArr.push(group)
+      }
+
+    }
+
+    win.webContents.send("gotArchive", finalArr);
+  })
+  
+  ipcMain.on("startSearch", (event, args) =>{
+    const filesPath = path.join(__dirname, "..", "files")
+    function getAllBlocks() {
+      let allGroups = [];
+      let allFiles = fs.readdirSync(filesPath, {withFileTypes: true})
+      for (const file of allFiles) {
+        if (file.isDirectory()) {
+          let subFiles = fs.readdirSync(path.join(filesPath, file.name), {withFileTypes: true})
+          for (const subfile of subFiles) {
+            let readFile = fs.readFileSync(path.join(filesPath, file.name, subfile.name), "utf-8")
+            allGroups.push({"filePath": path.join(filesPath, file.name, subfile.name), "fileName": subfile.name.replace(".json", ""), "blocks": JSON.parse(readFile)})
+          }
+        }
+        else {
+          let readFile = fs.readFileSync(path.join(filesPath, file.name), "utf-8")
+          allGroups.push({"filePath": path.join(filesPath, file.name), "fileName": file.name.replace(".json", ""), "blocks": JSON.parse(readFile)})
+        }
+      }
+      return allGroups
+    }
+    let allGroups = getAllBlocks()
+    win.webContents.send("gotAllBlocks", allGroups);
   })
 }
 

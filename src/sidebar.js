@@ -101,11 +101,14 @@ let createSettings = () => {
 	document.getElementById("sidebarTitle").title = ""
 	document.getElementById("sidebarList").innerHTML = `
   <div id='settingsZone'>
+  <div class='settingsArea'>
+	<span class='settingsText'>צבע נושא</span><input id="colorSwitcher" type="button" data-coloris>
+  </div>
     <div class='settingsArea'>
     <span class='settingsText'>ערכת נושא</span><div class='settingsButton' id='themeSwitcher'>${currentTheme == "light" ? "מצב אור" : "מצב חושך"}</div>
     </div>
     <div class='settingsArea'>
-      <span class='settingsText'>צבע נושא</span><input id="colorSwitcher" type="button" data-coloris>
+      <span class='settingsText'>סגנון דף</span><div class='settingsButton' id="pageSwitcher">${hebPageStyle}</div>
     </div>
   </div>`
 	document.getElementById("themeSwitcher").addEventListener('click', () => {
@@ -134,6 +137,28 @@ let createSettings = () => {
 			swatchesOnly: true
 		});
 	})
+	document.getElementById("pageSwitcher").addEventListener('click', (a) => {
+		switch (pageStyle) {
+			case "dots":
+				document.getElementById("pageSwitcher").innerText = "חלק"
+				window.api.setPageStyle("transparent")
+				break;
+			case "transparent":
+				document.getElementById("pageSwitcher").innerText = "משבצות"
+				window.api.setPageStyle("ruled")
+				break;
+			case "ruled":
+				document.getElementById("pageSwitcher").innerText = "נקודות"
+				window.api.setPageStyle("dots")
+				break;
+		
+			default:
+				break;
+		}
+		getPageStyle()
+	})
+
+
 
 }
 
@@ -393,7 +418,7 @@ document.addEventListener('contextmenu', function(e) {
 			file.firstChild.innerHTML = fileIconPath;
 		} else {
 			file.firstChild.classList.add("toDelete");
-			file.firstChild.innerHTML = trashIcon;
+			file.firstChild.innerHTML = trashCanIconPath;
 		}
 	}
 }, false);
@@ -451,11 +476,22 @@ document.addEventListener("dblclick", function(e) {
 
 // Create a new file
 function newFile() {
+
 	if (dirTree.map(file => file = file.path).includes(`${dirTreeLocation}\\קובץ חדש.json`)) {
 		popupAnimation("cantCreate")
 	} else {
+		
 		window.api.newFile()
+		document.getElementById("fileName").style.fontWeight = 700
+		document.getElementById("fileName").contentEditable = true
+		document.getElementById("fileName").style.userSelect = "unset"
+	
+		document.querySelectorAll(".archiveBlock").forEach(block => {
+			document.getElementById(block.id).gridstack.destroy();
+		})
+		document.getElementById("archivePage").style.display = "none"
 		document.getElementById("placeHolder").style.display = "none"
+		document.getElementById("searchPage").style.display = "none";
 		document.getElementById("content").style.display = "flex"
 		document.getElementById("slash").innerText = ""
 		document.getElementById("notebookName").innerText = ""
