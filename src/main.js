@@ -155,7 +155,12 @@ async function createWindow() {
   })
 
   ipcMain.on("save", (event, data, file, newName) => {
-    fs.writeFileSync(file, data, "utf-8");
+    let nonPicturesData = JSON.parse(data).filter(block => block.type != "Picture")
+    let picturesData = JSON.parse(data).filter(block => block.type == "Picture")
+    for (const pic of picturesData) {
+      fs.writeFileSync(path.join(__dirname, "..", "attachments", `${pic.id}.png`), pic.blockContent.split(';base64,').pop(), {encoding: 'base64'})
+    }
+    fs.writeFileSync(file, JSON.stringify(nonPicturesData), "utf-8");
     let name = file.split("\\").pop()
     fs.rename(file, file.replace(name, newName), ()=>{})
   })

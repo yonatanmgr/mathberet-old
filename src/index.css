@@ -1325,6 +1325,15 @@ ul {
   height: 40px;
 }
 
+.picturePicker{
+  width: 100%;
+  height: 100%;
+}
+
+.pictureBlock{
+  width: 100%;
+  border-radius: 7px;
+}
 .actionsArea .ggBox{
   direction: ltr !important;
 }

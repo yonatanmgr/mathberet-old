@@ -56,6 +56,10 @@ pageGrid.on('resizestop', async function (el) {
 	if (resized.type == "Group") {
 		resizeAll(resized.el.querySelector(".Group").gridstack)
 	}
+
+	// if (resized.type == "Picture") {
+	// 	console.log(resized.el.querySelector("canvas")); 
+	// }
 })
 
 pageGrid.on('dropped', function (event, previousWidget, newWidget) {
@@ -148,6 +152,7 @@ function blockData(html, id, type, h, blockContent = {}, x = 12, y = 1000, w = 6
 document.getElementById("addQuill").addEventListener("click", addQuill);
 document.getElementById("addGgb").addEventListener("click", addGgb);
 document.getElementById("addMF").addEventListener("click", addMF);
+document.getElementById("addPicture").addEventListener("click", addPicture);
 document.getElementById("addGroup").addEventListener("click", () => {
 	addGroup()
 });
@@ -293,7 +298,37 @@ function addQuill() {
 	} else return
 };
 
+function addPicture() {
+	if (currentfile) {
+		let id = Date.now();
+		let html = `${drag}</img><div class="actionsArea"></label><input type="file" class="picturePicker" id="picker_${id}"></div>`
+		let block = blockData(html, id, "Picture", 6)
+		pageGrid.addWidget(block);
+		createPicture(id)
+	} else return
+};
 
+function createPicture(id){
+	let picBlock = document.getElementById(`picker_${id}`)
+	picBlock.addEventListener('drop', (e)=>{
+		e.preventDefault();
+		const reader = new FileReader();
+		reader.readAsDataURL(e.dataTransfer.files[0]);
+		reader.onload = () => {
+			const image = new Image();
+			image.src = reader.result;
+			image.onload = () => {
+				picBlock.parentElement.innerHTML = `<canvas width="${image.width}" height="${image.height}" id="picture_${id}" class="pictureBlock"></canvas>`
+				picBlock = document.getElementById(`picture_${id}`)
+			  const context = picBlock.getContext('2d');
+			  context.drawImage(image, 0, 0, image.width, image.height, 0, 0, picBlock.width, picBlock.height);
+			  picBlock.style.setProperty("aspect-ratio", `${image.width} / ${image.height}`)
+			//   picBlock.style.setProperty("height", `${image.height}px`)
+			}
+		}
+	})
+	return
+}
 
 function addMF() {
 	if (currentfile) {
@@ -491,6 +526,9 @@ function saveGrid() {
 
 	function saveBlockContent(block) {
 		switch (block.type) {
+			case "Picture":
+				block.blockContent = document.getElementById(`picture_${block.id}`).toDataURL();
+				break;
 			case "Text":
 				block.blockContent = document.getElementById(`textEdit_${block.id}`).__quill.getContents()
 				break;
@@ -550,6 +588,8 @@ function saveGrid() {
 
 function loadBlockContent(block) {
 	switch (block.type) {
+		case "Picture":
+			break;
 		case "Text":
 			block.content = `${drag}</img><div class="actionsArea"><div id="textEdit_${block.id}" class="textBlock"></div></div>`
 			break;
@@ -600,6 +640,8 @@ function loadBlockContent(block) {
 
 function loadBlock(block) {
 	switch (block.type) {
+		case "Picture":
+			break;
 		case "Text":
 			block.blockContent = createQuill(block.id).setContents(block.blockContent)
 			break;
