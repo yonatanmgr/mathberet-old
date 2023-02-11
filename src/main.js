@@ -246,10 +246,7 @@ async function createWindow() {
     }
     let b64 = fs.readFileSync(foundPath, "base64")
     win.webContents.send("gotPicture", `data:image/png;base64,${b64}`);
-  })
-
-  ipcMain.on("deletePicture", (event, id) => {
-
+    return
   })
 
   ipcMain.on("getArchive", (event, args) => {

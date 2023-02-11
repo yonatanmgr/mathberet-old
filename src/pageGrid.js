@@ -308,7 +308,7 @@ function addPicture() {
 	} else return
 };
 
-async function createPicture(id, base64){
+function createPicture(id, base64){
 	let picBlock = document.getElementById(`picker_${id}`)
 	let actions = picBlock.closest(".actionsArea")
 	if (base64 == "") {
@@ -660,10 +660,7 @@ function loadBlockContent(block) {
 function loadBlock(block) {
 	switch (block.type) {
 		case "Picture":
-			window.api.getPicture(block.id)
-			window.api.receive("gotPicture", b64=>{
-				createPicture(block.id, b64)
-			})
+			getPicture(block.id)
 			break;
 		case "Text":
 			block.blockContent = createQuill(block.id).setContents(block.blockContent)
@@ -816,9 +813,9 @@ function loadBlock(block) {
 					})
 				}
 			})
-			items.map(loadBlockContent)
+			items.forEach(loadBlockContent)
 			createdGrid.load(items);
-			items.map(loadBlock)
+			items.forEach(loadBlock)
 			let currentDims;
 			let memDims = group.gridstack.parentGridItem.memoryDims;
 			group.gridstack.parentGridItem.el.querySelector(".handle").addEventListener("click", () => {
@@ -881,9 +878,9 @@ function loadGrid(path, file, folder) {
 	window.api.receive("fromMain", (data) => {
 		let items = JSON.parse(data.toString());
 		pageGrid.removeAll();
-		items.map(loadBlockContent)
+		items.forEach(loadBlockContent)
 		pageGrid.load(items);
-		items.map(loadBlock)
+		items.forEach(loadBlock)
 	});
 }
 
