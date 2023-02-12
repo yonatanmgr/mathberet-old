@@ -19,6 +19,7 @@ let shortcutDict = [
             {"text": "יצירת בלוק טקסט", "keys": ["Ctrl+t"]},       
             {"text": "יצירת בלוק מתמטי", "keys": ["Ctrl+m"]},       
             {"text": "יצירת בלוק גרפי", "keys": ["Ctrl+g"]},       
+            {"text": "יצירת בלוק תמונה", "keys": ["Ctrl+p"]},       
             {"text": "יצירת קבוצה", "keys": ["Ctrl+k"]},       
             {"text": "קיצורים לבלוק טקסט", "keys": null, "isSubTitle": true, "shortcuts":[
                 {"text": "כותרת גדולה", "keys": ["#+␣"]},       

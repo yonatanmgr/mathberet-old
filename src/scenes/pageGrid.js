@@ -134,7 +134,7 @@ function expand(expression) {
 	return ce.box(["Expand", ce.parse(expression)]).evaluate().latex
 }
 
-function blockData(html, id, type, h, blockContent = {}, x = 12, y = 1000, w = 6, minW = 2, minH = 2) {
+function blockData(html, id, type, h, blockContent = {}, x = 12, y = 1000, w = 6, minW = 2, minH = 2, maxH = 1000, maxW = 12) {
 	return {
 		id: id,
 		content: html,
@@ -145,7 +145,9 @@ function blockData(html, id, type, h, blockContent = {}, x = 12, y = 1000, w = 6
 		minW: minW,
 		minH: minH,
 		type: type,
-		blockContent: blockContent
+		blockContent: blockContent,
+		maxH: maxH,
+		maxW: maxW
 	}
 }
 
@@ -153,10 +155,8 @@ document.getElementById("addQuill").addEventListener("click", addQuill);
 document.getElementById("addGgb").addEventListener("click", addGgb);
 document.getElementById("addMF").addEventListener("click", addMF);
 document.getElementById("addPicture").addEventListener("click", addPicture);
-document.getElementById("addGroup").addEventListener("click", () => {
-	addGroup()
-});
-
+document.getElementById("addDivider").addEventListener("click", addDivider);
+document.getElementById("addGroup").addEventListener("click", () => {addGroup()});
 
 function addGroup(type) {
 	let groupType;
@@ -180,7 +180,7 @@ function addGroup(type) {
 			break;
 	}
 	let id = Date.now();
-	let html = `<div class='groupTop'>${drag}</img><span class='groupTitle' contenteditable='true'>קבוצה</span><span class='seperator'>${seperator}</span><span class='groupType'>${groupType}</span></div><div class="actionsArea"><div id="group_${id}" class="Group"></div></div>`
+	let html = `<div class='groupTop'>${drag}<span class='groupTitle' contenteditable='true'>קבוצה</span><span class='seperator'>${seperator}</span><span class='groupType'>${groupType}</span></div><div class="actionsArea"><div id="group_${id}" class="Group"></div></div>`
 	let block = {
 		id: id,
 		content: html,
@@ -287,7 +287,7 @@ function addQuill() {
 	if (currentfile) {
 
 		let id = Date.now();
-		let html = `${drag}</img><div class="actionsArea"><div id="textEdit_${id}" class="textBlock"></div></div>`
+		let html = `${drag}<div class="actionsArea"><div id="textEdit_${id}" class="textBlock"></div></div>`
 		let block = blockData(html, id, "Text", 2)
 		pageGrid.addWidget(block);
 		createQuill(id).focus();
@@ -297,11 +297,19 @@ function addQuill() {
 		})
 	} else return
 };
+function addDivider() {
+	if (currentfile) {
+		let id = Date.now();
+		let html = `${drag}<hr class="pageDivider"></div>`
+		let block = blockData(html, id, "Divider", 1, {}, 12, 1000, 12, 1, 1, 1, 12)
+		pageGrid.addWidget(block);
+	} else return
+};
 
 function addPicture() {
 	if (currentfile) {
 		let id = Date.now();
-		let html = `${drag}</img><div class="actionsArea"><input type="file" class="picturePicker" id="picker_${id}"></div>`
+		let html = `${drag}<div class="actionsArea"><input type="file" class="picturePicker" accept="image/*" id="picker_${id}"></div>`
 		let block = blockData(html, id, "Picture", 6)
 		pageGrid.addWidget(block);
 		createPicture(id, "")
@@ -328,6 +336,21 @@ function createPicture(id, base64){
 				}
 			}
 		})
+		picBlock.addEventListener('change', (e)=>{
+			const reader = new FileReader();
+			reader.readAsDataURL(picBlock.files[0]);
+			reader.onload = () => {
+				const image = new Image();
+				image.src = reader.result;
+				image.onload = () => {
+					picBlock.parentElement.innerHTML = `<canvas width="${image.width}" height="${image.height}" id="picture_${id}" class="pictureBlock"></canvas>`
+					picBlock = document.getElementById(`picture_${id}`)
+					const context = picBlock.getContext('2d');
+					context.drawImage(image, 0, 0, image.width, image.height, 0, 0, picBlock.width, picBlock.height);
+					picBlock.style.setProperty("aspect-ratio", `${image.width} / ${image.height}`)
+				}
+			}
+		})
 	} else {
 		const image = new Image();
 		image.src = base64;
@@ -340,7 +363,7 @@ function createPicture(id, base64){
 			newPicBlock.style.setProperty("aspect-ratio", `${image.width} / ${image.height}`)
 				})
 			.catch((encodingError) => {
-				actions.innerHTML = `<input type="file" class="picturePicker" id="picker_${id}">`
+				actions.innerHTML = `<input type="file" class="picturePicker" accept="image/*" id="picker_${id}">`
 				createPicture(id, "")
 			})
 	}
@@ -351,7 +374,7 @@ function addMF() {
 	if (currentfile) {
 
 		let id = Date.now();
-		let html = `${drag}</img><div class="actionsArea"><div id="mf_${id}" class="mathBlock"></div></div>`
+		let html = `${drag}<div class="actionsArea"><div id="mf_${id}" class="mathBlock"></div></div>`
 		let block = blockData(html, id, "Math", 3)
 		pageGrid.addWidget(block)
 		let created = createMF(id)
@@ -445,7 +468,7 @@ function addMF() {
 function addGgb() {
 	if (currentfile) {
 		let id = Date.now();
-		var html = `${drag}</img><div class="actionsArea"><div id="ggBox_${id}" class="ggBox"></div></div>`
+		var html = `${drag}<div class="actionsArea"><div id="ggBox_${id}" class="ggBox"></div></div>`
 		let block = blockData(html, id, "Graph", 10)
 		pageGrid.addWidget(block);
 		let box = document.getElementById(`ggBox_${id.toString()}`)
@@ -543,6 +566,9 @@ function saveGrid() {
 
 	function saveBlockContent(block) {
 		switch (block.type) {
+			case "Divider":
+				block.blockContent = `${drag}<hr class="pageDivider"></div>`
+				break;
 			case "Picture":
 				if (document.getElementById(`picture_${block.id}`)) {block.blockContent = document.getElementById(`picture_${block.id}`).toDataURL();}
 				else {block.blockContent = ""}
@@ -606,17 +632,20 @@ function saveGrid() {
 
 function loadBlockContent(block) {
 	switch (block.type) {
+		case "Divider":
+			block.content = `${drag}<hr class="pageDivider"></div>`
+			break;
 		case "Picture":
-			block.content = `${drag}</img><div class="actionsArea"><input type="file" class="picturePicker" id="picker_${block.id}"></div>`
+			block.content = `${drag}<div class="actionsArea"><input type="file" class="picturePicker" accept="image/*" id="picker_${block.id}"></div>`
 			break;
 		case "Text":
-			block.content = `${drag}</img><div class="actionsArea"><div id="textEdit_${block.id}" class="textBlock"></div></div>`
+			block.content = `${drag}<div class="actionsArea"><div id="textEdit_${block.id}" class="textBlock"></div></div>`
 			break;
 		case "Math":
-			block.content = `${drag}</img><div class="actionsArea"><div id="mf_${block.id}" class="mathBlock"></div></div>`
+			block.content = `${drag}<div class="actionsArea"><div id="mf_${block.id}" class="mathBlock"></div></div>`
 			break;
 		case "Graph":
-			block.content = `${drag}</img><div class="actionsArea"><div id="ggBox_${block.id}" class="ggBox"></div></div>`
+			block.content = `${drag}<div class="actionsArea"><div id="ggBox_${block.id}" class="ggBox"></div></div>`
 			break;
 		case "Group":
 			let groupType;
@@ -639,7 +668,7 @@ function loadBlockContent(block) {
 					groupType = "";
 					break;
 			}
-			block.content = `<div class='groupTop'>${drag}</img><span class='groupTitle' contenteditable='true'>${block.groupTitle}</span><span class='seperator'>${seperator}</span><span class='groupType'>${groupType}</span></div><div class="actionsArea"><div id="group_${block.id}" class="Group"></div></div>`
+			block.content = `<div class='groupTop'>${drag}<span class='groupTitle' contenteditable='true'>${block.groupTitle}</span><span class='seperator'>${seperator}</span><span class='groupType'>${groupType}</span></div><div class="actionsArea"><div id="group_${block.id}" class="Group"></div></div>`
 			async function setClass() {
 				let id = await block.id.toString()
 				let blockParent = findInGrid(id)

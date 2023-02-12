@@ -868,6 +868,13 @@ button:focus {outline:0;}
   background: var(--page-style);
 }
 
+.pageDivider{
+  background: gray;
+  opacity: 30%;
+  width: 100%;
+  height: 1px;
+}
+
 .ql-editor:has(h1:only-child) { overflow-y: hidden !important; }
 
 .ql-formula { direction: ltr; }

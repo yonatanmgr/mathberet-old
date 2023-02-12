@@ -68,6 +68,11 @@ async function createWindow() {
       click: () => {win.webContents.send("Graph");}
     },
       {
+      role: 'Add Picture Block',
+      accelerator: 'Ctrl+P',
+      click: () => {win.webContents.send("Picture");}
+    },
+      {
       role: 'Add Group',
       accelerator: 'Ctrl+K',
       click: () => {win.webContents.send("Group");}

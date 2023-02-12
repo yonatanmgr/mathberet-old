@@ -104,7 +104,7 @@ function search(text) {
 }
 
 document.onclick = hideMenu; 
-document.addEventListener("contextmenu", function(e){ if(e.target.closest("#addGroup, .groupType, .groupTitle") && document.getElementById("searchPage").style == "none") {rightClick(e)} })
+document.addEventListener("contextmenu", function(e){ if(e.target.closest("#addGroup, .groupType, .groupTitle") && document.getElementById("searchPage").style.display == "none") {rightClick(e)} })
 
 function hideMenu() {
   document.getElementById("contextMenu").children[0].id = "";
@@ -427,6 +427,7 @@ window.api.receive("Shortcuts", () => document.getElementById("help").click())
 window.api.receive("Group", () => document.getElementById("addGroup").click())
 window.api.receive("Text", () => document.getElementById("addQuill").click())
 window.api.receive("Graph", () => document.getElementById("addGgb").click())
+window.api.receive("Picture", () => document.getElementById("addPicture").click())
 window.api.receive("Math", () => document.getElementById("addMF").click())
 window.api.receive("newFile", () => document.getElementById("newFile").click())
 window.api.receive("toggleNotebooks", () => document.getElementById("notebooks").click())
