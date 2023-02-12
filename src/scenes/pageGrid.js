@@ -1,3 +1,5 @@
+let allDefenitions = [];
+
 // Initialize pageGrid
 var pageGrid = GridStack.init({
 	float: false,
@@ -462,6 +464,31 @@ function addMF() {
 				ev.preventDefault();
 			}
 		});
+
+		created.addEventListener('input', (ev) => {
+			let foundDefs = pageGrid.getGridItems().filter(item=>{
+				return item.querySelector("math-field").value.includes("\\coloneq") && item.querySelector("math-field").value.split("\\coloneq")[1] != ""
+			})
+			function setDefenitions() {
+				for (const defenition of foundDefs) {
+					let defJson = {
+						"blockId": defenition.gridstackNode.id,
+						"defenition": {
+							[defenition.querySelector("math-field").value.split("\\coloneq")[0]]: defenition.querySelector("math-field").value.split("\\coloneq")[1]
+						}
+					}
+					if (allDefenitions.map(def=>def=def.blockId).includes(defJson.blockId) == false) {	
+						allDefenitions.push(defJson)
+					} else {
+						let oldDef = allDefenitions.find(def => {return def.blockId == defJson.blockId})
+						if (oldDef.blockId == defJson.blockId && oldDef.defenition != defJson.defenition) { 
+							oldDef.defenition = defJson.defenition
+						}
+					}
+				}
+			}
+			setDefenitions()
+		})
 	} else return
 };
 

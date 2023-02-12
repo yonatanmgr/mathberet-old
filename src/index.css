@@ -738,25 +738,26 @@ button:focus {outline:0;}
   height: 40px;
   position: static;
   display: flex;
+  align-items: flex-end;
   flex-direction: row;
   direction: rtl;
   font-size: 23px;
   align-items: center;
 }
 .groupTitle{
-  height: 40px;
+  height: inherit;
   -webkit-user-drag: none;
   font-weight: 600;
   padding-top: 8px;
-
+  transition: 0.2s;
 }
 .groupType{
   -webkit-user-select: none;
   user-select: none;
-
-  padding-bottom: 8px;
+  height: inherit;
+  padding-top: 1px;
   font-weight: 300;
-  transition: font-weight 0.2s;
+  transition: 0.2s;
 }
 .groupType:hover{
   cursor: pointer;
@@ -772,7 +773,10 @@ button:focus {outline:0;}
   -webkit-user-select: none;
   user-select: none;
   font-weight: 300;
-  padding-bottom: 5px;
+  height: inherit;
+  padding-top: 8px;
+  transition: 0.2s;
+
 }
 
 .grid-stack-item-content:has(h1:only-child)>.handle {
@@ -870,9 +874,14 @@ button:focus {outline:0;}
 
 .pageDivider{
   background: gray;
-  opacity: 30%;
+  opacity: 40%;
+  direction: rtl;
+  margin-right: 0px;
+  max-width: 100%;
   width: 100%;
   height: 1px;
+  border: none;
+  transition: 0.2s;
 }
 
 .ql-editor:has(h1:only-child) { overflow-y: hidden !important; }
@@ -924,11 +933,16 @@ button:focus {outline:0;}
   opacity: 0.9;
 }
 
-.grid-stack-item-removing .actionsArea {
+.grid-stack-item-removing .actionsArea, .grid-stack-item-removing .pageDivider {
   max-width: 30px;
   max-height: 30px;
   opacity: 0.3;
   background-color: hsl(0, var(--theme-s), var(--theme-l))  !important;
+}
+.grid-stack-item-removing .groupTop :not(.handle) {
+  padding-top: 8px;
+  font-size: 5px;
+  height: 5px;
 }
 
 .windowButton {
