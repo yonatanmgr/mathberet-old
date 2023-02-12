@@ -53,8 +53,8 @@ function startSearch() {
 	})
 }
 
-function getAllPictures(){
-	window.api.getAllPictures()
+async function getAllPictures(path){
+	window.api.getAllPictures(path)
 	window.api.receive("gotAllPictures", (result)=>{
 		currentAllPics = result;
 	})

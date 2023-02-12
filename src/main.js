@@ -164,6 +164,18 @@ async function createWindow() {
         allPictureIds.push(block.id);
         fs.writeFileSync(path.join(__dirname, "..", "attachments", `${block.id}.png`), block.blockContent.split(';base64,').pop(), 'base64')
         tempBlock.blockContent = "";
+      } else if (block.type == "Group") {
+        let groupNonPicturesData = [];
+        let groupTempData = block.blockContent;
+        for (const subBlock of groupTempData) {
+          let newTempBlock = subBlock;
+          if (subBlock.type == "Picture") {
+            allPictureIds.push(subBlock.id);
+            fs.writeFileSync(path.join(__dirname, "..", "attachments", `${subBlock.id}.png`), subBlock.blockContent.split(';base64,').pop(), 'base64')
+            newTempBlock.blockContent = "";
+          }
+          groupNonPicturesData.push(newTempBlock)
+        }
       }
       nonPicturesData.push(tempBlock);
     }
@@ -171,9 +183,8 @@ async function createWindow() {
     let allPics = fs.readdirSync(path.join(__dirname, "..", "attachments"), {withFileTypes: true});
     for (const picture of allPics) {
       if (!allPictureIds.find(pic => {return pic == picture.name.split(".")[0]})){
-        foundPath = path.join(__dirname, "..", "attachments", picture.name);
+        let foundPath = path.join(__dirname, "..", "attachments", picture.name);
         shell.trashItem(path.resolve(foundPath)).then((res) => {}).catch((err) => {})
-        break;
       }
     }
 
@@ -185,7 +196,7 @@ async function createWindow() {
     for (const picture of newAllPics) {
       foundPath = path.join(__dirname, "..", "attachments", picture.name);
       let b64 = fs.readFileSync(foundPath, "base64")
-      allPicsArr.push({"Path": foundPath, "Base64": `data:image/png;base64,${b64}`})
+      allPicsArr.push({"filePath": file, "Path": foundPath, "Base64": `data:image/png;base64,${b64}`})
     }
 
     fs.writeFileSync(path.join(__dirname, "..", "allAttachments.json"), JSON.stringify(allPicsArr), "utf-8");
@@ -199,7 +210,9 @@ async function createWindow() {
 
   ipcMain.on("move", (event, oldDir, newDir) => {fs.renameSync(oldDir, newDir)})
 
-  ipcMain.on("load", (event, file) => {fs.readFile(file, "utf-8", (error, data) => {win.webContents.send("fromMain", data)})})
+  ipcMain.on("load", (event, file) => {
+    fs.readFile(file, "utf-8", (error, data) => {win.webContents.send("fromMain", data)})
+  })
   
   ipcMain.on("setUserColor", (event, color) => {
     store.set('color', color);
@@ -248,19 +261,19 @@ async function createWindow() {
 
   ipcMain.on("getPicture", (event, id) => {
     let allPics = fs.readdirSync(path.join(__dirname, "..", "attachments"), {withFileTypes: true});
-    let foundPath;
+    let foundPath, b64;
     for (const picture of allPics) {
       if (picture.name.split(".")[0] == id.toString()){
         foundPath = path.join(__dirname, "..", "attachments", picture.name);
+        b64 = fs.readFileSync(foundPath, "base64")
         break;
       }
     }
-    let b64 = fs.readFileSync(foundPath, "base64")
     win.webContents.send("gotPicture", `data:image/png;base64,${b64}`);
     return
   })
 
-  ipcMain.on("getAllPictures", (event) => {
+  ipcMain.on("getAllPictures", (event, file) => {
     // let allPics = fs.readdirSync(path.join(__dirname, "..", "attachments"), {withFileTypes: true});
     // let allPicsArr = []
     // let foundPath;
@@ -269,7 +282,13 @@ async function createWindow() {
     //   let b64 = fs.readFileSync(foundPath, "base64")
     //   allPicsArr.push({"Path": foundPath, "Base64": `data:image/png;base64,${b64}`})
     // }
-    win.webContents.send("gotAllPictures", JSON.parse(fs.readFileSync(path.join(__dirname, "..", "allAttachments.json"),"utf-8")));
+    let res;
+    if (file == "") {
+      res = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "allAttachments.json"), "utf-8"))
+    } else {
+      res = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "allAttachments.json"), "utf-8")).filter(pic=>pic.filePath == file)
+    }
+    win.webContents.send("gotAllPictures", res);
   })
 
   ipcMain.on("getArchive", (event, args) => {

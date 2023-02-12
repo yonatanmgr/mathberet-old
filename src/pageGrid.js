@@ -301,7 +301,7 @@ function addQuill() {
 function addPicture() {
 	if (currentfile) {
 		let id = Date.now();
-		let html = `${drag}</img><div class="actionsArea"></label><input type="file" class="picturePicker" id="picker_${id}"></div>`
+		let html = `${drag}</img><div class="actionsArea"><input type="file" class="picturePicker" id="picker_${id}"></div>`
 		let block = blockData(html, id, "Picture", 6)
 		pageGrid.addWidget(block);
 		createPicture(id, "")
@@ -329,16 +329,20 @@ function createPicture(id, base64){
 			}
 		})
 	} else {
-		(async () => {
-			const image = new Image();
-			image.src = base64;
-			await image.decode();
+		const image = new Image();
+		image.src = base64;
+		image.decode()
+		.then(() => {
 			actions.innerHTML = `<canvas width="${image.width}" height="${image.height}" id="picture_${id}" class="pictureBlock"></canvas>`
 			let newPicBlock = actions.querySelector(`.pictureBlock`)
 			const context = newPicBlock.getContext('2d');
 			context.drawImage(image, 0, 0, image.width, image.height, 0, 0, newPicBlock.width, newPicBlock.height);
 			newPicBlock.style.setProperty("aspect-ratio", `${image.width} / ${image.height}`)
-		})();
+				})
+			.catch((encodingError) => {
+				actions.innerHTML = `<input type="file" class="picturePicker" id="picker_${id}">`
+				createPicture(id, "")
+			})
 	}
 	return
 }
@@ -540,12 +544,8 @@ function saveGrid() {
 	function saveBlockContent(block) {
 		switch (block.type) {
 			case "Picture":
-				if (document.getElementById(`picture_${block.id}`)) {
-					block.blockContent = document.getElementById(`picture_${block.id}`).toDataURL();
-				}
-				else {
-					block.blockContent = ""
-				}
+				if (document.getElementById(`picture_${block.id}`)) {block.blockContent = document.getElementById(`picture_${block.id}`).toDataURL();}
+				else {block.blockContent = ""}
 				break;
 			case "Text":
 				block.blockContent = document.getElementById(`textEdit_${block.id}`).__quill.getContents()
@@ -659,11 +659,12 @@ function loadBlockContent(block) {
 
 function loadBlock(block) {
 	
-	
 	switch (block.type) {
 		case "Picture":
 			let found = currentAllPics.find(pic=>{return pic.Path.split("\\").pop().split(".")[0] == block.id})
-			createPicture(block.id, found.Base64)
+			if (found != undefined) {
+				createPicture(block.id, found.Base64)
+			}
 			break;
 		case "Text":
 			block.blockContent = createQuill(block.id).setContents(block.blockContent)
@@ -857,7 +858,7 @@ function loadBlock(block) {
 
 function loadGrid(path, file, folder) {
 
-	getAllPictures()
+	
 
 	// if (currentfile != undefined) {
 	//   saveGrid()
@@ -874,6 +875,7 @@ function loadGrid(path, file, folder) {
 	document.getElementById("content").style.display = "flex"
 
 	window.api.load(path);
+	getAllPictures(path)
 	folder != "files" ? document.getElementById("slash").innerText = " / " : document.getElementById("slash").innerText = ""
 	folder != "files" ? document.getElementById("notebookName").innerText = folder : document.getElementById("notebookName").innerText = ""
 	document.getElementById("fileName").innerText = file.replace(".json", "")

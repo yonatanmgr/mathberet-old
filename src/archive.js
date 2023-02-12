@@ -1,6 +1,6 @@
 
 
-function renderArchive(){
+async function renderArchive(){
     getArchive()
 
     let app = document.getElementById("archiveApp");
@@ -35,7 +35,7 @@ function renderArchive(){
 
         app.innerHTML = html.join("")
     
-        document.querySelectorAll(".archiveBlock").forEach(block => {
+        document.querySelectorAll(".archiveBlock").forEach(async block => {
             let search = () => {
                 for (const group of archiveContent) {
                     for (const subGroup of group.subGroups) {
@@ -60,22 +60,23 @@ function renderArchive(){
                 dragIn: false,
             }
             let grid = GridStack.init(options, document.getElementById(block.id))
-            grid.on('resizestop', function (el) {
-                let resized = el.target.gridstackNode;
-                if (resized.type == "Graph") {
-                    let a = resized.blockContent;
-                    a.getAppletObject().setSize(
-                        document.getElementById(`ggBox_${resized.id}`).offsetWidth,
-                        document.getElementById(`ggBox_${resized.id}`).offsetHeight
-                    );
-                }
-            })
+            // grid.on('resizestop', function (el) {
+            //     let resized = el.target.gridstackNode;
+            //     if (resized.type == "Graph") {
+            //         let a = resized.blockContent;
+            //         a.getAppletObject().setSize(
+            //             document.getElementById(`ggBox_${resized.id}`).offsetWidth,
+            //             document.getElementById(`ggBox_${resized.id}`).offsetHeight
+            //         );
+            //     }
+            // })
+            await getAllPictures("")
             setTimeout(() => {
                 found.blockContent.forEach(loadBlockContent)
                 grid.load(found.blockContent);
                 found.blockContent.forEach(loadBlock)
                 // found.blockContent.map(loadBlock)
-            }, 5);
+            }, 100);
         })
     
     
@@ -117,6 +118,7 @@ function renderArchive(){
                     updateHeight()
                     con.querySelector('.archiveBlock').gridstack.on('resize', updateHeight)
                     resizeAll(con.querySelector('.archiveBlock').gridstack)
+                    updateHeight()
                 }
         })
         title.addEventListener("mouseover", (e)=>{
