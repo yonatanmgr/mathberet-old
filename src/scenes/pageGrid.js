@@ -567,7 +567,7 @@ function saveGrid() {
 	function saveBlockContent(block) {
 		switch (block.type) {
 			case "Divider":
-				block.blockContent = `${drag}<hr class="pageDivider"></div>`
+				block.content = `${drag}<hr class="pageDivider"></div>`
 				break;
 			case "Picture":
 				if (document.getElementById(`picture_${block.id}`)) {block.blockContent = document.getElementById(`picture_${block.id}`).toDataURL();}
