@@ -56,6 +56,10 @@ pageGrid.on('resizestop', async function (el) {
 	if (resized.type == "Group") {
 		resizeAll(resized.el.querySelector(".Group").gridstack)
 	}
+
+	// if (resized.type == "Picture") {
+	// 	console.log(resized.el.querySelector("canvas")); 
+	// }
 })
 
 pageGrid.on('dropped', function (event, previousWidget, newWidget) {
@@ -72,7 +76,7 @@ pageGrid.on('dropped', function (event, previousWidget, newWidget) {
 			inlineShortcuts: defShortcuts,
 			plonkSound: null,
 			id: resized.id,
-			onExport: (mf, latex) => `${latex}`,
+			onExport: (mf, latex) => `${latex}`
 		})
 	}
 })
@@ -148,6 +152,7 @@ function blockData(html, id, type, h, blockContent = {}, x = 12, y = 1000, w = 6
 document.getElementById("addQuill").addEventListener("click", addQuill);
 document.getElementById("addGgb").addEventListener("click", addGgb);
 document.getElementById("addMF").addEventListener("click", addMF);
+document.getElementById("addPicture").addEventListener("click", addPicture);
 document.getElementById("addGroup").addEventListener("click", () => {
 	addGroup()
 });
@@ -244,7 +249,7 @@ function addGroup(type) {
 				inlineShortcuts: defShortcuts,
 				plonkSound: null,
 				id: block.id,
-				onExport: (mf, latex) => `${latex}`,
+				onExport: (mf, latex) => `${latex}`
 			})
 		}
 	})
@@ -293,7 +298,54 @@ function addQuill() {
 	} else return
 };
 
+function addPicture() {
+	if (currentfile) {
+		let id = Date.now();
+		let html = `${drag}</img><div class="actionsArea"><input type="file" class="picturePicker" id="picker_${id}"></div>`
+		let block = blockData(html, id, "Picture", 6)
+		pageGrid.addWidget(block);
+		createPicture(id, "")
+	} else return
+};
 
+function createPicture(id, base64){
+	let picBlock = document.getElementById(`picker_${id}`)
+	let actions = picBlock.closest(".actionsArea")
+	if (base64 == "") {
+		picBlock.addEventListener('drop', (e)=>{
+			e.preventDefault();
+			const reader = new FileReader();
+			reader.readAsDataURL(e.dataTransfer.files[0]);
+			reader.onload = () => {
+				const image = new Image();
+				image.src = reader.result;
+				image.onload = () => {
+					picBlock.parentElement.innerHTML = `<canvas width="${image.width}" height="${image.height}" id="picture_${id}" class="pictureBlock"></canvas>`
+					picBlock = document.getElementById(`picture_${id}`)
+					const context = picBlock.getContext('2d');
+					context.drawImage(image, 0, 0, image.width, image.height, 0, 0, picBlock.width, picBlock.height);
+					picBlock.style.setProperty("aspect-ratio", `${image.width} / ${image.height}`)
+				}
+			}
+		})
+	} else {
+		const image = new Image();
+		image.src = base64;
+		image.decode()
+		.then(() => {
+			actions.innerHTML = `<canvas width="${image.width}" height="${image.height}" id="picture_${id}" class="pictureBlock"></canvas>`
+			let newPicBlock = actions.querySelector(`.pictureBlock`)
+			const context = newPicBlock.getContext('2d');
+			context.drawImage(image, 0, 0, image.width, image.height, 0, 0, newPicBlock.width, newPicBlock.height);
+			newPicBlock.style.setProperty("aspect-ratio", `${image.width} / ${image.height}`)
+				})
+			.catch((encodingError) => {
+				actions.innerHTML = `<input type="file" class="picturePicker" id="picker_${id}">`
+				createPicture(id, "")
+			})
+	}
+	return
+}
 
 function addMF() {
 	if (currentfile) {
@@ -308,7 +360,7 @@ function addMF() {
 			inlineShortcuts: defShortcuts,
 			plonkSound: null,
 			id: id,
-			onExport: (mf, latex) => `${latex}`,
+			onExport: (mf, latex) => `${latex}`
 		})
 		async function getSelection(scene) {
 			let text = await navigator.clipboard.readText();
@@ -491,6 +543,10 @@ function saveGrid() {
 
 	function saveBlockContent(block) {
 		switch (block.type) {
+			case "Picture":
+				if (document.getElementById(`picture_${block.id}`)) {block.blockContent = document.getElementById(`picture_${block.id}`).toDataURL();}
+				else {block.blockContent = ""}
+				break;
 			case "Text":
 				block.blockContent = document.getElementById(`textEdit_${block.id}`).__quill.getContents()
 				break;
@@ -550,6 +606,9 @@ function saveGrid() {
 
 function loadBlockContent(block) {
 	switch (block.type) {
+		case "Picture":
+			block.content = `${drag}</img><div class="actionsArea"><input type="file" class="picturePicker" id="picker_${block.id}"></div>`
+			break;
 		case "Text":
 			block.content = `${drag}</img><div class="actionsArea"><div id="textEdit_${block.id}" class="textBlock"></div></div>`
 			break;
@@ -599,7 +658,14 @@ function loadBlockContent(block) {
 }
 
 function loadBlock(block) {
+	
 	switch (block.type) {
+		case "Picture":
+			let found = currentAllPics.find(pic=>{return pic.Path.split("\\").pop().split(".")[0] == block.id})
+			if (found != undefined) {
+				createPicture(block.id, found.Base64)
+			}
+			break;
 		case "Text":
 			block.blockContent = createQuill(block.id).setContents(block.blockContent)
 			break;
@@ -609,7 +675,7 @@ function loadBlock(block) {
 				inlineShortcuts: defShortcuts,
 				plonkSound: null,
 				id: block.id,
-				onExport: (mf, latex) => `${latex}`,
+				onExport: (mf, latex) => `${latex}`
 			})
 			block.blockContent = mfBlock.setValue(block.blockContent)
 			async function getSelection(scene) {
@@ -747,13 +813,13 @@ function loadBlock(block) {
 						inlineShortcuts: defShortcuts,
 						plonkSound: null,
 						id: block.id,
-						onExport: (mf, latex) => `${latex}`,
+						onExport: (mf, latex) => `${latex}`
 					})
 				}
 			})
-			items.map(loadBlockContent)
+			items.forEach(loadBlockContent)
 			createdGrid.load(items);
-			items.map(loadBlock)
+			items.forEach(loadBlock)
 			let currentDims;
 			let memDims = group.gridstack.parentGridItem.memoryDims;
 			group.gridstack.parentGridItem.el.querySelector(".handle").addEventListener("click", () => {
@@ -792,7 +858,7 @@ function loadBlock(block) {
 
 function loadGrid(path, file, folder) {
 
-
+	
 
 	// if (currentfile != undefined) {
 	//   saveGrid()
@@ -809,6 +875,7 @@ function loadGrid(path, file, folder) {
 	document.getElementById("content").style.display = "flex"
 
 	window.api.load(path);
+	getAllPictures(path)
 	folder != "files" ? document.getElementById("slash").innerText = " / " : document.getElementById("slash").innerText = ""
 	folder != "files" ? document.getElementById("notebookName").innerText = folder : document.getElementById("notebookName").innerText = ""
 	document.getElementById("fileName").innerText = file.replace(".json", "")
@@ -816,9 +883,9 @@ function loadGrid(path, file, folder) {
 	window.api.receive("fromMain", (data) => {
 		let items = JSON.parse(data.toString());
 		pageGrid.removeAll();
-		items.map(loadBlockContent)
+		items.forEach(loadBlockContent)
 		pageGrid.load(items);
-		items.map(loadBlock)
+		items.forEach(loadBlock)
 	});
 }
 

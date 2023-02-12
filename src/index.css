@@ -6,6 +6,11 @@
 }
 
 @media (prefers-color-scheme: dark) {
+  .picturePicker{
+    background: url(icons/darkPicture.svg) no-repeat scroll 50% 50% !important;
+    background-size: 30% 30% !important;
+  }
+
   div.circle {
     background: rgb(80, 80, 80) !important;
   }
@@ -91,6 +96,10 @@
     --theme-l: 30% !important;
     --theme-s: 20% !important;
     border-color: rgba(100, 100, 100, 0.2) !important;
+  }
+
+  #searchBar{
+    color: #eee !important;
   }
   
   
@@ -482,7 +491,7 @@ svg {
   border-radius: 8px;
   overflow: hidden;
   padding: 15px;
-  border: 1px solid transparent;
+  /* border: 1px solid transparent; */
   transition: 0.2s;
 }
 
@@ -794,6 +803,12 @@ button:focus {outline:0;}
   filter: brightness(30%) saturate(400%);
   fill: hsl(var(--theme-h), var(--theme-s), var(--theme-l));
 }
+
+/* .picBlockIcon{
+  opacity: 20%;
+  align-self: center;
+  justify-self: center;
+} */
 
 .sidebarItem>.grid-stack-item-content{ height: fit-content; }
 
@@ -1325,6 +1340,22 @@ ul {
   height: 40px;
 }
 
+::-webkit-file-upload-button{
+  display: none;
+}
+
+.picturePicker{
+  color: transparent;
+  width: 100%;
+  height: 100%;
+  background: url(icons/picture.svg) no-repeat scroll 50% 50%;
+  background-size: 30% 30%;
+}
+
+.pictureBlock{
+  width: 100%;
+  border-radius: 7px;
+}
 .actionsArea .ggBox{
   direction: ltr !important;
 }
@@ -1433,7 +1464,8 @@ div.circle {
   border: none;
   font-size: 24px;
   font-family: Rubik;
-
+  color: #121212;
+  background: transparent;
 }
 
 #searchBar::placeholder{
@@ -1471,6 +1503,7 @@ div.circle {
   overflow-y: scroll;
 }
 .archiveBlockTitle.open .archiveBlock .block{
+  width: 100%;
   display: block;
 }
 
