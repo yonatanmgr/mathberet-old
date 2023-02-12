@@ -557,7 +557,7 @@ function createGgb(id, base64) {
 
 
 	var applet = new GGBApplet(options, true);
-	applet.setHTML5Codebase('Geogebra/HTML5/5.0/web3d/');
+	applet.setHTML5Codebase('libraries/Geogebra/HTML5/5.0/web3d/');
 	applet.inject(`ggBox_${id}`);
 	return applet
 }
