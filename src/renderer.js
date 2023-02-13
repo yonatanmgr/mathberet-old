@@ -421,6 +421,14 @@ document.addEventListener('coloris:pick', event => {
 	document.querySelector(":root").style.setProperty("--theme-h", parseInt(event.detail.color.split(",")[0].split("(")[1]));
 });
 
+document.querySelector(".app").addEventListener('click', (e)=>{
+	if (document.getElementById("shortcutsHelp").classList.contains("open")) {	
+		if (e.target.closest("#shortcutsContent") || e.target.closest("#help")) {
+			return
+		} else document.getElementById("shortcutsHelp").classList.replace("open", "closed");
+	}
+})
+
 // Shortcuts
 window.api.receive("openArchive", () => document.getElementById("archive").click())
 window.api.receive("Shortcuts", () => document.getElementById("help").click())
