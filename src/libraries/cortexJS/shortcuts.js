@@ -251,7 +251,7 @@ let defShortcuts = {
     '¬': '\\neg',
     'not': '\\neg',
     ':=': '\\coloneq',
-    '::': '\\Colon',
+    '::': '\\coloneq',
   
     'TT': '\\perp',
     'II': '\\parallel',
