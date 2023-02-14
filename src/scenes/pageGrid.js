@@ -489,13 +489,12 @@ function addMF() {
 					}
 					if (allDefenitions.map(def=>def=def.blockId).includes(defJson.blockId) == false) {	
 						allDefenitions.push(defJson)
-						ce.assume(Object.keys(defJson.defenition)[0], Object.values(defJson.defenition)[0])
+						ce.pushScope(defJson.defenition)
 					} else {
 						let oldDef = allDefenitions.find(def => {return def.blockId == defJson.blockId})
 						if (oldDef.blockId == defJson.blockId && oldDef.defenition != defJson.defenition) { 
 							oldDef.defenition = defJson.defenition
-							ce.forget(Object.keys(defJson.defenition)[0])
-							ce.assume(Object.keys(defJson.defenition)[0], Object.values(defJson.defenition)[0])
+							ce.pushScope(oldDef.defenition)
 						}
 					}
 				}
