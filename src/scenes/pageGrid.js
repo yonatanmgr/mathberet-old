@@ -133,7 +133,17 @@ function focus(e) {
 }
 
 function expand(expression) {
-	return ce.box(["Expand", ce.parse(expression)]).evaluate().latex
+	if (expression.startsWith("\\begin{gathered}")) {
+		let arr = expression.split("\\begin{gathered}")[1].split("\\end{gathered}")[0].split("\\\\").map(s=>s.trim())
+		let res = arr.map(exp => ce.box(["Expand", ce.parse(exp)]).evaluate().latex);
+		return `\\begin{gathered}${res.join("\\\\")}\\end{gathered}`
+	} else if (expression.startsWith("\\begin{matrix}")) {
+		let arr = expression.split("\\begin{matrix}")[1].split("\\end{matrix}")[0].split("\\\\").map(s=>s.trim())
+		let splitArr = arr.map(a => a.split("&").map(s=>s.trim()));
+		let res = splitArr.map(line => line.map(exp => ce.box(["Expand", ce.parse(exp)]).evaluate().latex).join(" & "));
+		return `\\begin{matrix}${res.join("\\\\")}\\end{matrix}`
+	}
+	else return ce.box(["Expand", ce.parse(expression)]).evaluate().latex
 }
 
 function blockData(html, id, type, h, blockContent = {}, x = 12, y = 1000, w = 6, minW = 2, minH = 2, maxH = 1000, maxW = 12) {
@@ -393,9 +403,7 @@ function addMF() {
 			let newText = await navigator.clipboard.readText();
 			switch (scene) {
 				case "expand":
-					created.executeCommand(['insert', expand(newText), {
-						'insertionMode': 'replaceSelection'
-					}])
+					created.executeCommand(['insert', expand(newText), {'insertionMode': 'replaceSelection'}])
 					break;
 				case "graph":
 					let adapted = newText
@@ -467,7 +475,9 @@ function addMF() {
 
 		created.addEventListener('input', (ev) => {
 			let foundDefs = pageGrid.getGridItems().filter(item=>{
-				return item.querySelector("math-field").value.includes("\\coloneq") && item.querySelector("math-field").value.split("\\coloneq")[1] != ""
+				if (item.gridstackNode.type == "Math") {
+					return item.querySelector("math-field").value.includes("\\coloneq") && item.querySelector("math-field").value.split("\\coloneq")[1] != ""
+				}
 			})
 			function setDefenitions() {
 				for (const defenition of foundDefs) {
@@ -479,10 +489,13 @@ function addMF() {
 					}
 					if (allDefenitions.map(def=>def=def.blockId).includes(defJson.blockId) == false) {	
 						allDefenitions.push(defJson)
+						ce.assume(Object.keys(defJson.defenition)[0], Object.values(defJson.defenition)[0])
 					} else {
 						let oldDef = allDefenitions.find(def => {return def.blockId == defJson.blockId})
 						if (oldDef.blockId == defJson.blockId && oldDef.defenition != defJson.defenition) { 
 							oldDef.defenition = defJson.defenition
+							ce.forget(Object.keys(defJson.defenition)[0])
+							ce.assume(Object.keys(defJson.defenition)[0], Object.values(defJson.defenition)[0])
 						}
 					}
 				}
@@ -740,9 +753,7 @@ function loadBlock(block) {
 				let newText = await navigator.clipboard.readText();
 				switch (scene) {
 					case "expand":
-						mfBlock.executeCommand(['insert', expand(newText), {
-							'insertionMode': 'replaceSelection'
-						}])
+						mfBlock.executeCommand(['insert', expand(newText), {'insertionMode': 'replaceSelection'}])
 						break;
 					case "graph":
 						let adapted = newText
@@ -811,6 +822,35 @@ function loadBlock(block) {
 					ev.preventDefault();
 				}
 			});
+
+			mfBlock.addEventListener('input', (ev) => {
+				let foundDefs = pageGrid.getGridItems().filter(item=>{
+					if (item.gridstackNode.type == "Math") {
+						return item.querySelector("math-field").value.includes("\\coloneq") && item.querySelector("math-field").value.split("\\coloneq")[1] != ""
+					}
+				})
+				function setDefenitions() {
+					for (const defenition of foundDefs) {
+						let defJson = {
+							"blockId": defenition.gridstackNode.id,
+							"defenition": {
+								[defenition.querySelector("math-field").value.split("\\coloneq")[0]]: defenition.querySelector("math-field").value.split("\\coloneq")[1]
+							}
+						}
+						if (allDefenitions.map(def=>def=def.blockId).includes(defJson.blockId) == false) {	
+							allDefenitions.push(defJson)
+							ce.pushScope(defJson.defenition)
+						} else {
+							let oldDef = allDefenitions.find(def => {return def.blockId == defJson.blockId})
+							if (oldDef.blockId == defJson.blockId && oldDef.defenition != defJson.defenition) { 
+								oldDef.defenition = defJson.defenition
+								ce.pushScope(oldDef.defenition)
+							}
+						}
+					}
+				}
+				setDefenitions()
+			})
 			break;
 		case "Graph":
 			if (document.getElementById("searchPage").style.display != "none"){
