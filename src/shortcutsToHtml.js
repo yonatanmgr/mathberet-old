@@ -32,14 +32,16 @@ let shortcutDict = [
             ]}
         ]
     },
-    {    
+    {
         "part": "מתמטי",
         "shortcuts": [
+            {"text": "פתיחת מקלדת וירטואלית", "keys": ["Alt+k"]},       
             {"text": "פישוט הביטוי המסומן", "keys": ["Alt+x"]},       
             {"text": "העברת הביטוי המסומן לגרף", "keys": ["Alt+g"]},       
             {"text": "מעבר לכתיבה בשורות", "keys": ["Alt+Enter ↵"]},
             {"text": "ירידה בשורה", "keys": ["Ctrl+Enter ↵"]},
             {"text": "מחיקת שורה", "keys": ["Ctrl+⌫"]},
+            {"text": "הוספת טבלה", "keys": ["tbl"]},
             {"text": "חלוקה למקרים", "keys": ["cas"]},
             {"text": "פעולות מתמטיות", "keys": null, "isSubTitle": true, "shortcuts":
             [
