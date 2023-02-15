@@ -435,6 +435,10 @@ function addMF() {
 						getSelection("graph");
 						ev.preventDefault();
 						break;
+					case "KeyK":
+						created.executeCommand("toggleVirtualKeyboard")
+						ev.preventDefault();
+						break;
 					case "Equal":
 						created.insert('\\approx');
 						ev.preventDefault();
@@ -793,6 +797,10 @@ function loadBlock(block) {
 							break;
 						case "KeyG":
 							getSelection("graph");
+							ev.preventDefault();
+							break;
+						case "KeyK":
+							mfBlock.executeCommand("toggleVirtualKeyboard")
 							ev.preventDefault();
 							break;
 						case "Equal":

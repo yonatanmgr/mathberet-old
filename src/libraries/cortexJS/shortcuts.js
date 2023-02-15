@@ -8,7 +8,7 @@ let defShortcuts = {
     'vec': '\\vec{#?}',
     'gg': '\\hat{#?}',
     '^^': '\\land', 
-    'table': '\\begin{array}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|} {#?} & {#?} \\\\ {#?} & {#?} \\end{array}',
+    'tbl': '\\begin{array}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|} {#?} & {#?} \\\\ {#?} & {#?} \\end{array}',
     'mx': '\\begin{matrix} {#?} & {#?} \\\\ {#?} & {#?} \\end{matrix}',
     'mx22': '\\begin{matrix} {#?} & {#?} \\\\ {#?} & {#?} \\end{matrix}',
     'mx32': '\\begin{matrix} {#?} & {#?} \\\\ {#?} & {#?} \\\\ {#?} & {#?} \\end{matrix}',
