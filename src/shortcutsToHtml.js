@@ -130,6 +130,7 @@ let shortcutDict = [
                 {"text": "המספרים הממשיים", "latex": "\\R", "keys": ["RR"]},
                 {"text": "המספרים הרציונליים", "latex": "\\Q", "keys": ["QQ"]},
                 {"text": "המספרים המרוכבים", "latex": "\\C", "keys": ["CC"]},
+                {"text": "קבוצה", "latex": "\\Set{ \\square | \\square }", "keys": ["set"]},
                 {"text": "הקבוצה הריקה", "latex": "\\emptyset", "keys": ["Alt+0"]},
                 {"text": "הרכבה", "latex": "\\circ", "keys": ["Alt+o"]},
                 {"text": "איחוד", "latex": "\\cup", "keys": ["Alt+u"]},
