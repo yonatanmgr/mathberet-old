@@ -478,7 +478,19 @@ function addMF() {
 				if (item.gridstackNode.type == "Math") {
 					return item.querySelector("math-field").value.includes("\\coloneq") && item.querySelector("math-field").value.split("\\coloneq")[1] != ""
 				}
-			})
+			}).concat(
+				pageGrid.getGridItems().map(item=>{
+					if (item.gridstackNode.type == "Group" && item.querySelector(".Group").gridstack.getGridItems() != []) {
+						return item.querySelector(".Group").gridstack.getGridItems().filter(a=>{
+							if (a.gridstackNode.type == "Math") {
+								return a.querySelector("math-field").value.includes("\\coloneq") && a.querySelector("math-field").value.split("\\coloneq")[1] != ""
+							}
+						})
+					}
+					else return []
+				})
+			).flat()
+			
 			function setDefenitions() {
 				for (const defenition of foundDefs) {
 					let defJson = {
