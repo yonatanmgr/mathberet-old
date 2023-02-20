@@ -105,7 +105,7 @@ function search(text) {
 
 document.onclick = hideMenu; 
 document.addEventListener("contextmenu", function(e){ if(e.target.closest("#addGroup, .groupType, .groupTitle") && document.getElementById("searchPage").style.display == "none") {rightClick(e)} })
-document.addEventListener("contextmenu", function(e){ if(e.target.closest("#page") && document.getElementById("searchPage").style.display == "none") {rightClick(e)} })
+document.addEventListener("contextmenu", function(e){ if(e.target.closest("#page") && !e.target.closest(".block") && document.getElementById("searchPage").style.display == "none") {rightClick(e)} })
 
 function hideMenu() {
   document.getElementById("contextMenu-groups").children[0].id = "";
@@ -120,7 +120,7 @@ function rightClick(e) {
     else{ 
         var groupsMenu = document.getElementById("contextMenu-groups")
         var gridMenu = document.getElementById("contextMenu-grid")
-        if (e.target.closest("#page")){
+        if (e.target.closest("#page") && !e.target.closest(".block")){
 			gridMenu.children[0].id = ""
 			gridMenu.style.display = 'block'; 
 			gridMenu.style.left = e.pageX-50 + "px"; 
