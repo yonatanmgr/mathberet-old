@@ -534,7 +534,7 @@ function addGgb() {
 function createQuill(id) {
 	let bindings = {
 		ltr: {
-			key: 219,
+			key: 188,
 			shortKey: true,
 			handler: function (range) {
 				this.quill.formatLine(range, 'direction', '');
@@ -543,8 +543,16 @@ function createQuill(id) {
 				this.quill.currentAlign = ''
 			}
 		},
+		center: {
+			key: 191,
+			shortKey: true,
+			handler: function (range) {
+				this.quill.formatLine(range, 'align', 'center')
+				this.quill.currentAlign = 'center'
+			}
+		},
 		rtl: {
-			key: 221,
+			key: 190,
 			shortKey: true,
 			handler: function (range) {
 				this.quill.formatLine(range, 'direction', 'rtl');
@@ -622,7 +630,7 @@ function saveGrid() {
 	function saveBlockContent(block) {
 		switch (block.type) {
 			case "Divider":
-				block.content = `${drag}<hr class="pageDivider"></div>`
+				block.content = ``
 				break;
 			case "Picture":
 				if (document.getElementById(`picture_${block.id}`)) {block.blockContent = document.getElementById(`picture_${block.id}`).toDataURL();}
