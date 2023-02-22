@@ -68,9 +68,6 @@
   color: #eee;
 }
 
-.actionsArea:hover {
-  border: 1px solid #333 !important;
-}
 #clr-picker{
   background-color: #222 !important;
 }
@@ -498,7 +495,11 @@ svg {
 .actionsArea:has(.ggBox) { padding: 3px; }
 
 
-.actionsArea:hover { border: 1px solid #c5c5c5; }
+.actionsArea:hover {
+  -webkit-box-shadow: 0px 0px 0px 1px rgba(128, 128, 128,0.3) inset !important;
+  -moz-box-shadow: 0px 0px 0px 1px rgba(128, 128, 128,0.3) inset !important;
+  box-shadow: 0px 0px 0px 1px rgba(128, 128, 128,0.3) inset !important  ;
+}
 
 .appContainer {
   display: flex;
@@ -857,7 +858,7 @@ button:focus {outline:0;}
   border-radius: 20px 20px 0px 0px;
   height: 100% !important;
   overflow-y: scroll !important;
-  border: 1px solid #DDD;
+  box-shadow: 0px 0px 0px 0px rgba(128, 128, 128,0.8) inset;
   min-height: 100% !important;
   scroll-behavior: smooth;
   transition: 0.2s;

@@ -110,25 +110,28 @@ document.addEventListener("click", e => focus(e))
 function focus(e) {
 	let focused = e.target
 	if (focused.closest(".actionsArea")) {
-		document.querySelector(".pageContainer").style.border = "1px solid rgba(100, 100, 100, 0.2)"
+		document.querySelector(".pageContainer").style.boxShadow = "0px 0px 0px 1px rgba(128, 128, 128,0.3) inset"
 		focused = e.target.closest(".actionsArea")
 		currentBlock = focused.closest(".grid-stack-item").gridstackNode
-		currentBlock.el.querySelector(".actionsArea").style.border = "1px solid rgba(100, 100, 100, 0.3)"
+		currentBlock.el.querySelector(".actionsArea").style.boxShadow = "0px 0px 0px 1px rgba(128, 128, 128,0.3) inset"
+		if (currentBlock.type == "Math") {
+			currentBlock.el.querySelector("math-field")._mathfield.focus()
+		}
 		for (var area of document.getElementsByClassName("actionsArea")) {
 			if (area != focused)
-				area.style.border = "0px solid transparent"
+				area.style.boxShadow = "0px 0px 0px 0px rgba(128, 128, 128,0.3) inset"
 		}
 	} else if (focused.closest(".pageContainer")) {
 		focused = e.target.closest(".pageContainer")
 		for (var area of document.getElementsByClassName("actionsArea")) {
-			area.style.border = "0px solid transparent"
+			area.style.boxShadow = "0px 0px 0px 0px rgba(128, 128, 128,0.3) inset"
 		}
-		focused.style.border = "1px solid rgba(100, 100, 100, 0.3)"
+		focused.style.boxShadow = "0px 0px 0px 1px rgba(128, 128, 128,0.3) inset"
 	} else {
 		for (var area of document.getElementsByClassName("actionsArea")) {
-			area.style.border = "0px solid transparent"
+			area.style.boxShadow = "0px 0px 0px 0px rgba(128, 128, 128,0.3) inset"
 		}
-		document.querySelector(".pageContainer").style.border = "1px solid rgba(100, 100, 100, 0.2)"
+		document.querySelector(".pageContainer").style.boxShadow = "0px 0px 0px 1px rgba(128, 128, 128,0.3) inset"
 	}
 }
 
