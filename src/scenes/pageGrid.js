@@ -426,7 +426,7 @@ function addMF() {
 			}
 			navigator.clipboard.writeText(text);
 		}
-
+		created.addEventListener("click", e => focus(e))
 		created.addEventListener('keydown', (ev) => {
 			if (ev.altKey === true) {
 				switch (ev.code) {
@@ -799,6 +799,7 @@ function loadBlock(block) {
 				}
 				navigator.clipboard.writeText(text);
 			}
+			mfBlock.addEventListener("click", e => focus(e))
 			mfBlock.addEventListener('keydown', (ev) => {
 				if (ev.altKey === true) {
 					switch (ev.code) {
