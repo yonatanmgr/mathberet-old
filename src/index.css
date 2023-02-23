@@ -2,7 +2,12 @@
   --theme-s: 90%;
   --theme-l: 89%;
   --page-style: transparent;
-  font-family: Rubik !important;
+  font-family: 'Rubik' !important;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url(/src/fonts/Rubik-Regular.ttf);
 }
 
 @media (prefers-color-scheme: dark) {
