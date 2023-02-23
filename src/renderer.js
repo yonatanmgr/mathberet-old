@@ -105,36 +105,47 @@ function search(text) {
 
 document.onclick = hideMenu; 
 document.addEventListener("contextmenu", function(e){ if(e.target.closest("#addGroup, .groupType, .groupTitle") && document.getElementById("searchPage").style.display == "none") {rightClick(e)} })
+document.addEventListener("contextmenu", function(e){ if(e.target.closest("#page") && !e.target.closest(".block") && document.getElementById("searchPage").style.display == "none") {rightClick(e)} })
 
 function hideMenu() {
-  document.getElementById("contextMenu").children[0].id = "";
-  document.getElementById("contextMenu").style.display = "none" 
+  document.getElementById("contextMenu-groups").children[0].id = "";
+  document.getElementById("contextMenu-groups").style.display = "none" 
+  document.getElementById("contextMenu-grid").children[0].id = "";
+  document.getElementById("contextMenu-grid").style.display = "none" 
 } 
 
 function rightClick(e) { 
     e.preventDefault(); 
-    if (document.getElementById("contextMenu").style.display == "block"){hideMenu(); }
+    if (document.getElementById("contextMenu-groups").style.display == "block" || document.getElementById("contextMenu-grid").style.display == "block"){hideMenu(); }
     else{ 
-        var menu = document.getElementById("contextMenu")
+        var groupsMenu = document.getElementById("contextMenu-groups")
+        var gridMenu = document.getElementById("contextMenu-grid")
+        if (e.target.closest("#page") && !e.target.closest(".block")){
+			gridMenu.children[0].id = ""
+			gridMenu.style.display = 'block'; 
+			gridMenu.style.left = e.pageX-50 + "px"; 
+			gridMenu.style.top = e.pageY + "px"; 
+  
+        }
         if (e.target.closest("#addGroup")){
-          menu.children[0].id = ""
-		  menu.style.display = 'block'; 
-		  menu.style.left = e.pageX-50 + "px"; 
-		  menu.style.top = e.pageY + "px"; 
+          groupsMenu.children[0].id = ""
+		  groupsMenu.style.display = 'block'; 
+		  groupsMenu.style.left = e.pageX-50 + "px"; 
+		  groupsMenu.style.top = e.pageY + "px"; 
   
         }
         else if (e.target.closest(".groupType") || e.target.closest(".groupTitle") && e.target.closest(".groupTop").querySelector(".groupType").innerText == ""){
-          menu.children[0].id = e.target.closest('.block').gridstackNode.id
-		  menu.style.display = 'block'; 
-		  menu.style.left = e.pageX-50 + "px"; 
-		  menu.style.top = e.pageY + "px"; 
+          groupsMenu.children[0].id = e.target.closest('.block').gridstackNode.id
+		  groupsMenu.style.display = 'block'; 
+		  groupsMenu.style.left = e.pageX-50 + "px"; 
+		  groupsMenu.style.top = e.pageY + "px"; 
   
         }
     } 
 } 
 
-document.getElementById("contextMenu").children[0].querySelector('.undefined').addEventListener("click", ()=>{
-  let clicked = document.getElementById("contextMenu").children[0].id
+document.getElementById("contextMenu-groups").children[0].querySelector('.undefined').addEventListener("click", ()=>{
+  let clicked = document.getElementById("contextMenu-groups").children[0].id
   if (clicked){
     let block = findInGrid(clicked)
     block.querySelector(".seperator").innerHTML = ""
@@ -150,8 +161,8 @@ document.getElementById("contextMenu").children[0].querySelector('.undefined').a
   }
   else{ addGroup() }
 })
-document.getElementById("contextMenu").children[0].querySelector('.proof').addEventListener("click", ()=>{
-  let clicked = document.getElementById("contextMenu").children[0].id
+document.getElementById("contextMenu-groups").children[0].querySelector('.proof').addEventListener("click", ()=>{
+  let clicked = document.getElementById("contextMenu-groups").children[0].id
   if (clicked){
 
   let block = findInGrid(clicked)
@@ -169,8 +180,8 @@ document.getElementById("contextMenu").children[0].querySelector('.proof').addEv
 else{ addGroup("proof") }
 
 })
-document.getElementById("contextMenu").children[0].querySelector('.assumption').addEventListener("click", ()=>{
-  let clicked = document.getElementById("contextMenu").children[0].id
+document.getElementById("contextMenu-groups").children[0].querySelector('.assumption').addEventListener("click", ()=>{
+  let clicked = document.getElementById("contextMenu-groups").children[0].id
   if (clicked){
 
   let block = findInGrid(clicked)
@@ -188,8 +199,8 @@ document.getElementById("contextMenu").children[0].querySelector('.assumption').
   else{ addGroup("assumption") }
 
 })
-document.getElementById("contextMenu").children[0].querySelector('.theorem').addEventListener("click", ()=>{
-  let clicked = document.getElementById("contextMenu").children[0].id
+document.getElementById("contextMenu-groups").children[0].querySelector('.theorem').addEventListener("click", ()=>{
+  let clicked = document.getElementById("contextMenu-groups").children[0].id
   if (clicked){
 
 	let block = findInGrid(clicked)
@@ -207,8 +218,8 @@ document.getElementById("contextMenu").children[0].querySelector('.theorem').add
   else{ addGroup("theorem") }
 
 })
-document.getElementById("contextMenu").children[0].querySelector('.defenition').addEventListener("click", ()=>{  
-  let clicked = document.getElementById("contextMenu").children[0].id
+document.getElementById("contextMenu-groups").children[0].querySelector('.defenition').addEventListener("click", ()=>{  
+  let clicked = document.getElementById("contextMenu-groups").children[0].id
   if (clicked){
 
 	let block = findInGrid(clicked)
@@ -420,6 +431,14 @@ document.addEventListener('coloris:pick', event => {
 	window.api.setUserColor(parseInt(event.detail.color.split(",")[0].split("(")[1]))
 	document.querySelector(":root").style.setProperty("--theme-h", parseInt(event.detail.color.split(",")[0].split("(")[1]));
 });
+
+document.querySelector(".app").addEventListener('click', (e)=>{
+	if (document.getElementById("shortcutsHelp").classList.contains("open")) {	
+		if (e.target.closest("#shortcutsContent") || e.target.closest("#help")) {
+			return
+		} else document.getElementById("shortcutsHelp").classList.replace("open", "closed");
+	}
+})
 
 // Shortcuts
 window.api.receive("openArchive", () => document.getElementById("archive").click())

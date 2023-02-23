@@ -7,7 +7,8 @@ let defShortcuts = {
     'nCk': '\\binom',
     'vec': '\\vec{#?}',
     'gg': '\\hat{#?}',
-    '^^': '\\land',
+    '^^': '\\land', 
+    'tbl': '\\begin{array}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|} {#?} & {#?} \\\\ {#?} & {#?} \\end{array}',
     'mx': '\\begin{matrix} {#?} & {#?} \\\\ {#?} & {#?} \\end{matrix}',
     'mx22': '\\begin{matrix} {#?} & {#?} \\\\ {#?} & {#?} \\end{matrix}',
     'mx32': '\\begin{matrix} {#?} & {#?} \\\\ {#?} & {#?} \\\\ {#?} & {#?} \\end{matrix}',
@@ -220,6 +221,7 @@ let defShortcuts = {
     '!in': '\\notin',
     'sub': '\\subset',
     'subb': '\\subseteq',
+    'set': '\\Set{ {#?} | {#?} }',
   
     // Sets
     'NN': '\\mathbb{N}', // Natural numbers
@@ -251,7 +253,7 @@ let defShortcuts = {
     '¬': '\\neg',
     'not': '\\neg',
     ':=': '\\coloneq',
-    '::': '\\Colon',
+    '::': '\\coloneq',
   
     'TT': '\\perp',
     'II': '\\parallel',
@@ -389,6 +391,8 @@ let defShortcuts = {
     '->': '\\to',
     '|->': '\\mapsto',
     '-->': '\\longrightarrow',
+    'up': '\\nearrow',
+    'down': '\\searrow',
     //    '<-':                   '\\leftarrow',
     '<--': '\\longleftarrow',
     '=>': '\\Rightarrow',

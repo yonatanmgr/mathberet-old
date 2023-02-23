@@ -1,3 +1,17 @@
+let allDefenitions = [];
+
+var mlOptions = (id) => { return {
+	// customVirtualKeyboardLayers: HIGH_SCHOOL_KEYBOARD_LAYER,
+    // customVirtualKeyboards: HIGH_SCHOOL_KEYBOARD,
+    // virtualKeyboards: "high-school-keyboard",
+	virtualKeyboardContainer: document.getElementById("page").parentElement,
+	inlineShortcuts: defShortcuts,
+	keypressSound: null,
+	plonkSound: null,
+	id: id,
+	onExport: (mf, latex) => `${latex}`
+}}
+
 // Initialize pageGrid
 var pageGrid = GridStack.init({
 	float: false,
@@ -72,12 +86,7 @@ pageGrid.on('dropped', function (event, previousWidget, newWidget) {
 		);
 	}
 	else if (resized.type == "Math"){
-		resized.el.querySelector("math-field")._mathfield.setOptions({
-			inlineShortcuts: defShortcuts,
-			plonkSound: null,
-			id: resized.id,
-			onExport: (mf, latex) => `${latex}`
-		})
+		resized.el.querySelector("math-field")._mathfield.setOptions(mlOptions(resized.id))
 	}
 })
 
@@ -108,30 +117,43 @@ document.addEventListener("click", e => focus(e))
 function focus(e) {
 	let focused = e.target
 	if (focused.closest(".actionsArea")) {
-		document.querySelector(".pageContainer").style.border = "1px solid rgba(100, 100, 100, 0.2)"
+		document.querySelector(".pageContainer").style.boxShadow = "0px 0px 0px 1px rgba(128, 128, 128,0.15) inset"
 		focused = e.target.closest(".actionsArea")
 		currentBlock = focused.closest(".grid-stack-item").gridstackNode
-		currentBlock.el.querySelector(".actionsArea").style.border = "1px solid rgba(100, 100, 100, 0.3)"
+		currentBlock.el.querySelector(".actionsArea").style.boxShadow = "0px 0px 0px 1px rgba(128, 128, 128,0.3) inset"
+		if (currentBlock.type == "Math") {
+			currentBlock.el.querySelector("math-field")._mathfield.focus()
+		}
 		for (var area of document.getElementsByClassName("actionsArea")) {
 			if (area != focused)
-				area.style.border = "0px solid transparent"
+				area.style.boxShadow = "unset"
 		}
 	} else if (focused.closest(".pageContainer")) {
 		focused = e.target.closest(".pageContainer")
 		for (var area of document.getElementsByClassName("actionsArea")) {
-			area.style.border = "0px solid transparent"
+			area.style.boxShadow = "unset"
 		}
-		focused.style.border = "1px solid rgba(100, 100, 100, 0.3)"
+		focused.style.boxShadow = "0px 0px 0px 1px rgba(128, 128, 128,0.3) inset"
 	} else {
 		for (var area of document.getElementsByClassName("actionsArea")) {
-			area.style.border = "0px solid transparent"
+			area.style.boxShadow = "unset"
 		}
-		document.querySelector(".pageContainer").style.border = "1px solid rgba(100, 100, 100, 0.2)"
+		document.querySelector(".pageContainer").style.boxShadow = "0px 0px 0px 1px rgba(128, 128, 128,0.15) inset"
 	}
 }
 
 function expand(expression) {
-	return ce.box(["Expand", ce.parse(expression)]).evaluate().latex
+	if (expression.startsWith("\\begin{gathered}")) {
+		let arr = expression.split("\\begin{gathered}")[1].split("\\end{gathered}")[0].split("\\\\").map(s=>s.trim())
+		let res = arr.map(exp => ce.box(["Expand", ce.parse(exp)]).evaluate().latex);
+		return `\\begin{gathered}${res.join("\\\\")}\\end{gathered}`
+	} else if (expression.startsWith("\\begin{matrix}")) {
+		let arr = expression.split("\\begin{matrix}")[1].split("\\end{matrix}")[0].split("\\\\").map(s=>s.trim())
+		let splitArr = arr.map(a => a.split("&").map(s=>s.trim()));
+		let res = splitArr.map(line => line.map(exp => ce.box(["Expand", ce.parse(exp)]).evaluate().latex).join(" & "));
+		return `\\begin{matrix}${res.join("\\\\")}\\end{matrix}`
+	}
+	else return ce.box(["Expand", ce.parse(expression)]).evaluate().latex
 }
 
 function blockData(html, id, type, h, blockContent = {}, x = 12, y = 1000, w = 6, minW = 2, minH = 2, maxH = 1000, maxW = 12) {
@@ -245,12 +267,7 @@ function addGroup(type) {
 			);
 		}
 		else if (resized.type == "Math"){
-			resized.el.querySelector("math-field")._mathfield.setOptions({
-				inlineShortcuts: defShortcuts,
-				plonkSound: null,
-				id: block.id,
-				onExport: (mf, latex) => `${latex}`
-			})
+			resized.el.querySelector("math-field")._mathfield.setOptions(mlOptions(resized.id))
 		}
 	})
 	let currentDims;
@@ -379,21 +396,14 @@ function addMF() {
 		pageGrid.addWidget(block)
 		let created = createMF(id)
 		created.focus()
-		created.setOptions({
-			inlineShortcuts: defShortcuts,
-			plonkSound: null,
-			id: id,
-			onExport: (mf, latex) => `${latex}`
-		})
+		created.setOptions(mlOptions(id))
 		async function getSelection(scene) {
 			let text = await navigator.clipboard.readText();
 			created.executeCommand(['copyToClipboard', '#0'])
 			let newText = await navigator.clipboard.readText();
 			switch (scene) {
 				case "expand":
-					created.executeCommand(['insert', expand(newText), {
-						'insertionMode': 'replaceSelection'
-					}])
+					created.executeCommand(['insert', expand(newText), {'insertionMode': 'replaceSelection'}])
 					break;
 				case "graph":
 					let adapted = newText
@@ -413,7 +423,7 @@ function addMF() {
 			}
 			navigator.clipboard.writeText(text);
 		}
-
+		created.addEventListener("click", e => focus(e))
 		created.addEventListener('keydown', (ev) => {
 			if (ev.altKey === true) {
 				switch (ev.code) {
@@ -423,6 +433,10 @@ function addMF() {
 						break;
 					case "KeyG":
 						getSelection("graph");
+						ev.preventDefault();
+						break;
+					case "KeyK":
+						created.executeCommand("toggleVirtualKeyboard")
 						ev.preventDefault();
 						break;
 					case "Equal":
@@ -462,6 +476,47 @@ function addMF() {
 				ev.preventDefault();
 			}
 		});
+
+		created.addEventListener('input', (ev) => {
+			let foundDefs = pageGrid.getGridItems().filter(item=>{
+				if (item.gridstackNode.type == "Math") {
+					return item.querySelector("math-field").value.includes("\\coloneq") && item.querySelector("math-field").value.split("\\coloneq")[1] != ""
+				}
+			}).concat(
+				pageGrid.getGridItems().map(item=>{
+					if (item.gridstackNode.type == "Group" && item.querySelector(".Group").gridstack.getGridItems() != []) {
+						return item.querySelector(".Group").gridstack.getGridItems().filter(a=>{
+							if (a.gridstackNode.type == "Math") {
+								return a.querySelector("math-field").value.includes("\\coloneq") && a.querySelector("math-field").value.split("\\coloneq")[1] != ""
+							}
+						})
+					}
+					else return []
+				})
+			).flat()
+			
+			function setDefenitions() {
+				for (const defenition of foundDefs) {
+					let defJson = {
+						"blockId": defenition.gridstackNode.id,
+						"defenition": {
+							[defenition.querySelector("math-field").value.split("\\coloneq")[0]]: defenition.querySelector("math-field").value.split("\\coloneq")[1]
+						}
+					}
+					if (allDefenitions.map(def=>def=def.blockId).includes(defJson.blockId) == false) {	
+						allDefenitions.push(defJson)
+						ce.pushScope(defJson.defenition)
+					} else {
+						let oldDef = allDefenitions.find(def => {return def.blockId == defJson.blockId})
+						if (oldDef.blockId == defJson.blockId && oldDef.defenition != defJson.defenition) { 
+							oldDef.defenition = defJson.defenition
+							ce.pushScope(oldDef.defenition)
+						}
+					}
+				}
+			}
+			setDefenitions()
+		})
 	} else return
 };
 
@@ -479,7 +534,7 @@ function addGgb() {
 function createQuill(id) {
 	let bindings = {
 		ltr: {
-			key: 219,
+			key: 188,
 			shortKey: true,
 			handler: function (range) {
 				this.quill.formatLine(range, 'direction', '');
@@ -488,8 +543,16 @@ function createQuill(id) {
 				this.quill.currentAlign = ''
 			}
 		},
+		center: {
+			key: 191,
+			shortKey: true,
+			handler: function (range) {
+				this.quill.formatLine(range, 'align', 'center')
+				this.quill.currentAlign = 'center'
+			}
+		},
 		rtl: {
-			key: 221,
+			key: 190,
 			shortKey: true,
 			handler: function (range) {
 				this.quill.formatLine(range, 'direction', 'rtl');
@@ -567,7 +630,7 @@ function saveGrid() {
 	function saveBlockContent(block) {
 		switch (block.type) {
 			case "Divider":
-				block.content = `${drag}<hr class="pageDivider"></div>`
+				block.content = ``
 				break;
 			case "Picture":
 				if (document.getElementById(`picture_${block.id}`)) {block.blockContent = document.getElementById(`picture_${block.id}`).toDataURL();}
@@ -700,12 +763,7 @@ function loadBlock(block) {
 			break;
 		case "Math":
 			let mfBlock = createMF(block.id);
-			mfBlock.setOptions({
-				inlineShortcuts: defShortcuts,
-				plonkSound: null,
-				id: block.id,
-				onExport: (mf, latex) => `${latex}`
-			})
+			mfBlock.setOptions(mlOptions(block.id))
 			block.blockContent = mfBlock.setValue(block.blockContent)
 			async function getSelection(scene) {
 				let text = await navigator.clipboard.readText();
@@ -713,9 +771,7 @@ function loadBlock(block) {
 				let newText = await navigator.clipboard.readText();
 				switch (scene) {
 					case "expand":
-						mfBlock.executeCommand(['insert', expand(newText), {
-							'insertionMode': 'replaceSelection'
-						}])
+						mfBlock.executeCommand(['insert', expand(newText), {'insertionMode': 'replaceSelection'}])
 						break;
 					case "graph":
 						let adapted = newText
@@ -735,6 +791,7 @@ function loadBlock(block) {
 				}
 				navigator.clipboard.writeText(text);
 			}
+			mfBlock.addEventListener("click", e => focus(e))
 			mfBlock.addEventListener('keydown', (ev) => {
 				if (ev.altKey === true) {
 					switch (ev.code) {
@@ -744,6 +801,10 @@ function loadBlock(block) {
 							break;
 						case "KeyG":
 							getSelection("graph");
+							ev.preventDefault();
+							break;
+						case "KeyK":
+							mfBlock.executeCommand("toggleVirtualKeyboard")
 							ev.preventDefault();
 							break;
 						case "Equal":
@@ -784,6 +845,35 @@ function loadBlock(block) {
 					ev.preventDefault();
 				}
 			});
+
+			mfBlock.addEventListener('input', (ev) => {
+				let foundDefs = pageGrid.getGridItems().filter(item=>{
+					if (item.gridstackNode.type == "Math") {
+						return item.querySelector("math-field").value.includes("\\coloneq") && item.querySelector("math-field").value.split("\\coloneq")[1] != ""
+					}
+				})
+				function setDefenitions() {
+					for (const defenition of foundDefs) {
+						let defJson = {
+							"blockId": defenition.gridstackNode.id,
+							"defenition": {
+								[defenition.querySelector("math-field").value.split("\\coloneq")[0]]: defenition.querySelector("math-field").value.split("\\coloneq")[1]
+							}
+						}
+						if (allDefenitions.map(def=>def=def.blockId).includes(defJson.blockId) == false) {	
+							allDefenitions.push(defJson)
+							ce.pushScope(defJson.defenition)
+						} else {
+							let oldDef = allDefenitions.find(def => {return def.blockId == defJson.blockId})
+							if (oldDef.blockId == defJson.blockId && oldDef.defenition != defJson.defenition) { 
+								oldDef.defenition = defJson.defenition
+								ce.pushScope(oldDef.defenition)
+							}
+						}
+					}
+				}
+				setDefenitions()
+			})
 			break;
 		case "Graph":
 			if (document.getElementById("searchPage").style.display != "none"){
@@ -838,12 +928,7 @@ function loadBlock(block) {
 					);
 				}
 				else if (resized.type == "Math"){
-					resized.el.querySelector("math-field")._mathfield.setOptions({
-						inlineShortcuts: defShortcuts,
-						plonkSound: null,
-						id: block.id,
-						onExport: (mf, latex) => `${latex}`
-					})
+					resized.el.querySelector("math-field")._mathfield.setOptions(mlOptions(block.id))
 				}
 			})
 			items.forEach(loadBlockContent)
