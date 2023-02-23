@@ -99,7 +99,21 @@
     color: #eee !important;
   }
   
-  
+  .ML__keyboard{
+    --keycap-background: hsla(var(--theme-h), 80%, 10%, 0.2) !important;
+    --keycap-background-active: hsla(var(--theme-h), 80%, 40%, 0.6) !important;
+    --keyboard-alternate-background-active: hsla(var(--theme-h), 100%, 70%, 1) !important;
+    --keyboard-alternate-background: hsla(var(--theme-h), 40%, 30%, 0.9) !important;
+    --keyboard-text-active: hsla(var(--theme-h), 100%, 70%, 1) !important;
+    --keyboard-background: hsla(var(--theme-h), 80%, 7%, 0.9) !important;
+    --keycap-background-border: hsla(var(--theme-h), 80%, 40%, 0.3) !important;
+    --keycap-background-border-bottom: hsla(var(--theme-h), 80%, 50%, 0.3) !important;
+    --keycap-text-active: hsla(var(--theme-h), 80%, 70%, 1) !important;
+    --keycap-modifier-background: hsla(var(--theme-h), 80%, 10%, 0.2) !important;
+    --keycap-modifier-active: hsla(var(--theme-h), 80%, 10%, 0.4) !important;
+    --keycap-modifier-border: hsla(var(--theme-h), 80%, 40%, 0.3) !important;
+    --keycap-modifier-border-bottom: hsla(var(--theme-h), 80%, 50%, 0.3) !important;  
+  }  
   #colorSwitcher{
     background-color: hsl(var(--theme-h), 30%, var(--theme-l)) !important;
     color: hsl(var(--theme-h), 30%, var(--theme-l)) !important;   
@@ -185,6 +199,22 @@
 }
 
 @media (prefers-color-scheme: light) {
+  .ML__keyboard{
+    --keyboard-alternate-background-active: hsla(var(--theme-h), 20%, 60%, 1) !important;
+    --keyboard-alternate-background: hsla(var(--theme-h), 20%, 80%, 1) !important;
+    --keyboard-text-active: unset !important;
+    --keyboard-background: hsla(var(--theme-h), 80%, 20%, 0.2) !important;
+    --keycap-background: hsla(var(--theme-h), 5%, 100%, 0.8) !important;
+    --keycap-background-border: hsla(var(--theme-h), 80%, 40%, 0.3) !important;
+    --keycap-background-active: hsla(var(--theme-h), 5%, 100%, 1) !important;
+    --keycap-background-border-bottom: hsla(var(--theme-h), 80%, 50%, 0.3) !important;
+    --keycap-text-active: hsla(var(--theme-h), 80%, 70%, 1) !important;
+    --keycap-modifier-background: hsla(var(--theme-h), 5%, 100%, 0.8) !important;
+    --keycap-modifier-active: unset;
+    --keycap-modifier-border: unset;
+    --keycap-modifier-border-bottom: unset;  
+  }
+
   body {color: #121212;}
 
   #sidebar .tool:active { 
@@ -498,7 +528,7 @@ svg {
 .actionsArea:hover {
   -webkit-box-shadow: 0px 0px 0px 1px rgba(128, 128, 128,0.3) inset !important;
   -moz-box-shadow: 0px 0px 0px 1px rgba(128, 128, 128,0.3) inset !important;
-  box-shadow: 0px 0px 0px 1px rgba(128, 128, 128,0.3) inset !important  ;
+  box-shadow: 0px 0px 0px 1px rgba(128, 128, 128,0.3) inset !important;
 }
 
 .appContainer {
@@ -852,13 +882,23 @@ button:focus {outline:0;}
   fill: hsl(var(--theme-h), 50%, 30%);
 }
 
+.ML__keyboard--plate{
+  direction: ltr !important;
+  border-radius: 10px 10px 0px 0px !important;
+}
+.ML__keyboard{
+  width: 60% !important;
+  left: inherit !important;
+}
+
 .pageContainer {
   background-color: white;
+  position: relative;
   width: 73%;
   border-radius: 20px 20px 0px 0px;
   height: 100% !important;
   overflow-y: scroll !important;
-  box-shadow: 0px 0px 0px 0px rgba(128, 128, 128,0.8) inset;
+  box-shadow: 0px 0px 0px 1px rgba(128, 128, 128,0.15) inset;
   min-height: 100% !important;
   scroll-behavior: smooth;
   transition: 0.2s;
@@ -1039,12 +1079,12 @@ button:focus {outline:0;}
   flex: 1;
   overflow-y: hidden;
   padding-top: 70px;
+  position: relative;
   display: none;
   flex-direction: row;
   direction: rtl;
-
   align-items: flex-start;
-  /* margin-top: auto; */
+  margin-top: auto;
   margin-bottom: auto;
   justify-content: center;
   height: -webkit-fill-available;

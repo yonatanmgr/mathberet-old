@@ -1,5 +1,17 @@
 let allDefenitions = [];
 
+var mlOptions = (id) => { return {
+	// customVirtualKeyboardLayers: HIGH_SCHOOL_KEYBOARD_LAYER,
+    // customVirtualKeyboards: HIGH_SCHOOL_KEYBOARD,
+    // virtualKeyboards: "high-school-keyboard",
+	virtualKeyboardContainer: document.getElementById("page").parentElement,
+	inlineShortcuts: defShortcuts,
+	keypressSound: null,
+	plonkSound: null,
+	id: id,
+	onExport: (mf, latex) => `${latex}`
+}}
+
 // Initialize pageGrid
 var pageGrid = GridStack.init({
 	float: false,
@@ -74,12 +86,7 @@ pageGrid.on('dropped', function (event, previousWidget, newWidget) {
 		);
 	}
 	else if (resized.type == "Math"){
-		resized.el.querySelector("math-field")._mathfield.setOptions({
-			inlineShortcuts: defShortcuts,
-			plonkSound: null,
-			id: resized.id,
-			onExport: (mf, latex) => `${latex}`
-		})
+		resized.el.querySelector("math-field")._mathfield.setOptions(mlOptions(resized.id))
 	}
 })
 
@@ -110,7 +117,7 @@ document.addEventListener("click", e => focus(e))
 function focus(e) {
 	let focused = e.target
 	if (focused.closest(".actionsArea")) {
-		document.querySelector(".pageContainer").style.boxShadow = "0px 0px 0px 1px rgba(128, 128, 128,0.3) inset"
+		document.querySelector(".pageContainer").style.boxShadow = "0px 0px 0px 1px rgba(128, 128, 128,0.15) inset"
 		focused = e.target.closest(".actionsArea")
 		currentBlock = focused.closest(".grid-stack-item").gridstackNode
 		currentBlock.el.querySelector(".actionsArea").style.boxShadow = "0px 0px 0px 1px rgba(128, 128, 128,0.3) inset"
@@ -119,19 +126,19 @@ function focus(e) {
 		}
 		for (var area of document.getElementsByClassName("actionsArea")) {
 			if (area != focused)
-				area.style.boxShadow = "0px 0px 0px 0px rgba(128, 128, 128,0.3) inset"
+				area.style.boxShadow = "unset"
 		}
 	} else if (focused.closest(".pageContainer")) {
 		focused = e.target.closest(".pageContainer")
 		for (var area of document.getElementsByClassName("actionsArea")) {
-			area.style.boxShadow = "0px 0px 0px 0px rgba(128, 128, 128,0.3) inset"
+			area.style.boxShadow = "unset"
 		}
 		focused.style.boxShadow = "0px 0px 0px 1px rgba(128, 128, 128,0.3) inset"
 	} else {
 		for (var area of document.getElementsByClassName("actionsArea")) {
-			area.style.boxShadow = "0px 0px 0px 0px rgba(128, 128, 128,0.3) inset"
+			area.style.boxShadow = "unset"
 		}
-		document.querySelector(".pageContainer").style.boxShadow = "0px 0px 0px 1px rgba(128, 128, 128,0.3) inset"
+		document.querySelector(".pageContainer").style.boxShadow = "0px 0px 0px 1px rgba(128, 128, 128,0.15) inset"
 	}
 }
 
@@ -260,12 +267,7 @@ function addGroup(type) {
 			);
 		}
 		else if (resized.type == "Math"){
-			resized.el.querySelector("math-field")._mathfield.setOptions({
-				inlineShortcuts: defShortcuts,
-				plonkSound: null,
-				id: block.id,
-				onExport: (mf, latex) => `${latex}`
-			})
+			resized.el.querySelector("math-field")._mathfield.setOptions(mlOptions(resized.id))
 		}
 	})
 	let currentDims;
@@ -394,12 +396,7 @@ function addMF() {
 		pageGrid.addWidget(block)
 		let created = createMF(id)
 		created.focus()
-		created.setOptions({
-			inlineShortcuts: defShortcuts,
-			plonkSound: null,
-			id: id,
-			onExport: (mf, latex) => `${latex}`
-		})
+		created.setOptions(mlOptions(id))
 		async function getSelection(scene) {
 			let text = await navigator.clipboard.readText();
 			created.executeCommand(['copyToClipboard', '#0'])
@@ -766,12 +763,7 @@ function loadBlock(block) {
 			break;
 		case "Math":
 			let mfBlock = createMF(block.id);
-			mfBlock.setOptions({
-				inlineShortcuts: defShortcuts,
-				plonkSound: null,
-				id: block.id,
-				onExport: (mf, latex) => `${latex}`
-			})
+			mfBlock.setOptions(mlOptions(block.id))
 			block.blockContent = mfBlock.setValue(block.blockContent)
 			async function getSelection(scene) {
 				let text = await navigator.clipboard.readText();
@@ -936,12 +928,7 @@ function loadBlock(block) {
 					);
 				}
 				else if (resized.type == "Math"){
-					resized.el.querySelector("math-field")._mathfield.setOptions({
-						inlineShortcuts: defShortcuts,
-						plonkSound: null,
-						id: block.id,
-						onExport: (mf, latex) => `${latex}`
-					})
+					resized.el.querySelector("math-field")._mathfield.setOptions(mlOptions(block.id))
 				}
 			})
 			items.forEach(loadBlockContent)
