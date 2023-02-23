@@ -255,13 +255,16 @@ async function createWindow() {
 
   ipcMain.on("getNotebooks", (event, args) => {
     const filesPath = path.join(__dirname, "..", "files")
-    const all = () => (fs.readdirSync(filesPath, {withFileTypes: true})).map(
+    const all = () => (fs.readdirSync(filesPath, {withFileTypes: true}))
+    .filter(file => {return (file.isDirectory() || file.name.split(".")[1] == "json")})
+    .map(
       file => file = 
       {
         "parentFolder": filesPath,
         "path": path.join(filesPath, file.name),
         "name": file.name,
         "files": file.isDirectory() ? fs.readdirSync(path.join(filesPath, file.name), {withFileTypes: true})
+        .filter(subfile => {return (subfile.name.split(".")[1] == "json")})
         .map(subfile => subfile = {
           "parentFolder": path.join(filesPath, file.name),
           "path": path.join(filesPath, file.name, subfile.name),
@@ -317,13 +320,17 @@ async function createWindow() {
         if (file.isDirectory()) {
           let subFiles = fs.readdirSync(path.join(filesPath, file.name), {withFileTypes: true})
           for (const subfile of subFiles) {
-            let readFile = fs.readFileSync(path.join(filesPath, file.name, subfile.name), "utf-8")
-            for (const block of JSON.parse(readFile)) {if (block.type == 'Group') {allGroups.push(block)}}
+            if (subfile.name.split(".")[1] == "json"){
+              let readFile = fs.readFileSync(path.join(filesPath, file.name, subfile.name), "utf-8")
+              for (const block of JSON.parse(readFile)) {if (block.type == 'Group') {allGroups.push(block)}}
+            }
           }
         }
         else {
-          let readFile = fs.readFileSync(path.join(filesPath, file.name), "utf-8")
-          for (const block of JSON.parse(readFile)) {if (block.type == 'Group') {allGroups.push(block)}}
+          if (subfile.name.split(".")[1] == "json"){
+            let readFile = fs.readFileSync(path.join(filesPath, file.name), "utf-8")
+            for (const block of JSON.parse(readFile)) {if (block.type == 'Group') {allGroups.push(block)}}
+          }
         }
       }
       return allGroups
