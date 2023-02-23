@@ -327,7 +327,7 @@ async function createWindow() {
           }
         }
         else {
-          if (subfile.name.split(".")[1] == "json"){
+          if (file.name.split(".")[1] == "json"){
             let readFile = fs.readFileSync(path.join(filesPath, file.name), "utf-8")
             for (const block of JSON.parse(readFile)) {if (block.type == 'Group') {allGroups.push(block)}}
           }
