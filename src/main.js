@@ -39,10 +39,20 @@ async function createWindow() {
     color: {type: 'number', maximum: 360, minimum: 1, default: 203},
     pageStyle: {type: 'string', default: 'transparent'}
   };
+  fs.readdir(app.getPath('userData') ,(err, res)=>{
+    if (err){
+      fs.mkdirSync(app.getPath('userData'))
+      if (fs.readFileSync(path.join(app.getPath('userData'), "config.json")) == "") {
+        fs.writeFileSync(path.join(app.getPath('userData'), "config.json"), "{}")
+      }
+    }
+    else if (fs.readFileSync(path.join(app.getPath('userData'), "config.json")) == "") {
+      fs.writeFileSync(path.join(app.getPath('userData'), "config.json"), "{}")
+    }
+  })
 
-  if (fs.readFileSync(path.join(app.getPath('userData'), "config.json")) == "") {
-    fs.writeFileSync(path.join(app.getPath('userData'), "config.json"), "{}")
-  }
+
+
   const store = new Store({schema});
 
   nativeTheme.themeSource = store.get('theme');
