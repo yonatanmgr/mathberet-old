@@ -2,6 +2,8 @@
 A digital mathematics notebook, written in Vanilla ES6 and built with Electron.
 Currently only in Hebrew, English support will be added in future versions.
 
+**Using Mathberet** - [Wiki](https://github.com/yonatanmgr/mathberet/wiki)
+
 ## Libraries Used
 - Custom Block Editor
   - [GridStack](https://github.com/gridstack/gridstack.js)
