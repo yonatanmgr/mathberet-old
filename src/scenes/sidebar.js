@@ -26,7 +26,7 @@ let createMyNotebooks = () => {
 			let movedItem = findInTree(previousWidget) // find the relevant dirtree item
 			let sourceGrid = previousWidget.grid
 			let targetGrid = newWidget.grid
-			let targetGridItems = targetGrid.getGridItems().map(item => item.gridstackNode.id.split("\\").slice(-1)[0])
+			let targetGridItems = targetGrid.getGridItems().map(item => item.gridstackNode.id.split("\\").slice(-1)[0].split("/").slice(-1)[0])
 			if (hasDuplicates(targetGridItems) || movedItem.files) {
 				popupAnimation("cantMove");
 				targetGrid.removeWidget(newWidget.el)
@@ -469,7 +469,7 @@ document.addEventListener("dblclick", function(e) {
 	if (target) {
 		let path = target.closest(".grid-stack-item").gridstackNode.id
 		let fileName = findInTree(target.closest(".grid-stack-item").gridstackNode).name
-		let folderName = findInTree(target.closest(".grid-stack-item").gridstackNode).parentFolder.split("\\").pop()
+		let folderName = findInTree(target.closest(".grid-stack-item").gridstackNode).parentFolder.split("\\").pop().split("/").pop()
 		loadGrid(path, fileName, folderName)
 	}
 });

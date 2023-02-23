@@ -215,7 +215,7 @@ async function createWindow() {
     }
 
     fs.writeFileSync(path.join(__dirname, "..", "allAttachments.json"), JSON.stringify(allPicsArr), "utf-8");
-    let name = file.split("\\").pop()
+    let name = file.split("\\").pop().split("/").pop()
     fs.rename(file, file.replace(name, newName), ()=>{})
   })
   

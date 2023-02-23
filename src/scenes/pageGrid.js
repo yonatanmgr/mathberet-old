@@ -680,13 +680,13 @@ function saveGrid() {
 	let fileToUpdate = findInSidebar(currentfile)
 	setTimeout(() => {
 		let toUpdate = findInTree(fileToUpdate.gridstackNode)
-		currentfile = currentfile.replace(currentfile.split("\\").pop(), `${document.getElementById("fileName").innerText}.json`)
+		currentfile = currentfile.replace(currentfile.split("\\").pop().split("/").pop(), `${document.getElementById("fileName").innerText}.json`)
 		sidebarGrid.update(fileToUpdate, {
 			id: currentfile
 		})
-		fileToUpdate.querySelector(".fileName").innerText = currentfile.split("\\").pop().replace(".json", "")
+		fileToUpdate.querySelector(".fileName").innerText = currentfile.split("\\").pop().split("/").pop().replace(".json", "")
 		toUpdate.path = currentfile
-		toUpdate.name = currentfile.split("\\").pop()
+		toUpdate.name = currentfile.split("\\").pop().split("/").pop()
 	}, 5);
 	getArchive()
 	popupAnimation("save")
@@ -753,7 +753,7 @@ function loadBlock(block) {
 	
 	switch (block.type) {
 		case "Picture":
-			let found = currentAllPics.find(pic=>{return pic.Path.split("\\").pop().split(".")[0] == block.id})
+			let found = currentAllPics.find(pic=>{return pic.Path.split("\\").pop().split(".")[0].split("/").pop().split(".")[0] == block.id})
 			if (found != undefined) {
 				createPicture(block.id, found.Base64)
 			}
