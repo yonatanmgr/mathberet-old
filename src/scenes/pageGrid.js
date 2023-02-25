@@ -11,7 +11,7 @@ var mlOptions = (id) => { return {
 
 // Initialize pageGrid
 var pageGrid = GridStack.init({
-	float: false,
+	float: false, 
 	handle: '.handle',
 	resizable: {
 		handles: 's,sw,w'
@@ -318,7 +318,7 @@ function addDivider() {
 		let block = blockData(html, id, "Divider", 1, {}, 12, 1000, 12, 1, 1, 1, 12)
 		pageGrid.addWidget(block);
 	} else return
-};
+}; 
 
 function addPicture() {
 	if (currentfile) {
@@ -1003,7 +1003,7 @@ if (currentfile) {
 	document.getElementById("close").addEventListener("click", saveGrid);
 } else {
 	document.getElementById("close").removeEventListener("click", saveGrid);
-}
+} 
 
 
 class Block {
@@ -1097,4 +1097,4 @@ class Divider extends Block {
 
 class Group extends Block {
 	subBlocks = [];
-}
+} 
