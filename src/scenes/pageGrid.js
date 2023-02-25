@@ -1,9 +1,6 @@
 let allDefenitions = [];
 
 var mlOptions = (id) => { return {
-	// customVirtualKeyboardLayers: HIGH_SCHOOL_KEYBOARD_LAYER,
-    // customVirtualKeyboards: HIGH_SCHOOL_KEYBOARD,
-    // virtualKeyboards: "high-school-keyboard",
 	virtualKeyboardContainer: document.getElementById("page").parentElement,
 	inlineShortcuts: defShortcuts,
 	keypressSound: null,
@@ -885,7 +882,6 @@ function loadBlock(block) {
 				box.closest(".grid-stack-item").gridstackNode.blockContent = createGgb(block.id, block.blockContent)
 			}
 			break;
-
 		case "Group":
 
 			let group = document.getElementById(`group_${block.id}`)
@@ -1007,4 +1003,98 @@ if (currentfile) {
 	document.getElementById("close").addEventListener("click", saveGrid);
 } else {
 	document.getElementById("close").removeEventListener("click", saveGrid);
+}
+
+
+class Block {
+	constructor(id){
+		this.id = id;
+	};
+
+	create(){};
+	delete(){};
+	load(){};
+	save(){};
+	focus(){};
+}
+
+class MathBlock extends Block {
+	constructor(id){
+		super(id);
+		this.options = {
+			virtualKeyboardContainer: document.getElementById("page").parentElement,
+			inlineShortcuts: defShortcuts,
+			keypressSound: null,
+			plonkSound: null,
+			id: this.id,
+			onExport: (mf, latex) => `${latex}`
+		}
+	};
+
+	expand(){};
+	async getSelection(){};
+}
+
+class TextBlock extends Block {
+	constructor(id){
+		super(id);
+		this.bindings = {
+				ltr: {
+					key: 188,
+					shortKey: true,
+					handler: function (range) {
+						this.quill.formatLine(range, 'direction', '');
+						this.quill.formatLine(range, 'align', '')
+						this.quill.typingDirection = ''
+						this.quill.currentAlign = ''
+					}
+				},
+				center: {
+					key: 191,
+					shortKey: true,
+					handler: function (range) {
+						this.quill.formatLine(range, 'align', 'center')
+						this.quill.currentAlign = 'center'
+					}
+				},
+				rtl: {
+					key: 190,
+					shortKey: true,
+					handler: function (range) {
+						this.quill.formatLine(range, 'direction', 'rtl');
+						this.quill.formatLine(range, 'align', 'right')
+						this.quill.typingDirection = 'rtl'
+						this.quill.currentAlign = 'right'
+					}
+				},
+				math: {
+					key: 52,
+					shiftKey: true,
+					handler: async function (range) {
+						const text = await navigator.clipboard.readText();
+						let selection = this.quill.getSelection();
+						this.quill.insertEmbed(selection.index, 'formula', text);
+						this.quill.setSelection(30, 30);
+					}
+				}
+		};
+		this.options = {modules: {keyboard: {bindings: this.bindings}, toolbar: [["formula"]]}, theme: 'bubble'};
+	};
+
+}
+
+class GraphBlock extends Block {
+	
+}
+
+class PictureBlock extends Block {
+
+}
+
+class Divider extends Block {
+	
+}
+
+class Group extends Block {
+	subBlocks = [];
 }
